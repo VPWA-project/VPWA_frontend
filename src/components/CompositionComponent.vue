@@ -1,57 +1,50 @@
 <template>
-  <div>
-    <p>{{ title }}</p>
-    <ul>
-      <li v-for="todo in todos" :key="todo.id" @click="increment">
-        {{ todo.id }} - {{ todo.content }}
-      </li>
-    </ul>
-    <p>Count: {{ todoCount }} / {{ meta.totalCount }}</p>
-    <p>Active: {{ active ? 'yes' : 'no' }}</p>
-    <p>Clicks on todos: {{ clickCount }}</p>
+  <div class="q-pa-md full-width">
+    <q-infinite-scroll @load="onLoad" reverse>
+      <template v-slot:loading>
+        <div class="row justify-center q-my-md">
+          <q-spinner color="primary" name="dots" size="40px" />
+        </div>
+      </template>
+
+      <div v-for="(message, index) in items" :key="index">
+        <q-chat-message
+          name="me"
+          avatar="https://cdn.quasar.dev/img/avatar1.jpg"
+          :text="[message]"
+        />
+      </div>
+    </q-infinite-scroll>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, computed, ref, toRef, Ref } from 'vue';
-import { Todo, Meta } from './models';
 
-function useClickCount() {
-  const clickCount = ref(0);
-  function increment() {
-    clickCount.value += 1;
-    return clickCount.value;
-  }
-
-  return { clickCount, increment };
-}
-
-function useDisplayTodo(todos: Ref<Todo[]>) {
-  const todoCount = computed(() => todos.value.length);
-  return { todoCount };
-}
+import { defineComponent, ref } from 'vue';
 
 export default defineComponent({
-  name: 'CompositionComponent',
-  props: {
-    title: {
-      type: String,
-      required: true,
-    },
-    todos: {
-      type: Array as PropType<Todo[]>,
-      default: () => [],
-    },
-    meta: {
-      type: Object as PropType<Meta>,
-      required: true,
-    },
-    active: {
-      type: Boolean,
-    },
-  },
-  setup(props) {
-    return { ...useClickCount(), ...useDisplayTodo(toRef(props, 'todos')) };
-  },
-});
+  // props: {
+  //   messages: Array
+  // },
+
+  setup () {
+    const items = ref([ 'a', 'b', 'c', 'd', 'e', 'f', 'g' ])
+
+    return {
+      items,
+      onLoad (done: () => void) {
+        setTimeout(() => {
+          items.value.splice(0, 0, 'a', 'b', 'c', 'd', 'e')
+          done()
+        }, 2000)
+      }
+    }
+  }
+})
 </script>
+
+<style>
+.full-width {
+  width: 100%;
+}
+</style>
