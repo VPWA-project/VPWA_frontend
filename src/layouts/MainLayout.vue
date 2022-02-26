@@ -11,15 +11,86 @@
           @click="toggleLeftDrawer"
         />
 
-        <q-toolbar-title> Quasar App </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
+        <q-toolbar-title> Channel name </q-toolbar-title>
       </q-toolbar>
     </q-header>
 
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
       <q-list>
-        <q-item-label header> Essential Links </q-item-label>
+        <q-item clickable>
+          <q-menu fit anchor="bottom left" self="top left">
+            <q-item-section>
+              <q-item-label class="q-pa-md text-grey-7">Your status</q-item-label>
+
+              <q-item clickable>
+                <q-item-section avatar>
+                  <q-icon name="circle" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>Online</q-item-label>
+                </q-item-section>
+              </q-item>
+
+              <q-item clickable>
+                <q-item-section avatar>
+                  <q-icon name="remove_circle_outline" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>DND</q-item-label>
+                </q-item-section>
+              </q-item>
+
+              <q-item clickable>
+                <q-item-section avatar>
+                  <q-icon name="circle" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>Offline</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-item-section>
+
+            <q-separator spaced inset />
+
+            <q-item-section>
+              <q-item clickable>
+                <q-item-section avatar>
+                  <q-icon name="settings" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>Settings</q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item clickable>
+                <q-item-section avatar>
+                  <q-icon name="logout" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>Logout</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-item-section>
+
+          </q-menu>
+
+          <q-item-section avatar>
+            <q-avatar>
+              <img src="https://cdn.quasar.dev/img/boy-avatar.png">
+            </q-avatar>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Jozko Mrkvička</q-item-label>
+            <q-item-label caption>@jozomrkva</q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <q-separator spaced inset />
+
+        <q-scroll-area style="height: calc(100% - 100px)">
+          <q-list>
+            
+          </q-list>
+        </q-scroll-area>
 
         <EssentialLink
           v-for="link in essentialLinks"
@@ -32,6 +103,20 @@
     <q-page-container>
       <router-view />
     </q-page-container>
+
+    <q-footer>
+      <q-toolbar class="bg-grey-3 text-black row">
+        <q-input
+          rounded
+          outlined
+          dense
+          class="WAL__field col-grow q-mr-sm"
+          bg-color="white"
+          v-model="message"
+          placeholder="Type a message"
+        />
+      </q-toolbar>
+    </q-footer>
   </q-layout>
 </template>
 
@@ -97,6 +182,7 @@ export default defineComponent({
 
     return {
       essentialLinks: linksList,
+      message: '',
       leftDrawerOpen,
       toggleLeftDrawer() {
         leftDrawerOpen.value = !leftDrawerOpen.value;
