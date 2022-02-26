@@ -88,15 +88,13 @@
 
         <q-scroll-area style="height: calc(100% - 100px)">
           <q-list>
-            
-          </q-list>
-        </q-scroll-area>
-
-        <EssentialLink
+            <EssentialLink
           v-for="link in essentialLinks"
           :key="link.title"
           v-bind="link"
         />
+          </q-list>
+        </q-scroll-area>
       </q-list>
     </q-drawer>
 
