@@ -32,7 +32,7 @@
       <q-btn
         type="submit"
         :loading="submitting"
-        label="Register"
+        label="Login"
         class="q-mt-md q-pa-md"
         style="width: 100%"
         color="blue"
@@ -46,9 +46,9 @@
 </template>
 
 <script lang="ts">
-import { QInput } from "quasar";
-import { ref, defineComponent } from "vue";
-import { emailRules, passwordRules } from "src/utils/rules";
+import { QInput } from 'quasar';
+import { ref, defineComponent } from 'vue';
+import { emailRules, passwordRules } from 'src/utils/rules';
 
 export default defineComponent({
   name: 'LoginForm',

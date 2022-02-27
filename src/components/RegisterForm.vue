@@ -56,7 +56,7 @@
       <q-btn
         type="submit"
         :loading="submitting"
-        label="Login"
+        label="Register"
         class="q-mt-md q-pa-md"
         style="width: 100%"
         color="blue"
