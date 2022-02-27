@@ -63,9 +63,18 @@ export default defineComponent({
 
     const submitting = ref<boolean>(false)
 
-    const onSubmit = async () => {
-      await emailRef.value?.validate()
-      await passwordRef.value?.validate()
+    const onSubmit = () => {
+      Promise.all([
+        emailRef.value?.validate(),
+        passwordRef.value?.validate()
+      ])
+      .then(result => {
+        if(result.every(v => v === true)) {
+          // TODO: login
+          console.log('Loggin in')
+        }
+      })
+      .catch(console.log)
     }
 
     return {
