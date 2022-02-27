@@ -1,7 +1,7 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-header elevated>
-      <q-toolbar>
+      <q-toolbar style="height: 56px">
         <q-btn
           flat
           dense
@@ -93,8 +93,20 @@
         </q-scroll-area>
       </q-list>
 
+      <q-item>
+        <q-item-section>
+          <q-item-label>Invitations</q-item-label>
+        </q-item-section>
+      </q-item>
+
+      <q-item>
+        <q-item-section>
+          <q-item-label>Channels</q-item-label>
+        </q-item-section>
+      </q-item>
+
        <ChannelLink
-          v-for="link in essentialLinks"
+          v-for="link in channels"
           :key="link.title"
           v-bind="link"
         />
@@ -115,6 +127,7 @@
           v-model="message"
           placeholder="Type a message"
         />
+        <q-btn round flat icon="send" />
       </q-toolbar>
     </q-footer>
   </q-layout>
@@ -136,7 +149,7 @@ export default defineComponent({
     const leftDrawerOpen = ref(false);
 
     return {
-      essentialLinks: [
+      channels: [
         {
           title: 'Channel 1',
           icon: 'tag'
@@ -147,6 +160,9 @@ export default defineComponent({
         },
       ],
       message: '',
+      messages: [
+        
+      ],
       leftDrawerOpen,
       toggleLeftDrawer() {
         leftDrawerOpen.value = !leftDrawerOpen.value;
