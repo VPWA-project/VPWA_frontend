@@ -102,12 +102,22 @@ export default defineComponent({
 
     const submitting = ref<boolean>(false);
 
-    const onSubmit = async () => {
-      await emailRef.value?.validate();
-      await firstnameRef.value?.validate();
-      await lastnameRef.value?.validate();
-      await nicknameRef.value?.validate();
-      await passwordRef.value?.validate();
+    const onSubmit = () => {
+      Promise.all([
+        emailRef.value?.validate(),
+        firstnameRef.value?.validate(),
+        lastnameRef.value?.validate(),
+        nicknameRef.value?.validate(),
+        passwordRef.value?.validate(),
+      ])
+      .then(result => {
+        if(result.every(v => v === true)) {
+          // TODO: register
+          console.log('Register')
+        }
+      })
+      .catch(console.log)
+
     };
 
     return {
