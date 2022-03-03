@@ -8,7 +8,7 @@
             flat
             color="primary"
             label="Create"
-            @click="openCreateChannelDialog"
+            @click="notifyCreateButtonClicked"
           />
         </q-card-section>
 
@@ -40,22 +40,18 @@
 import { defineComponent, ref } from 'vue'
 
 export default defineComponent({
-    setup() {
+    setup(_, { emit }) {
         const isSearchChannelDialogOpen = ref<boolean>(false)
         const searchText = ref<string>('');
 
-        const toggleSearchChannelDialog = () => {
-            isSearchChannelDialogOpen.value = !isSearchChannelDialogOpen.value;
-        }
-        
-        const openCreateChannelDialog = () => {
-            isSearchChannelDialogOpen.value = false;
-
+        const notifyCreateButtonClicked = () => {
+            emit('create-button-clicked', isSearchChannelDialogOpen)
         }
 
         return {
             isSearchChannelDialogOpen,
-            searchText
+            searchText,
+            notifyCreateButtonClicked
         }
     },
 })

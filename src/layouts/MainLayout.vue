@@ -118,65 +118,6 @@
       <router-view />
     </q-page-container>
 
-    <q-dialog v-model="dialog" maximized full-width full-height>
-      <q-card class="full-height full-height">
-        <q-card-section class="flex-center row justify-between">
-          <q-btn flat color="primary" v-close-popup label="Cancel" />
-          <h3 style="font-size: 1.5rem">Channels</h3>
-          <q-btn
-            flat
-            color="primary"
-            label="Create"
-            @click="openCreateChannelDialog"
-          />
-        </q-card-section>
-
-        <q-separator inset />
-
-        <q-card-section class="col q-pb-none">
-          <q-input outlined bottom-slots v-model="text" label="Label">
-            <template v-slot:prepend>
-              <q-icon name="search" />
-            </template>
-            <template v-slot:append>
-              <q-icon name="close" @click="text = ''" class="cursor-pointer" />
-            </template>
-          </q-input>
-        </q-card-section>
-
-        <q-separator inset />
-
-        <q-card-section class="col q-pt-none">
-          <ChannelLink title="Channel 1" icon="lock" />
-          <ChannelLink title="Channel 2" icon="lock" />
-          <ChannelLink title="Channel 3" icon="lock" />
-        </q-card-section>
-      </q-card>
-    </q-dialog>
-
-    <q-dialog v-model="createChannelDialog" maximized full-width full-height>
-      <q-card class="full-height full-height">
-        <q-card-section class="flex-center col">
-          <h3 style="font-size: 1.5rem">Create a new {{ `${isPublicChannel ? 'public' : 'private'}` }} channel</h3>
-          <q-toggle
-            :label="`${isPublicChannel ? 'Anyone can join' : 'Restricted to invited members'}`"
-            v-model="isPublicChannel"
-          />
-          <p class="text-grey-7" v-if="!isPublicChannel">A private channel is only visible to its members and only members of private channel can read its content.</p>
-        </q-card-section>
-
-        <q-separator inset />
-
-        <q-card-section class="col q-pb-none">
-          <q-input
-            class="q-mt-lg"
-            outlined
-            label="Channel name"
-          />
-        </q-card-section>
-      </q-card>
-    </q-dialog>
-
     <q-footer>
       <q-toolbar class="bg-grey-3 text-black row">
         <q-input
@@ -203,8 +144,8 @@ export default defineComponent({
   name: 'MainLayout',
 
   components: {
-    ChannelLink,
-  },
+    ChannelLink
+},
 
   setup() {
     const leftDrawerOpen = ref(false);
