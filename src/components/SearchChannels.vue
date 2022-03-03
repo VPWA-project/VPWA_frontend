@@ -1,6 +1,12 @@
 <template>
-    <q-dialog v-model="isSearchChannelDialogOpen" maximized full-width full-height>
-      <q-card class="full-height full-height">
+  <q-dialog
+    v-model="isSearchChannelDialogOpen"
+    maximized
+    full-width
+    full-height
+  >
+    <q-card class="full-height full-height">
+      <div style="max-width: 800px; margin-left: auto; margin-right: auto;">
         <q-card-section class="flex-center row justify-between">
           <q-btn flat color="primary" v-close-popup label="Cancel" />
           <h3 style="font-size: 1.5rem">Channels</h3>
@@ -20,7 +26,11 @@
               <q-icon name="search" />
             </template>
             <template v-slot:append>
-              <q-icon name="close" @click="searchText = ''" class="cursor-pointer" />
+              <q-icon
+                name="close"
+                @click="searchText = ''"
+                class="cursor-pointer"
+              />
             </template>
           </q-input>
         </q-card-section>
@@ -32,27 +42,28 @@
           <ChannelLink title="Channel 2" icon="lock" />
           <ChannelLink title="Channel 3" icon="lock" />
         </q-card-section>
-      </q-card>
-    </q-dialog>
+      </div>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref } from 'vue';
 
 export default defineComponent({
-    setup(_, { emit }) {
-        const isSearchChannelDialogOpen = ref<boolean>(false)
-        const searchText = ref<string>('');
+  setup(_, { emit }) {
+    const isSearchChannelDialogOpen = ref<boolean>(false);
+    const searchText = ref<string>('');
 
-        const notifyCreateButtonClicked = () => {
-            emit('create-button-clicked', isSearchChannelDialogOpen)
-        }
+    const notifyCreateButtonClicked = () => {
+      emit('create-button-clicked', isSearchChannelDialogOpen);
+    };
 
-        return {
-            isSearchChannelDialogOpen,
-            searchText,
-            notifyCreateButtonClicked
-        }
-    },
-})
+    return {
+      isSearchChannelDialogOpen,
+      searchText,
+      notifyCreateButtonClicked,
+    };
+  },
+});
 </script>
