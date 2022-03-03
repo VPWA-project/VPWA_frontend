@@ -32,7 +32,7 @@
       <q-btn
         type="submit"
         :loading="submitting"
-        label="Register"
+        label="Login"
         class="q-mt-md q-pa-md"
         style="width: 100%"
         color="blue"
@@ -46,9 +46,9 @@
 </template>
 
 <script lang="ts">
-import { QInput } from "quasar";
-import { ref, defineComponent } from "vue";
-import { emailRules, passwordRules } from "src/utils/rules";
+import { QInput } from 'quasar';
+import { ref, defineComponent } from 'vue';
+import { emailRules, passwordRules } from 'src/utils/rules';
 
 export default defineComponent({
   name: 'LoginForm',
@@ -63,9 +63,18 @@ export default defineComponent({
 
     const submitting = ref<boolean>(false)
 
-    const onSubmit = async () => {
-      await emailRef.value?.validate()
-      await passwordRef.value?.validate()
+    const onSubmit = () => {
+      Promise.all([
+        emailRef.value?.validate(),
+        passwordRef.value?.validate()
+      ])
+      .then(result => {
+        if(result.every(v => v === true)) {
+          // TODO: login
+          console.log('Loggin in')
+        }
+      })
+      .catch(console.log)
     }
 
     return {
