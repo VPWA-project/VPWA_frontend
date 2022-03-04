@@ -98,7 +98,7 @@
             <q-item-label>Channels</q-item-label>
           </q-item-section>
           <q-item-section avatar>
-            <q-btn round flat icon="add_circle" @click="toggleChannelList" />
+            <q-btn round flat icon="add_circle" />
           </q-item-section>
         </q-item>
       </q-list>
@@ -117,6 +117,8 @@
     <q-page-container>
       <router-view />
     </q-page-container>
+
+    <SearchChannels />
 
     <q-footer>
       <q-toolbar class="bg-grey-3 text-black row">
@@ -137,6 +139,7 @@
 
 <script lang="ts">
 import ChannelLink from 'src/components/ChannelLink.vue';
+import SearchChannels from 'src/components/SearchChannels.vue';
 
 import { defineComponent, ref } from 'vue';
 
@@ -144,7 +147,8 @@ export default defineComponent({
   name: 'MainLayout',
 
   components: {
-    ChannelLink
+    ChannelLink,
+    SearchChannels
 },
 
   setup() {
@@ -160,30 +164,12 @@ export default defineComponent({
       },
     ]);
 
-    const dialog = ref(false);
-    const createChannelDialog = ref(false);
-    const isPublicChannel = ref(true)
-
     return {
       channels,
-      dialog,
-      createChannelDialog,
-      isPublicChannel,
       message: '',
-      messages: [],
       leftDrawerOpen,
       toggleLeftDrawer() {
         leftDrawerOpen.value = !leftDrawerOpen.value;
-      },
-      toggleChannelList() {
-        dialog.value = !dialog.value;
-      },
-      toggleCreateChannelDialog() {
-        createChannelDialog.value = !createChannelDialog.value;
-      },
-      openCreateChannelDialog() {
-        dialog.value = !dialog.value;
-        createChannelDialog.value = !createChannelDialog.value;
       },
       createChannel() {
         channels.value.push({
