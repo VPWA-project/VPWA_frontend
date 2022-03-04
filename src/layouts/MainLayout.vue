@@ -10,17 +10,54 @@
           aria-label="Menu"
           @click="toggleLeftDrawer"
         />
-
         <q-toolbar-title> Channel name </q-toolbar-title>
+        <q-btn flat dense round icon="more_vert" clickable @click="changeMe">
+          <q-menu fit anchor="bottom right" self="top right">
+            <div class="q-gutter-sm">
+              <q-btn
+                label="Leave channel"
+                color="white"
+                text-color="black"
+                @click="confirm = true"
+              />
+              <q-dialog v-model="confirm" persistent>
+                <q-card>
+                  <q-card-section class="row items-center">
+                    <q-avatar
+                      icon="group_off"
+                      color="primary"
+                      text-color="white"
+                    />
+                    <span class="q-ml-sm"
+                      >Do you really want to leave this channel ?</span
+                    >
+                  </q-card-section>
+
+                  <q-card-actions align="right">
+                    <q-btn flat label="Cancel" color="primary" v-close-popup />
+                    <q-btn
+                      flat
+                      label="Leave channel"
+                      color="primary"
+                      v-close-popup
+                    />
+                  </q-card-actions>
+                </q-card>
+              </q-dialog>
+            </div>
+          </q-menu>
+        </q-btn>
       </q-toolbar>
     </q-header>
 
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
       <q-list>
-        <q-item clickable>
+        <q-item clickable @click="changeMe">
           <q-menu fit anchor="bottom left" self="top left">
             <q-item-section>
-              <q-item-label class="q-pa-md text-grey-7">Your status</q-item-label>
+              <q-item-label class="q-pa-md text-grey-7"
+                >Your status</q-item-label
+              >
 
               <q-item clickable>
                 <q-item-section avatar>
@@ -70,26 +107,26 @@
                 </q-item-section>
               </q-item>
             </q-item-section>
-
           </q-menu>
 
           <q-item-section avatar>
-            <q-avatar>
-              <img src="https://cdn.quasar.dev/img/boy-avatar.png">
-            </q-avatar>
+            <q-avatar rounded color="primary" text-color="white"
+              >{{ nameInitials }}<q-badge color="red" rounded floating
+            /></q-avatar>
           </q-item-section>
           <q-item-section>
             <q-item-label>Jozko Mrkvička</q-item-label>
             <q-item-label caption>@jozomrkva</q-item-label>
+          </q-item-section>
+          <q-item-section avatar>
+            <q-icon :name="btnIcon" size="1.4em" />
           </q-item-section>
         </q-item>
 
         <q-separator spaced inset />
 
         <q-scroll-area style="height: calc(100% - 100px)">
-          <q-list>
-      
-          </q-list>
+          <q-list> </q-list>
         </q-scroll-area>
       </q-list>
 
@@ -105,11 +142,7 @@
         </q-item-section>
       </q-item>
 
-       <ChannelLink
-          v-for="link in channels"
-          :key="link.title"
-          v-bind="link"
-        />
+      <ChannelLink v-for="link in channels" :key="link.title" v-bind="link" />
     </q-drawer>
 
     <q-page-container>
@@ -136,7 +169,8 @@
 <script lang="ts">
 import ChannelLink from 'src/components/ChannelLink.vue';
 
-import { defineComponent, ref } from 'vue';
+import { computed, defineComponent, ref } from 'vue';
+import { useDialogPluginComponent } from 'quasar';
 
 export default defineComponent({
   name: 'MainLayout',
@@ -147,26 +181,41 @@ export default defineComponent({
 
   setup() {
     const leftDrawerOpen = ref(false);
+    const btnIcon = ref('expand_more');
+    const firstName = ref('Jozko');
+    const lastName = ref('Mrkvicka');
 
     return {
       channels: [
         {
           title: 'Channel 1',
-          icon: 'tag'
+          icon: 'tag',
         },
         {
           title: 'Channel 2',
-          icon: 'lock'
+          icon: 'lock',
         },
       ],
+      btnIcon,
       message: '',
-      messages: [
-        
-      ],
+      messages: [],
       leftDrawerOpen,
+      confirm: ref(false),
+
       toggleLeftDrawer() {
         leftDrawerOpen.value = !leftDrawerOpen.value;
       },
+
+      changeMe() {
+        if (btnIcon.value == 'expand_more') {
+          btnIcon.value = 'expand_less';
+        } else {
+          btnIcon.value = 'expand_more';
+        }
+      },
+      nameInitials: computed(() => {
+        return firstName.value[0] + lastName.value[0];
+      }),
     };
   },
 });
