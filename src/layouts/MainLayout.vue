@@ -54,10 +54,12 @@
       <q-list>
         <q-item clickable @click="changeMe">
           <q-menu fit anchor="bottom left" self="top left">
-            <q-item-section>
-              <q-item-label class="q-pa-md text-grey-7"
-                >Your status</q-item-label
-              >
+            <q-list>
+              <q-item class="no-padding">
+                <q-item-label class="q-pa-md text-grey-7"
+                  >Your status</q-item-label
+                >
+              </q-item>
 
               <q-item clickable>
                 <q-item-section avatar>
@@ -85,11 +87,9 @@
                   <q-item-label>Offline</q-item-label>
                 </q-item-section>
               </q-item>
-            </q-item-section>
 
-            <q-separator spaced inset />
+              <q-separator spaced inset />
 
-            <q-item-section>
               <q-item clickable>
                 <q-item-section avatar>
                   <q-icon name="settings" />
@@ -106,7 +106,7 @@
                   <q-item-label>Logout</q-item-label>
                 </q-item-section>
               </q-item>
-            </q-item-section>
+            </q-list>
           </q-menu>
 
           <q-item-section avatar>
@@ -125,29 +125,38 @@
 
         <q-separator spaced inset />
 
-        <q-scroll-area style="height: calc(100% - 100px)">
-          <q-list> </q-list>
-        </q-scroll-area>
+        <q-item>
+          <q-item-section>
+            <q-item-label>Invitations</q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <q-item>
+          <q-item-section>
+            <q-item-label>Channels</q-item-label>
+          </q-item-section>
+          <q-item-section avatar>
+            <q-btn round flat icon="add_circle" />
+          </q-item-section>
+        </q-item>
       </q-list>
 
-      <q-item>
-        <q-item-section>
-          <q-item-label>Invitations</q-item-label>
-        </q-item-section>
-      </q-item>
-
-      <q-item>
-        <q-item-section>
-          <q-item-label>Channels</q-item-label>
-        </q-item-section>
-      </q-item>
-
-      <ChannelLink v-for="link in channels" :key="link.title" v-bind="link" />
+      <q-scroll-area style="height: calc(100% - 190px)">
+        <q-list>
+          <ChannelLink
+            v-for="link in channels"
+            :key="link.title"
+            v-bind="link"
+          />
+        </q-list>
+      </q-scroll-area>
     </q-drawer>
 
     <q-page-container>
       <router-view />
     </q-page-container>
+
+    <SearchChannels />
 
     <q-footer>
       <q-toolbar class="bg-grey-3 text-black row">
@@ -168,25 +177,26 @@
 
 <script lang="ts">
 import ChannelLink from 'src/components/ChannelLink.vue';
+import SearchChannels from 'src/components/SearchChannels.vue';
 
 import { computed, defineComponent, ref } from 'vue';
-import { useDialogPluginComponent } from 'quasar';
 
 export default defineComponent({
   name: 'MainLayout',
 
   components: {
     ChannelLink,
-  },
+    SearchChannels
+},
 
   setup() {
     const leftDrawerOpen = ref(false);
+
     const btnIcon = ref('expand_more');
     const firstName = ref('Jozko');
     const lastName = ref('Mrkvicka');
 
-    return {
-      channels: [
+    const channels = ref([
         {
           title: 'Channel 1',
           icon: 'tag',
@@ -195,17 +205,18 @@ export default defineComponent({
           title: 'Channel 2',
           icon: 'lock',
         },
-      ],
+      ],)
+
+    return {
+      channels,
       btnIcon,
       message: '',
-      messages: [],
       leftDrawerOpen,
       confirm: ref(false),
 
       toggleLeftDrawer() {
         leftDrawerOpen.value = !leftDrawerOpen.value;
       },
-
       changeMe() {
         if (btnIcon.value == 'expand_more') {
           btnIcon.value = 'expand_less';
@@ -216,6 +227,12 @@ export default defineComponent({
       nameInitials: computed(() => {
         return firstName.value[0] + lastName.value[0];
       }),
+      createChannel() {
+        channels.value.push({
+          title: 'Picovina',
+          icon: 'lock',
+        });
+      },
     };
   },
 });

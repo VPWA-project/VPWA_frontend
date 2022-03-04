@@ -27,3 +27,7 @@ export const passwordRules = [
   (val: string) =>
     (!!val && val.length >= 8) || 'Password must be at least 8 characters long',
 ];
+
+export const channelNameRules = [
+  (val: string) => !!val || 'Name is required'
+]
