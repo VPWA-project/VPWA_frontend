@@ -180,6 +180,7 @@ import ChannelLink from 'src/components/ChannelLink.vue';
 import SearchChannels from 'src/components/SearchChannels.vue';
 
 import { computed, defineComponent, ref } from 'vue';
+import { useStore } from '../store'
 
 export default defineComponent({
   name: 'MainLayout',
@@ -196,19 +197,9 @@ export default defineComponent({
     const firstName = ref('Jozko');
     const lastName = ref('Mrkvicka');
 
-    const channels = ref([
-        {
-          title: 'Channel 1',
-          icon: 'tag',
-        },
-        {
-          title: 'Channel 2',
-          icon: 'lock',
-        },
-      ],)
+    const $store = useStore()
 
     return {
-      channels,
       btnIcon,
       message: '',
       leftDrawerOpen,
@@ -227,11 +218,11 @@ export default defineComponent({
       nameInitials: computed(() => {
         return firstName.value[0] + lastName.value[0];
       }),
+      channels: computed(() => {
+        return ''
+      }),
       createChannel() {
-        channels.value.push({
-          title: 'Picovina',
-          icon: 'lock',
-        });
+        return
       },
     };
   },
