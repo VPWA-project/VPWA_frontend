@@ -3,13 +3,18 @@
     <q-card class="full-height full-height">
       <div style="max-width: 800px; margin-left: auto; margin-right: auto">
         <q-card-section class="flex-center row justify-between">
-          <q-btn flat color="primary" v-close-popup label="Cancel" />
+          <q-btn
+            flat
+            color="primary"
+            @click="handleCloseButton"
+            label="Cancel"
+          />
           <h3 style="font-size: 1.5rem">Channels</h3>
           <q-btn
             flat
             color="primary"
             label="Create"
-            @click="notifyCreateButtonClicked"
+            @click="createChannelOpen = true"
           />
         </q-card-section>
 
@@ -23,7 +28,7 @@
             label="Search channel"
             @keydown="clearTimer"
             @keyup="clearTimer"
-            @focus="e => search()"
+            @focus="(e) => search()"
           >
             <template v-slot:prepend>
               <q-icon name="search" />
@@ -52,12 +57,7 @@
           >
             <template v-slot:append>
               <div class="row justify-end">
-                <q-btn
-                  flat
-                  color="black"
-                  label="View"
-                  @click="notifyCreateButtonClicked"
-                />
+                <q-btn flat color="black" label="View" />
                 <q-btn
                   flat
                   color="green"
@@ -71,31 +71,45 @@
       </div>
     </q-card>
   </q-dialog>
+
+  <CreateChannel :open="createChannelOpen" @close="createChannelOpen = false" />
 </template>
 
 <script lang="ts">
 import { Channel } from 'src/store/channels/state';
 import { SearchPublicChannelsPayload } from 'src/store/channels/types';
-import { defineComponent, ref, computed } from 'vue';
+import { defineComponent, ref, toRef, computed } from 'vue';
 import { useStore } from '../store';
 import ChannelLink from './ChannelLink.vue';
+import CreateChannel from './CreateChannel.vue';
 
 export default defineComponent({
-  setup(_, { emit }) {
+  props: {
+    open: {
+      type: Boolean,
+      default: true,
+    },
+  },
+  watch: {
+    open(_, newValue) {
+      if (newValue === false) {
+        this.searchText = '';
+      }
+    },
+  },
+  emits: ['close'],
+  setup(props, { emit }) {
+    const isDialogOpen = toRef(props, 'open');
     const $store = useStore();
-    const isDialogOpen = ref<boolean>(true);
     const searchText = ref<string>('');
     const timer = ref<NodeJS.Timeout>();
-    const showSpinner = ref<boolean>(false)
-
-    const notifyCreateButtonClicked = () => {
-      emit('create-button-clicked', isDialogOpen.value);
-    };
+    const showSpinner = ref<boolean>(false);
+    const createChannelOpen = ref<boolean>(false);
 
     const clearTimer = () => {
       clearTimeout(timer.value as NodeJS.Timeout);
       timer.value = setTimeout(search, 1000);
-      showSpinner.value = true
+      showSpinner.value = true;
     };
 
     const handleClearSearchText = () => {
@@ -104,7 +118,7 @@ export default defineComponent({
     };
 
     const search = () => {
-      showSpinner.value = true
+      showSpinner.value = true;
 
       const payload: SearchPublicChannelsPayload = {
         searchText: searchText.value,
@@ -112,37 +126,41 @@ export default defineComponent({
       $store
         .dispatch('channels/searchPublicChannels', payload)
         .then(() => {
-          showSpinner.value = false
+          showSpinner.value = false;
         })
         .catch((err) => {
           console.log(err);
-          showSpinner.value = false
+          showSpinner.value = false;
         });
     };
 
     const joinChannel = (channel: Channel) => {
-      $store.dispatch('channels/joinChannel', channel)
-      .then(() => {
-        $store.dispatch('channels/removeFromPublicChannels', channel.id).catch(console.log)
-      })
-      .catch(console.log)
-    }
+      $store
+        .dispatch('channels/joinChannel', channel)
+        .then(() => {
+          $store
+            .dispatch('channels/removeFromPublicChannels', channel.id)
+            .catch(console.log);
+        })
+        .catch(console.log);
+    };
 
     return {
       isDialogOpen,
       showSpinner,
       searchText,
       timer,
+      createChannelOpen,
       search,
       clearTimer,
-      notifyCreateButtonClicked,
       handleClearSearchText,
       joinChannel,
       availableChannels: computed(
         () => $store.state.channels.availableChannels
       ),
+      handleCloseButton: () => emit('close'),
     };
   },
-  components: { ChannelLink },
+  components: { ChannelLink, CreateChannel },
 });
 </script>

@@ -8,7 +8,13 @@
               Create a new
               {{ `${state.isChannelPublic ? 'public' : 'private'}` }} channel
             </h3>
-            <q-btn round flat color="black" icon="close" v-close-popup />
+            <q-btn
+              round
+              flat
+              color="black"
+              icon="close"
+              @click="handleCloseButton"
+            />
           </div>
           <q-toggle
             :label="`${
@@ -70,7 +76,7 @@
 import { useQuasar } from 'quasar';
 import { ChannelType } from 'src/store/channels/state';
 import { CreateChannelPayload } from 'src/store/channels/types';
-import { defineComponent, reactive, ref } from 'vue';
+import { defineComponent, reactive, ref, toRef } from 'vue';
 import { useStore } from '../store';
 import useVuelidate from '@vuelidate/core';
 import { required, helpers } from '@vuelidate/validators';
@@ -82,8 +88,23 @@ const rules = {
 };
 
 export default defineComponent({
-  setup() {
-    const isDialogOpen = ref<boolean>(true);
+  props: {
+    open: {
+      type: Boolean,
+      default: true,
+    },
+  },
+  watch: {
+    open(_, newValue) {
+      if (newValue === false) {
+        this.state.channelName = '';
+        this.state.isChannelPublic = true;
+      }
+    },
+  },
+  emits: ['close'],
+  setup(props, { emit }) {
+    const isDialogOpen = toRef(props, 'open');
     const submitting = ref<boolean>(false);
 
     const $store = useStore();
@@ -95,6 +116,10 @@ export default defineComponent({
     });
 
     const v$ = useVuelidate(rules, state);
+
+    const handleCloseButton = () => {
+      emit('close');
+    };
 
     const handleSubmit = () => {
       v$.value
@@ -116,7 +141,7 @@ export default defineComponent({
                   color: 'blue',
                 });
 
-                isDialogOpen.value = false
+                handleCloseButton();
               })
               .catch(console.log);
           }
@@ -128,6 +153,7 @@ export default defineComponent({
       isDialogOpen,
       submitting,
       handleSubmit,
+      handleCloseButton,
       state,
       v$,
     };
