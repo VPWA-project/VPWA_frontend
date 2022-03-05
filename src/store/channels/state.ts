@@ -9,7 +9,8 @@ export interface Channel {
   type: ChannelType;
 }
 export interface ChannelsStateInterface {
-  channels: Array<Channel>
+  channels: Array<Channel>;
+  availableChannels: Array<Channel>;
 }
 
 function state(): ChannelsStateInterface {
@@ -25,7 +26,8 @@ function state(): ChannelsStateInterface {
         name: 'Channel 2',
         type: ChannelType.Private
       }
-    ]
+    ],
+    availableChannels: []
   };
 }
 

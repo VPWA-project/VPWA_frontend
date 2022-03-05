@@ -156,7 +156,7 @@
       <router-view />
     </q-page-container>
 
-    <CreateChannel />
+    <SearchChannels />
 
     <q-footer>
       <q-toolbar class="bg-grey-3 text-black row">
@@ -176,11 +176,10 @@
 </template>
 
 <script lang="ts">
-import ChannelLink from 'src/components/ChannelLink.vue';
-import SearchChannels from 'src/components/SearchChannels.vue';
-
 import { computed, defineComponent, ref } from 'vue';
 import { useStore } from '../store'
+import ChannelLink from 'src/components/ChannelLink.vue';
+import SearchChannels from 'src/components/SearchChannels.vue';
 import CreateChannel from 'src/components/CreateChannel.vue';
 
 export default defineComponent({
@@ -188,7 +187,7 @@ export default defineComponent({
 
   components: {
     ChannelLink,
-    CreateChannel
+    SearchChannels
 },
 
   setup() {
