@@ -7,12 +7,25 @@
     <q-item-section>
       <q-item-label>{{ name }}</q-item-label>
     </q-item-section>
+
+    <q-item-section>
+      <slot name="append">
+      </slot>
+    </q-item-section>
   </q-item>
 </template>
 
 <script lang="ts">
 import { ChannelType } from 'src/store/channels/state';
 import { defineComponent, computed } from 'vue';
+
+const getIconByType = (type: ChannelType): string => {
+  if (type === ChannelType.Private) {
+    return 'lock';
+  }
+
+  return 'tag';
+};
 
 export default defineComponent({
   name: 'ChannelLink',
@@ -23,24 +36,16 @@ export default defineComponent({
     },
     type: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
 
   setup() {
-    const getIconByType = (type: ChannelType): string => {
-      if(type === ChannelType.Private) {
-        return 'lock'
-      }
-
-      return 'tag'
-    }
-
     return {
       getIconByType: computed(() => {
-        return (type: ChannelType) => getIconByType(type)
-      })
-    }
-  }
+        return (type: ChannelType) => getIconByType(type);
+      }),
+    };
+  },
 });
 </script>

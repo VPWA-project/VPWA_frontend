@@ -23,6 +23,7 @@
             label="Search channel"
             @keydown="clearTimer"
             @keyup="clearTimer"
+            @focus="e => search()"
           >
             <template v-slot:prepend>
               <q-icon name="search" />
@@ -39,7 +40,7 @@
 
         <q-separator inset />
 
-        <div v-show="timer" class="row flex-center q-mt-md">
+        <div v-show="showSpinner" class="row flex-center q-mt-md">
           <q-spinner color="primary" size="3em" />
         </div>
 
@@ -48,7 +49,24 @@
             v-for="link in availableChannels"
             :key="link.id"
             v-bind="link"
-          />
+          >
+            <template v-slot:append>
+              <div class="row justify-end">
+                <q-btn
+                  flat
+                  color="black"
+                  label="View"
+                  @click="notifyCreateButtonClicked"
+                />
+                <q-btn
+                  flat
+                  color="green"
+                  label="Join"
+                  @click="joinChannel(link)"
+                />
+              </div>
+            </template>
+          </ChannelLink>
         </q-card-section>
       </div>
     </q-card>
@@ -68,6 +86,7 @@ export default defineComponent({
     const isDialogOpen = ref<boolean>(true);
     const searchText = ref<string>('');
     const timer = ref<NodeJS.Timeout>();
+    const showSpinner = ref<boolean>(false)
 
     const notifyCreateButtonClicked = () => {
       emit('create-button-clicked', isDialogOpen.value);
@@ -76,36 +95,49 @@ export default defineComponent({
     const clearTimer = () => {
       clearTimeout(timer.value as NodeJS.Timeout);
       timer.value = setTimeout(search, 1000);
+      showSpinner.value = true
     };
 
     const handleClearSearchText = () => {
-      searchText.value = ''
-      search()
-    }
+      searchText.value = '';
+      search();
+    };
 
     const search = () => {
+      showSpinner.value = true
+
       const payload: SearchPublicChannelsPayload = {
         searchText: searchText.value,
       };
       $store
         .dispatch('channels/searchPublicChannels', payload)
         .then(() => {
-          timer.value = undefined;
+          showSpinner.value = false
         })
-        .catch(err => {
-          console.log(err)
-          timer.value = undefined;
+        .catch((err) => {
+          console.log(err);
+          showSpinner.value = false
         });
     };
 
+    const joinChannel = (channel: Channel) => {
+      $store.dispatch('channels/joinChannel', channel)
+      .then(() => {
+        $store.dispatch('channels/removeFromPublicChannels', channel.id).catch(console.log)
+      })
+      .catch(console.log)
+    }
+
     return {
       isDialogOpen,
+      showSpinner,
       searchText,
       timer,
       search,
       clearTimer,
       notifyCreateButtonClicked,
       handleClearSearchText,
+      joinChannel,
       availableChannels: computed(
         () => $store.state.channels.availableChannels
       ),

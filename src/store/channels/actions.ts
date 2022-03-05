@@ -1,3 +1,4 @@
+import { isContext } from 'vm';
 import { ActionTree } from 'vuex';
 import { StateInterface } from '../index';
 import { Channel, ChannelsStateInterface, ChannelType } from './state';
@@ -42,6 +43,18 @@ const actions: ActionTree<ChannelsStateInterface, StateInterface> = {
       context.commit('searchPublicChannels', availableChannels);
     }, 2000);
   },
+
+  removeFromPublicChannels: (context, payload: number) => {
+    context.commit('removeFromPublicChannels', payload)
+  },
+
+  joinChannel: (context, payload: Channel) => {
+    // TODO: add in server
+
+    setTimeout(() => {
+      context.commit('joinChannel', payload)
+    }, 2000)
+  }
 };
 
 export default actions;
