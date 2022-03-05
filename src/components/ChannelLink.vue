@@ -37,9 +37,8 @@ export default defineComponent({
     type: {
       type: String,
       required: true,
-    },
+    }
   },
-
   setup() {
     return {
       getIconByType: computed(() => {

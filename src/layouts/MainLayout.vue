@@ -143,7 +143,7 @@
 
       <q-scroll-area style="height: calc(100% - 190px)">
         <q-list>
-          <ChannelLink v-for="link in channels" :key="link.id" v-bind="link" />
+          <ChannelLink v-for="link in channels" :key="link.id" v-bind="link" @click="switchChannel(link)" />
         </q-list>
       </q-scroll-area>
     </q-drawer>
@@ -179,6 +179,7 @@ import { computed, defineComponent, ref } from 'vue';
 import { useStore } from '../store';
 import ChannelLink from 'src/components/ChannelLink.vue';
 import SearchChannels from 'src/components/SearchChannels.vue';
+import { Channel } from 'src/store/channels/state';
 
 export default defineComponent({
   name: 'MainLayout',
@@ -191,7 +192,6 @@ export default defineComponent({
   setup() {
     const leftDrawerOpen = ref(false);
     const browseChannelsOpen = ref(false);
-    const createChannelOpen = ref(false);
 
     const btnIcon = ref('expand_more');
     const firstName = ref('Jozko');
@@ -203,12 +203,15 @@ export default defineComponent({
       browseChannelsOpen.value = true;
     };
 
+    const switchChannel = (channel: Channel) => {
+      return
+    }
+
     return {
       btnIcon,
       message: '',
       leftDrawerOpen,
       browseChannelsOpen,
-      createChannelOpen,
       confirm: ref(false),
 
       toggleLeftDrawer() {
@@ -228,6 +231,7 @@ export default defineComponent({
         return $store.state.channels.channels;
       }),
       showBrowseChannels,
+      switchChannel
     };
   },
 });

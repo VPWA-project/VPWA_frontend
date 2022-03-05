@@ -11,6 +11,27 @@ const actions: ActionTree<ChannelsStateInterface, StateInterface> = {
     }, 2000);
   },
 
+  fetchUserChannels: (context, payload: number) => {
+    // TODO: fetch user channels from database
+    
+    const userChannels: Array<Channel> = [
+      {
+        id: 1,
+        name: 'Channel 1',
+        type: ChannelType.Public
+      },
+      {
+        id: 2,
+        name: 'Channel 2',
+        type: ChannelType.Private
+      }
+    ]
+    
+    setTimeout(() => {
+      context.commit('fetchUserChannels', userChannels);
+    }, 2000)
+  },
+
   searchPublicChannels: (context, payload: SearchPublicChannelsPayload) => {
     // TODO: fetch from server
 
