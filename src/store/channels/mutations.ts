@@ -1,9 +1,9 @@
 import { MutationTree } from 'vuex';
-import { ChannelStateInterface } from './state';
+import { Channel, ChannelsStateInterface } from './state';
 
-const mutation: MutationTree<ChannelStateInterface> = {
-  someMutation(/* state: ChannelStateInterface */) {
-    // your code
+const mutation: MutationTree<ChannelsStateInterface> = {
+  createChannel(state: ChannelsStateInterface, payload: Channel) {
+    state.channels.push(payload)
   },
 };
 

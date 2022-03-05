@@ -145,7 +145,7 @@
         <q-list>
           <ChannelLink
             v-for="link in channels"
-            :key="link.title"
+            :key="link.id"
             v-bind="link"
           />
         </q-list>
@@ -156,7 +156,7 @@
       <router-view />
     </q-page-container>
 
-    <SearchChannels />
+    <CreateChannel />
 
     <q-footer>
       <q-toolbar class="bg-grey-3 text-black row">
@@ -181,13 +181,14 @@ import SearchChannels from 'src/components/SearchChannels.vue';
 
 import { computed, defineComponent, ref } from 'vue';
 import { useStore } from '../store'
+import CreateChannel from 'src/components/CreateChannel.vue';
 
 export default defineComponent({
   name: 'MainLayout',
 
   components: {
     ChannelLink,
-    SearchChannels
+    CreateChannel
 },
 
   setup() {
@@ -219,11 +220,8 @@ export default defineComponent({
         return firstName.value[0] + lastName.value[0];
       }),
       channels: computed(() => {
-        return ''
+        return $store.state.channels.channels;
       }),
-      createChannel() {
-        return
-      },
     };
   },
 });

@@ -1,10 +1,10 @@
 import { GetterTree } from 'vuex';
 import { StateInterface } from '../index';
-import { ChannelStateInterface } from './state';
+import { ChannelsStateInterface } from './state';
 
-const getters: GetterTree<ChannelStateInterface, StateInterface> = {
-  someGetter(/* context */) {
-    // your code
+const getters: GetterTree<ChannelsStateInterface, StateInterface> = {
+  getChannels(state) {
+    return state.channels;
   },
 };
 

@@ -1,10 +1,13 @@
 import { ActionTree } from 'vuex';
 import { StateInterface } from '../index';
-import { ChannelStateInterface } from './state';
+import { ChannelsStateInterface } from './state';
+import { CreateChannelPayload } from './types';
 
-const actions: ActionTree<ChannelStateInterface, StateInterface> = {
-  someAction(/* context */) {
-    // your code
+const actions: ActionTree<ChannelsStateInterface, StateInterface> = {
+  createChannel: (context, payload: CreateChannelPayload) => {
+    setTimeout(() => {
+      context.commit('createChannel', payload);
+    }, 2000);
   },
 };
 

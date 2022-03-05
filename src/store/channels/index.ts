@@ -1,11 +1,11 @@
 import { Module } from 'vuex';
 import { StateInterface } from '../index';
-import state, { ChannelStateInterface } from './state';
+import state, { ChannelsStateInterface } from './state';
 import actions from './actions';
 import getters from './getters';
 import mutations from './mutations';
 
-const channelModule: Module<ChannelStateInterface, StateInterface> = {
+const channels: Module<ChannelsStateInterface, StateInterface> = {
   namespaced: true,
   actions,
   getters,
@@ -13,4 +13,4 @@ const channelModule: Module<ChannelStateInterface, StateInterface> = {
   state,
 };
 
-export default channelModule;
+export default channels;
