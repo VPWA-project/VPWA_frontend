@@ -6,39 +6,50 @@
           <div class="row flex-center justify-between">
             <h3 style="font-size: 1.5rem">
               Create a new
-              {{ `${isChannelPublic ? 'public' : 'private'}` }} channel
+              {{ `${state.isChannelPublic ? 'public' : 'private'}` }} channel
             </h3>
-            <q-btn round flat color="black" icon="close" v-close-popup />
+            <q-btn
+              round
+              flat
+              color="black"
+              icon="close"
+              @click="handleCloseButton"
+            />
           </div>
           <q-toggle
             :label="`${
-              isChannelPublic
+              state.isChannelPublic
                 ? 'Anyone can join'
                 : 'Restricted to invited members'
             }`"
-            v-model="isChannelPublic"
+            v-model="state.isChannelPublic"
             keep-color
-            :color="`${isChannelPublic ? 'green' : 'orange'}`"
+            :color="`${state.isChannelPublic ? 'green' : 'orange'}`"
           />
-          <p class="text-grey-7" v-if="!isChannelPublic">
+          <p class="text-grey-7" v-show="!state.isChannelPublic">
             A private channel is only visible to its members and only members of
             private channel can read its content.
           </p>
         </q-card-section>
 
         <q-card-section class="col q-pt-none">
-          <q-form @submit.prevent.stop="onSubmit">
+          <q-form @submit.prevent.stop="handleSubmit">
             <q-input
-              ref="channelNameRef"
-              v-model="channelName"
-              :rules="channelNameRules"
+              v-model="state.channelName"
+              :error="v$.channelName.$error"
               class="q-mt-lg"
               type="text"
               outlined
+              bottom-slots
               label="Name"
             >
               <template v-slot:prepend>
-                <q-icon :name="`${isChannelPublic ? 'tag' : 'lock'}`" />
+                <q-icon :name="`${state.isChannelPublic ? 'tag' : 'lock'}`" />
+              </template>
+              <template v-slot:error>
+                <span :key="error.$uid" v-for="error of v$.channelName.$errors">
+                  {{ error.$message }}
+                </span>
               </template>
             </q-input>
 
@@ -62,25 +73,77 @@
 </template>
 
 <script lang="ts">
-import { QInput } from 'quasar';
-import { defineComponent, ref } from 'vue';
-import { channelNameRules } from '../utils/rules';
+import { useQuasar } from 'quasar';
+import { ChannelType } from 'src/store/channels/state';
+import { CreateChannelPayload } from 'src/store/channels/types';
+import { defineComponent, reactive, ref, toRef } from 'vue';
+import { useStore } from '../store';
+import useVuelidate from '@vuelidate/core';
+import { required, helpers } from '@vuelidate/validators';
+
+const rules = {
+  channelName: {
+    required: helpers.withMessage("Channel name can't be empty", required),
+  },
+};
 
 export default defineComponent({
-  setup() {
-    const isDialogOpen = ref<boolean>(true);
-    const isChannelPublic = ref<boolean>(false);
-    const channelNameRef = ref<QInput | null>(null);
-    const channelName = ref<string>('');
-
+  props: {
+    open: {
+      type: Boolean,
+      default: true,
+    },
+  },
+  watch: {
+    open(_, newValue) {
+      if (newValue === false) {
+        this.state.channelName = '';
+        this.state.isChannelPublic = true;
+      }
+    },
+  },
+  emits: ['close'],
+  setup(props, { emit }) {
+    const isDialogOpen = toRef(props, 'open');
     const submitting = ref<boolean>(false);
 
-    const onSubmit = () => {
-      Promise.all([channelNameRef.value?.validate()])
+    const $store = useStore();
+    const $q = useQuasar();
+
+    const state = reactive({
+      channelName: '',
+      isChannelPublic: true,
+    });
+
+    const v$ = useVuelidate(rules, state);
+
+    const handleCloseButton = () => {
+      emit('close');
+    };
+
+    const handleSubmit = () => {
+      v$.value
+        .$validate()
         .then((result) => {
-          if (result.every((v) => v === true)) {
-            // TODO: create new channel
-            console.log('Creating new channel');
+          if (result) {
+            const payload: CreateChannelPayload = {
+              name: state.channelName,
+              type: state.isChannelPublic
+                ? ChannelType.Public
+                : ChannelType.Private,
+            };
+
+            $store
+              .dispatch('channels/createChannel', payload)
+              .then(() => {
+                $q.notify({
+                  message: `Channel ${payload.name} was created successfully`,
+                  color: 'blue',
+                });
+
+                handleCloseButton();
+              })
+              .catch(console.log);
           }
         })
         .catch(console.log);
@@ -88,14 +151,11 @@ export default defineComponent({
 
     return {
       isDialogOpen,
-      isChannelPublic,
-      channelNameRef,
-      channelName,
-
-      channelNameRules,
-
       submitting,
-      onSubmit
+      handleSubmit,
+      handleCloseButton,
+      state,
+      v$,
     };
   },
 });

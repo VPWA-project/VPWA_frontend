@@ -7,7 +7,10 @@ export interface UserStateInterface {
 
 const state = (): UserStateInterface => {
   return {
-    
+    firstname: 'Jozko',
+    lastname: 'Mrkvicka',
+    nickname: '@jozino',
+    email: 'hhh'
   };
 }
 

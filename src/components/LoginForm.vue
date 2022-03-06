@@ -49,6 +49,7 @@
 import { QInput } from 'quasar';
 import { ref, defineComponent } from 'vue';
 import { emailRules, passwordRules } from 'src/utils/rules';
+import { useStore } from 'src/store';
 
 export default defineComponent({
   name: 'LoginForm',
@@ -63,6 +64,8 @@ export default defineComponent({
 
     const submitting = ref<boolean>(false)
 
+    const $store = useStore()
+
     const onSubmit = () => {
       Promise.all([
         emailRef.value?.validate(),
@@ -72,6 +75,7 @@ export default defineComponent({
         if(result.every(v => v === true)) {
           // TODO: login
           console.log('Loggin in')
+          $store.dispatch('channels/fetchUserChannels', 1).catch(console.log)
         }
       })
       .catch(console.log)

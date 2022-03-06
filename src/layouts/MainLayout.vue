@@ -136,18 +136,14 @@
             <q-item-label>Channels</q-item-label>
           </q-item-section>
           <q-item-section avatar>
-            <q-btn round flat icon="add_circle" />
+            <q-btn round flat icon="add_circle" @click="showBrowseChannels" />
           </q-item-section>
         </q-item>
       </q-list>
 
       <q-scroll-area style="height: calc(100% - 190px)">
         <q-list>
-          <ChannelLink
-            v-for="link in channels"
-            :key="link.title"
-            v-bind="link"
-          />
+          <ChannelLink v-for="link in channels" :key="link.id" v-bind="link" @click="switchChannel(link)" />
         </q-list>
       </q-scroll-area>
     </q-drawer>
@@ -156,7 +152,10 @@
       <router-view />
     </q-page-container>
 
-    <SearchChannels />
+    <SearchChannels
+      :open="browseChannelsOpen"
+      @close="browseChannelsOpen = false"
+    />
 
     <q-footer>
       <q-toolbar class="bg-grey-3 text-black row">
@@ -176,33 +175,43 @@
 </template>
 
 <script lang="ts">
+import { computed, defineComponent, ref } from 'vue';
+import { useStore } from '../store';
 import ChannelLink from 'src/components/ChannelLink.vue';
 import SearchChannels from 'src/components/SearchChannels.vue';
-
-import { computed, defineComponent, ref } from 'vue';
-import { useStore } from '../store'
+import { Channel } from 'src/store/channels/state';
 
 export default defineComponent({
   name: 'MainLayout',
 
   components: {
     ChannelLink,
-    SearchChannels
-},
+    SearchChannels,
+  },
 
   setup() {
     const leftDrawerOpen = ref(false);
+    const browseChannelsOpen = ref(false);
 
     const btnIcon = ref('expand_more');
     const firstName = ref('Jozko');
     const lastName = ref('Mrkvicka');
 
-    const $store = useStore()
+    const $store = useStore();
+
+    const showBrowseChannels = () => {
+      browseChannelsOpen.value = true;
+    };
+
+    const switchChannel = (channel: Channel) => {
+      return
+    }
 
     return {
       btnIcon,
       message: '',
       leftDrawerOpen,
+      browseChannelsOpen,
       confirm: ref(false),
 
       toggleLeftDrawer() {
@@ -219,11 +228,10 @@ export default defineComponent({
         return firstName.value[0] + lastName.value[0];
       }),
       channels: computed(() => {
-        return ''
+        return $store.state.channels.channels;
       }),
-      createChannel() {
-        return
-      },
+      showBrowseChannels,
+      switchChannel
     };
   },
 });
