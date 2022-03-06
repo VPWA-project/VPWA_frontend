@@ -74,6 +74,10 @@ const actions: ActionTree<ChannelsStateInterface, StateInterface> = {
     setTimeout(() => {
       context.commit('joinChannel', payload)
     }, 2000)
+  },
+
+  setActiveChannel: (context, payload: Channel) => {
+    context.commit('setActiveChannel', payload)
   }
 };
 

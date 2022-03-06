@@ -10,7 +10,9 @@
           aria-label="Menu"
           @click="toggleLeftDrawer"
         />
-        <q-toolbar-title> Channel name </q-toolbar-title>
+        <q-toolbar-title>
+          {{ activeChannel ? activeChannel.name : '' }}
+        </q-toolbar-title>
         <q-btn flat dense round icon="more_vert" clickable @click="changeMe">
           <q-menu fit anchor="bottom right" self="top right">
             <div class="q-gutter-sm">
@@ -207,7 +209,7 @@ export default defineComponent({
     };
 
     const switchChannel = (channel: Channel) => {
-      return;
+      $store.dispatch('channels/setActiveChannel', channel).catch(console.log);
     };
 
     return {
@@ -231,19 +233,24 @@ export default defineComponent({
       },
 
       nameInitials: computed(() => {
-        const firstName: string = $store.state.user.loggedInUser?.firstname as string;
-        const lastName: string = $store.state.user.loggedInUser?.lastname as string;
+        const firstName: string = $store.state.user.loggedInUser
+          ?.firstname as string;
+        const lastName: string = $store.state.user.loggedInUser
+          ?.lastname as string;
         return firstName[0] + lastName[0];
       }),
 
       userNickName: computed(() => {
-        const nickName: string = $store.state.user.loggedInUser?.nickname as string;
+        const nickName: string = $store.state.user.loggedInUser
+          ?.nickname as string;
         return '@' + nickName;
       }),
 
       userName: computed(() => {
-        const firstName: string = $store.state.user.loggedInUser?.firstname as string;
-        const lastName: string = $store.state.user.loggedInUser?.lastname as string;
+        const firstName: string = $store.state.user.loggedInUser
+          ?.firstname as string;
+        const lastName: string = $store.state.user.loggedInUser
+          ?.lastname as string;
         return firstName + ' ' + lastName;
       }),
 
@@ -255,6 +262,9 @@ export default defineComponent({
 
       channels: computed(() => {
         return $store.state.channels.channels;
+      }),
+      activeChannel: computed(() => {
+        return $store.state.channels.activeChannel;
       }),
       showBrowseChannels,
       switchChannel,

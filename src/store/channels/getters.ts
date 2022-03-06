@@ -13,6 +13,10 @@ const getters: GetterTree<ChannelsStateInterface, StateInterface> = {
 
   getChannelById: (state) => (id: number): Channel | undefined => {
     return state.channels.find(channel => channel.id === id);
+  },
+
+  getActiveChannel: (state): Channel | undefined => {
+    return state.activeChannel
   }
 };
 

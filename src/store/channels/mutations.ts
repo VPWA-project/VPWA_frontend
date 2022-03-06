@@ -24,6 +24,10 @@ const mutation: MutationTree<ChannelsStateInterface> = {
 
   joinChannel: (state: ChannelsStateInterface, payload: Channel) => {
     state.channels.push(payload)
+  },
+
+  setActiveChannel: (state: ChannelsStateInterface, payload: Channel) => {
+    state.activeChannel = payload
   }
 };
 

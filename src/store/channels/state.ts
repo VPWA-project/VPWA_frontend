@@ -11,7 +11,8 @@ export interface Channel {
 export interface ChannelsStateInterface {
   channels: Array<Channel>; // user's channels
   availableChannels: Array<Channel>; // available public channels
-  invitations: Array<Channel>
+  invitations: Array<Channel>;
+  activeChannel?: Channel;
 }
 
 function state(): ChannelsStateInterface {
