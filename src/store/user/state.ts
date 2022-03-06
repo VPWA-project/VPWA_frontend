@@ -3,6 +3,8 @@ export interface UserStateInterface {
   lastname?: string;
   nickname?: string;
   email?: string;
+  status?: Enumerator;
+  id?: number;
 }
 
 const state = (): UserStateInterface => {
@@ -10,8 +12,8 @@ const state = (): UserStateInterface => {
     firstname: 'Jozko',
     lastname: 'Mrkvicka',
     nickname: '@jozino',
-    email: 'hhh'
+    email: 'hhh',
   };
-}
+};
 
 export default state;

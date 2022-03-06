@@ -49,37 +49,47 @@
 import { QInput } from 'quasar';
 import { ref, defineComponent } from 'vue';
 import { emailRules, passwordRules } from 'src/utils/rules';
-import { useStore } from 'src/store';
+import { useStore } from '../store';
+import { UserStatePayload } from '../store/user/types';
 
 export default defineComponent({
   name: 'LoginForm',
-  
+
   setup() {
-    const email = ref<string | null>(null)
-    const emailRef = ref<QInput | null>(null)
+    const email = ref<string | null>(null);
+    const emailRef = ref<QInput | null>(null);
 
-    const password = ref<string | null>(null)
-    const passwordRef = ref<QInput | null>(null)
-    const isPwd = ref<boolean>(true)
+    const password = ref<string | null>(null);
+    const passwordRef = ref<QInput | null>(null);
+    const isPwd = ref<boolean>(true);
 
-    const submitting = ref<boolean>(false)
+    const submitting = ref<boolean>(false);
 
-    const $store = useStore()
+    const $store = useStore();
 
     const onSubmit = () => {
-      Promise.all([
-        emailRef.value?.validate(),
-        passwordRef.value?.validate()
-      ])
-      .then(result => {
-        if(result.every(v => v === true)) {
-          // TODO: login
-          console.log('Loggin in')
-          $store.dispatch('channels/fetchUserChannels', 1).catch(console.log)
-        }
-      })
-      .catch(console.log)
-    }
+      Promise.all([emailRef.value?.validate(), passwordRef.value?.validate()])
+        .then((result) => {
+          if (result.every((v) => v === true)) {
+            const payload: UserStatePayload = {
+              email: email.value as string,
+              password: password.value as string,
+            };
+
+            $store
+              .dispatch('user/loginUser', payload)
+              .then(() => {
+                $store
+                  .dispatch('channels/fetchUserChannels', 1)
+                  .catch(console.log);
+              })
+              .catch(console.log);
+
+            console.log('Loggin in');
+          }
+        })
+        .catch(console.log);
+    };
 
     return {
       email,
@@ -90,9 +100,8 @@ export default defineComponent({
       submitting,
       emailRules,
       passwordRules,
-      onSubmit
-    }
-  }
-})
-
+      onSubmit,
+    };
+  },
+});
 </script>
