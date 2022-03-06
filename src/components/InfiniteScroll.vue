@@ -32,10 +32,10 @@ export default defineComponent({
 
     return {
       items,
-      onLoad (done: () => void) {
+      onLoad: (_: number, done: (stop: boolean | undefined) => void) => {
         setTimeout(() => {
           items.value.splice(0, 0, 'a', 'b', 'c', 'd', 'e')
-          done()
+          done(false)
         }, 2000)
       }
     }
