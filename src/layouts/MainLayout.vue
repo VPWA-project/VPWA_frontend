@@ -41,6 +41,7 @@
                       flat
                       label="Leave channel"
                       color="primary"
+                      @click="leaveChannel"
                       v-close-popup
                     />
                   </q-card-actions>
@@ -266,6 +267,10 @@ export default defineComponent({
       activeChannel: computed(() => {
         return $store.state.channels.activeChannel;
       }),
+      leaveChannel: () => {
+        $store.dispatch('channels/leaveChannel', $store.state.channels.activeChannel)
+        .catch(console.log)
+      },
       showBrowseChannels,
       switchChannel,
     };

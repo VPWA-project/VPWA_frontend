@@ -19,6 +19,14 @@ export interface UserStateInterface {
 
 const state = (): UserStateInterface => {
   return {
+    loggedInUser: {
+      id: 1,
+      firstname: 'Jozko',
+      lastname: 'Mrkvicka',
+      nickname: 'jozino',
+      email: 'jozino@gmail.com',
+      status: UserStatus.Online
+    },
     users: []
   };
 };

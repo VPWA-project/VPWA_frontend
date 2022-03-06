@@ -1,3 +1,4 @@
+import { isContext } from 'vm';
 import { ActionTree } from 'vuex';
 import { StateInterface } from '../index';
 import { Channel, ChannelsStateInterface, ChannelType } from './state';
@@ -78,6 +79,12 @@ const actions: ActionTree<ChannelsStateInterface, StateInterface> = {
 
   setActiveChannel: (context, payload: Channel) => {
     context.commit('setActiveChannel', payload)
+  },
+
+  leaveChannel: (context, payload: Channel) => {
+    // TODO: send request to server
+
+    context.commit('leaveChannel', payload)
   }
 };
 
