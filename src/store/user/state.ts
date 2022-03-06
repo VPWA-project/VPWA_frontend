@@ -3,12 +3,12 @@ export interface UserStateInterface {
   lastname?: string;
   nickname?: string;
   email?: string;
+  status?: Enumerator;
+  id?: number;
 }
 
 const state = (): UserStateInterface => {
-  return {
-    
-  };
-}
+  return {};
+};
 
 export default state;

@@ -79,6 +79,8 @@ import {
   lastnameRules,
   nicknameRules,
 } from 'src/utils/rules';
+import { useStore } from '../store';
+import { UserRegisterPayload } from '../store/user/types';
 
 export default defineComponent({
   name: 'RegisterForm',
@@ -102,6 +104,8 @@ export default defineComponent({
 
     const submitting = ref<boolean>(false);
 
+    const $store = useStore();
+
     const onSubmit = () => {
       Promise.all([
         emailRef.value?.validate(),
@@ -110,14 +114,21 @@ export default defineComponent({
         nicknameRef.value?.validate(),
         passwordRef.value?.validate(),
       ])
-      .then(result => {
-        if(result.every(v => v === true)) {
-          // TODO: register
-          console.log('Register')
-        }
-      })
-      .catch(console.log)
+        .then((result) => {
+          if (result.every((v) => v === true)) {
+            const payload: UserRegisterPayload = {
+              email: email.value as string,
+              password: password.value as string,
+              firstname: firstname.value as string,
+              lastname: lastname.value as string,
+              nickname: nickname.value as string,
+            };
 
+            $store.dispatch('user/registerUser', payload).catch(console.log);
+            console.log('Register');
+          }
+        })
+        .catch(console.log);
     };
 
     return {

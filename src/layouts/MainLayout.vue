@@ -115,8 +115,8 @@
             /></q-avatar>
           </q-item-section>
           <q-item-section>
-            <q-item-label>Jozko Mrkvička</q-item-label>
-            <q-item-label caption>@jozomrkva</q-item-label>
+            <q-item-label>{{ userName }}</q-item-label>
+            <q-item-label caption>{{ userNickName }}</q-item-label>
           </q-item-section>
           <q-item-section avatar>
             <q-icon :name="btnIcon" size="1.4em" />
@@ -180,34 +180,34 @@ import ChannelLink from 'src/components/ChannelLink.vue';
 import SearchChannels from 'src/components/SearchChannels.vue';
 
 import { computed, defineComponent, ref } from 'vue';
-import { useStore } from '../store'
+import { useStore } from '../store';
 
 export default defineComponent({
   name: 'MainLayout',
 
   components: {
     ChannelLink,
-    SearchChannels
-},
+    SearchChannels,
+  },
 
   setup() {
     const leftDrawerOpen = ref(false);
 
     const btnIcon = ref('expand_more');
-    const firstName = ref('Jozko');
-    const lastName = ref('Mrkvicka');
 
-    const $store = useStore()
+    const $store = useStore();
 
     return {
       btnIcon,
       message: '',
       leftDrawerOpen,
       confirm: ref(false),
+      user: computed(() => $store.state.user),
 
       toggleLeftDrawer() {
         leftDrawerOpen.value = !leftDrawerOpen.value;
       },
+
       changeMe() {
         if (btnIcon.value == 'expand_more') {
           btnIcon.value = 'expand_less';
@@ -215,14 +215,36 @@ export default defineComponent({
           btnIcon.value = 'expand_more';
         }
       },
+
       nameInitials: computed(() => {
-        return firstName.value[0] + lastName.value[0];
+        const firstName: string = $store.state.user.firstname as string;
+        const lastName: string = $store.state.user.lastname as string;
+        return firstName[0] + lastName[0];
       }),
+
+      userNickName: computed(() => {
+        const nickName: string = $store.state.user.nickname as string;
+        return '@' + nickName;
+      }),
+
+      userName: computed(() => {
+        const firstName: string = $store.state.user.firstname as string;
+        const lastName: string = $store.state.user.lastname as string;
+        return firstName + ' ' + lastName;
+      }),
+
+      /*
+      userGetter: computed<string>(() => {
+        return $store.getters.userGetter;
+      }),
+      */
+
       channels: computed(() => {
-        return ''
+        return '';
       }),
+
       createChannel() {
-        return
+        return;
       },
     };
   },
