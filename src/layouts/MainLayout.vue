@@ -231,19 +231,19 @@ export default defineComponent({
       },
 
       nameInitials: computed(() => {
-        const firstName: string = $store.state.user.firstname as string;
-        const lastName: string = $store.state.user.lastname as string;
+        const firstName: string = $store.state.user.loggedInUser?.firstname as string;
+        const lastName: string = $store.state.user.loggedInUser?.lastname as string;
         return firstName[0] + lastName[0];
       }),
 
       userNickName: computed(() => {
-        const nickName: string = $store.state.user.nickname as string;
+        const nickName: string = $store.state.user.loggedInUser?.nickname as string;
         return '@' + nickName;
       }),
 
       userName: computed(() => {
-        const firstName: string = $store.state.user.firstname as string;
-        const lastName: string = $store.state.user.lastname as string;
+        const firstName: string = $store.state.user.loggedInUser?.firstname as string;
+        const lastName: string = $store.state.user.loggedInUser?.lastname as string;
         return firstName + ' ' + lastName;
       }),
 
