@@ -53,6 +53,28 @@
               </template>
             </q-input>
 
+            <q-select
+              outlined
+              v-model="model"
+              use-input
+              use-chips
+              multiple
+              stack-label
+              input-debounce="0"
+              label="Invitations"
+              :options="options"
+              @filter="filterFn"
+              @filter-abort="abortFilterFn"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    User not found
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+
             <q-btn
               type="submit"
               :loading="submitting"
@@ -121,6 +143,30 @@ export default defineComponent({
       emit('close');
     };
 
+    const stringOptions = ['Google', 'Facebook', 'Twitter', 'Apple', 'Oracle'];
+
+    const model = ref(null);
+    const options = ref(stringOptions);
+
+    const filterFn = (val: string, update: (value: () => void) => void) => {
+      setTimeout(() => {
+        update(() => {
+          if (val === '') {
+            options.value = stringOptions;
+          } else {
+            const needle = val.toLowerCase();
+            options.value = stringOptions.filter(
+              (v) => v.toLowerCase().indexOf(needle) > -1
+            );
+          }
+        });
+      }, 1500);
+    };
+
+    const abortFilterFn = () => {
+      return;
+    };
+
     const handleSubmit = () => {
       v$.value
         .$validate()
@@ -156,6 +202,10 @@ export default defineComponent({
       handleCloseButton,
       state,
       v$,
+      model,
+      options,
+      filterFn,
+      abortFilterFn,
     };
   },
 });
