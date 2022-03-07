@@ -17,6 +17,9 @@ const actions: ActionTree<UserStateInterface, StateInterface> = {
       context.commit('registerUser', payload);
     }, 2000);
   },
+  changeUserStatus(context, payload: string) {
+    context.commit('changeUserStatus', payload);
+  },
 };
 
 export default actions;

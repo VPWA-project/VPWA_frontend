@@ -1,9 +1,15 @@
+export enum StatusType {
+  Online = 'green',
+  Dnd = 'red',
+  Offline = 'black',
+}
+
 export interface UserStateInterface {
   firstname?: string;
   lastname?: string;
   nickname?: string;
   email?: string;
-  status?: Enumerator;
+  status?: StatusType;
   id?: number;
 }
 
@@ -11,8 +17,9 @@ const state = (): UserStateInterface => {
   return {
     firstname: 'Jozko',
     lastname: 'Mrkvicka',
-    nickname: '@jozino',
+    nickname: 'jozino',
     email: 'hhh',
+    status: StatusType.Online,
   };
 };
 

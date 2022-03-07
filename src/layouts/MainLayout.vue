@@ -11,7 +11,7 @@
           @click="toggleLeftDrawer"
         />
         <q-toolbar-title> Channel name </q-toolbar-title>
-        <q-btn flat dense round icon="more_vert" clickable @click="changeMe">
+        <q-btn flat dense round icon="more_vert" clickable>
           <q-menu fit anchor="bottom right" self="top right">
             <div class="q-gutter-sm">
               <q-btn
@@ -61,27 +61,27 @@
                 >
               </q-item>
 
-              <q-item clickable>
+              <q-item clickable @click="changeUserStatus('ONLINE')">
                 <q-item-section avatar>
-                  <q-icon name="circle" />
+                  <q-badge color="green" rounded />
                 </q-item-section>
                 <q-item-section>
                   <q-item-label>Online</q-item-label>
                 </q-item-section>
               </q-item>
 
-              <q-item clickable>
+              <q-item clickable @click="changeUserStatus('DND')">
                 <q-item-section avatar>
-                  <q-icon name="remove_circle_outline" />
+                  <q-badge color="red" rounded />
                 </q-item-section>
                 <q-item-section>
                   <q-item-label>DND</q-item-label>
                 </q-item-section>
               </q-item>
 
-              <q-item clickable>
+              <q-item clickable @click="changeUserStatus('OFFLINE')">
                 <q-item-section avatar>
-                  <q-icon name="circle" />
+                  <q-badge color="black" rounded />
                 </q-item-section>
                 <q-item-section>
                   <q-item-label>Offline</q-item-label>
@@ -90,14 +90,6 @@
 
               <q-separator spaced inset />
 
-              <q-item clickable>
-                <q-item-section avatar>
-                  <q-icon name="settings" />
-                </q-item-section>
-                <q-item-section>
-                  <q-item-label>Settings</q-item-label>
-                </q-item-section>
-              </q-item>
               <q-item clickable>
                 <q-item-section avatar>
                   <q-icon name="logout" />
@@ -111,7 +103,7 @@
 
           <q-item-section avatar>
             <q-avatar rounded color="primary" text-color="white"
-              >{{ nameInitials }}<q-badge color="red" rounded floating
+              >{{ nameInitials }}<q-badge :color="userStatus" rounded floating
             /></q-avatar>
           </q-item-section>
           <q-item-section>
@@ -185,6 +177,7 @@ import { useStore } from '../store';
 import ChannelLink from 'src/components/ChannelLink.vue';
 import SearchChannels from 'src/components/SearchChannels.vue';
 import { Channel } from 'src/store/channels/state';
+import { StatusType } from 'src/store/user/state';
 
 export default defineComponent({
   name: 'MainLayout',
@@ -230,6 +223,10 @@ export default defineComponent({
         }
       },
 
+      changeUserStatus(status: string) {
+        $store.dispatch('user/changeUserStatus', status).catch(console.log);
+      },
+
       nameInitials: computed(() => {
         const firstName: string = $store.state.user.firstname as string;
         const lastName: string = $store.state.user.lastname as string;
@@ -245,6 +242,10 @@ export default defineComponent({
         const firstName: string = $store.state.user.firstname as string;
         const lastName: string = $store.state.user.lastname as string;
         return firstName + ' ' + lastName;
+      }),
+
+      userStatus: computed(() => {
+        return $store.state.user.status as string;
       }),
 
       /*

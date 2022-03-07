@@ -1,5 +1,5 @@
 import { MutationTree } from 'vuex';
-import { UserStateInterface } from './state';
+import { StatusType, UserStateInterface } from './state';
 import { UserRegisterPayload, UserStatePayload } from './types';
 
 const mutation: MutationTree<UserStateInterface> = {
@@ -12,6 +12,15 @@ const mutation: MutationTree<UserStateInterface> = {
     state.lastname = payload.lastname;
     state.nickname = payload.nickname;
     state.email = payload.email;
+  },
+  changeUserStatus(state: UserStateInterface, payload: string) {
+    if (payload == 'ONLINE') {
+      state.status = StatusType.Online;
+    } else if (payload == 'DND') {
+      state.status = StatusType.Dnd;
+    } else if (payload == 'OFFLINE') {
+      state.status = StatusType.Offline;
+    }
   },
 };
 
