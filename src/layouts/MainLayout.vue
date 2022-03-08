@@ -175,18 +175,7 @@
     />
 
     <q-footer>
-      <q-toolbar class="bg-grey-3 text-black row">
-        <q-input
-          rounded
-          outlined
-          dense
-          class="WAL__field col-grow q-mr-sm"
-          bg-color="white"
-          v-model="message"
-          placeholder="Type a message"
-        />
-        <q-btn round flat icon="send" />
-      </q-toolbar>
+      <MessageForm />
     </q-footer>
   </q-layout>
 </template>
@@ -198,6 +187,7 @@ import ChannelLink from 'src/components/ChannelLink.vue';
 import SearchChannels from 'src/components/SearchChannels.vue';
 import { Channel } from 'src/store/channels/state';
 import { UserStatus } from 'src/store/user/state';
+import MessageForm from 'src/components/MessageForm.vue';
 
 export default defineComponent({
   name: 'MainLayout',
@@ -205,7 +195,8 @@ export default defineComponent({
   components: {
     ChannelLink,
     SearchChannels,
-  },
+    MessageForm
+},
 
   setup() {
     const leftDrawerOpen = ref(false);
