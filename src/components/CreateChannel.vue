@@ -55,7 +55,7 @@
 
             <q-select
               outlined
-              v-model="model"
+              v-model="invitations"
               use-input
               use-chips
               multiple
@@ -63,8 +63,7 @@
               input-debounce="0"
               label="Invitations"
               :options="options"
-              @filter="filterFn"
-              @filter-abort="abortFilterFn"
+              @filter="fetchUsers"
             >
               <template v-slot:no-option>
                 <q-item>
@@ -77,7 +76,7 @@
 
             <q-btn
               type="submit"
-              :loading="submitting"
+              :loading="state.submitting"
               flat
               label="Create channel"
               class="q-mt-lg"
@@ -95,7 +94,7 @@
 </template>
 
 <script lang="ts">
-import { useQuasar } from 'quasar';
+import { QSelect, useQuasar } from 'quasar';
 import { ChannelType } from 'src/store/channels/state';
 import { CreateChannelPayload } from 'src/store/channels/types';
 import { defineComponent, reactive, ref, toRef } from 'vue';
@@ -121,13 +120,13 @@ export default defineComponent({
       if (newValue === false) {
         this.state.channelName = '';
         this.state.isChannelPublic = true;
+        this.state.submitting = false;
       }
     },
   },
   emits: ['close'],
   setup(props, { emit }) {
     const isDialogOpen = toRef(props, 'open');
-    const submitting = ref<boolean>(false);
 
     const $store = useStore();
     const $q = useQuasar();
@@ -135,6 +134,7 @@ export default defineComponent({
     const state = reactive({
       channelName: '',
       isChannelPublic: true,
+      submitting: false,
     });
 
     const v$ = useVuelidate(rules, state);
@@ -143,12 +143,12 @@ export default defineComponent({
       emit('close');
     };
 
-    const stringOptions = ['Google', 'Facebook', 'Twitter', 'Apple', 'Oracle'];
+    const stringOptions = ['sangalaa', 'adam', '5cos', 'lucyklus', 'stuff'];
 
-    const model = ref(null);
+    const invitations = ref<QSelect | null>(null);
     const options = ref(stringOptions);
 
-    const filterFn = (val: string, update: (value: () => void) => void) => {
+    const fetchUsers = (val: string, update: (value: () => void) => void) => {
       setTimeout(() => {
         update(() => {
           if (val === '') {
@@ -163,11 +163,9 @@ export default defineComponent({
       }, 1500);
     };
 
-    const abortFilterFn = () => {
-      return;
-    };
-
     const handleSubmit = () => {
+      state.submitting = true;
+
       v$.value
         .$validate()
         .then((result) => {
@@ -187,9 +185,13 @@ export default defineComponent({
                   color: 'blue',
                 });
 
+                state.submitting = false;
+
                 handleCloseButton();
               })
               .catch(console.log);
+          } else {
+            state.submitting = false;
           }
         })
         .catch(console.log);
@@ -197,15 +199,13 @@ export default defineComponent({
 
     return {
       isDialogOpen,
-      submitting,
       handleSubmit,
       handleCloseButton,
       state,
       v$,
-      model,
+      invitations,
       options,
-      filterFn,
-      abortFilterFn,
+      fetchUsers,
     };
   },
 });
