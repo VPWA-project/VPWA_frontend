@@ -93,6 +93,26 @@
 
               <q-separator spaced inset />
 
+              <q-item class="no-padding">
+                <q-item-label class="q-pa-md text-grey-7"
+                  >Notification settings</q-item-label
+                >
+              </q-item>
+
+              <q-item tag="label" v-ripple>
+                <q-item-section>
+                  <q-item-label>Only @mentions</q-item-label>
+                </q-item-section>
+                <q-item-section avatar>
+                  <q-toggle
+                    color="blue"
+                    v-model="allowOnlyMentions"
+                  />
+                </q-item-section>
+              </q-item>
+
+              <q-separator spaced inset />
+
               <q-item clickable>
                 <q-item-section avatar>
                   <q-icon name="settings" />
@@ -200,6 +220,7 @@ export default defineComponent({
   setup() {
     const leftDrawerOpen = ref(false);
     const browseChannelsOpen = ref(false);
+    const allowOnlyMentions = ref(true);
 
     const btnIcon = ref('expand_more');
 
@@ -218,6 +239,7 @@ export default defineComponent({
       message: '',
       leftDrawerOpen,
       browseChannelsOpen,
+      allowOnlyMentions,
       confirm: ref(false),
       user: computed(() => $store.state.user),
 
@@ -268,8 +290,12 @@ export default defineComponent({
         return $store.state.channels.activeChannel;
       }),
       leaveChannel: () => {
-        $store.dispatch('channels/leaveChannel', $store.state.channels.activeChannel)
-        .catch(console.log)
+        $store
+          .dispatch(
+            'channels/leaveChannel',
+            $store.state.channels.activeChannel
+          )
+          .catch(console.log);
       },
       showBrowseChannels,
       switchChannel,
