@@ -62,6 +62,7 @@
               stack-label
               input-debounce="0"
               label="Invitations"
+              class="q-mt-md"
               :options="options"
               @filter="fetchUsers"
             >
