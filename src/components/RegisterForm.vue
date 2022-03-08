@@ -1,61 +1,89 @@
 <template>
-  <form @submit.prevent.stop="onSubmit">
+  <form @submit.prevent.stop="handleSubmit">
     <h2 class="text-h6 text-center">Register</h2>
 
     <q-input
       class="q-mt-lg"
       outlined
-      ref="emailRef"
-      v-model="email"
+      v-model="state.email"
+      :error="v$.email.$error"
       label="Email"
-      :rules="emailRules"
-    />
+    >
+      <template v-slot:error>
+        <span :key="error.$uid" v-for="error of v$.email.$errors">
+          {{ error.$message }}
+        </span>
+      </template>
+    </q-input>
+
     <q-input
       class="q-mt-md"
       outlined
-      ref="passwordRef"
-      v-model="password"
-      :type="isPwd ? 'password' : 'text'"
+      v-model="state.password"
+      :error="v$.password.$error"
+      :type="state.isPwd ? 'password' : 'text'"
       label="Password"
-      :rules="passwordRules"
     >
       <template v-slot:append>
         <q-icon
-          :name="isPwd ? 'visibility_off' : 'visibility'"
+          :name="state.isPwd ? 'visibility_off' : 'visibility'"
           class="cursor-pointer"
-          @click="isPwd = !isPwd"
+          @click="state.isPwd = !state.isPwd"
         />
       </template>
+      <template v-slot:error>
+        <span :key="error.$uid" v-for="error of v$.password.$errors">
+          {{ error.$message }}
+        </span>
+      </template>
     </q-input>
+
     <q-input
       class="q-mt-md"
       outlined
-      ref="firstnameRef"
-      v-model="firstname"
+      v-model="state.firstname"
+      :error="v$.firstname.$error"
       label="Firstname"
-      :rules="firstnameRules"
-    />
+    >
+      <template v-slot:error>
+        <span :key="error.$uid" v-for="error of v$.firstname.$errors">
+          {{ error.$message }}
+        </span>
+      </template>
+    </q-input>
+
     <q-input
       class="q-mt-md"
       outlined
-      ref="lastnameRef"
-      v-model="lastname"
+      v-model="state.lastname"
+      :error="v$.lastname.$error"
       label="Lastname"
-      :rules="lastnameRules"
-    />
+    >
+      <template v-slot:error>
+        <span :key="error.$uid" v-for="error of v$.lastname.$errors">
+          {{ error.$message }}
+        </span>
+      </template>
+    </q-input>
+
     <q-input
       class="q-mt-md"
       outlined
-      ref="nicknameRef"
-      v-model="nickname"
+      v-model="state.nickname"
+      :error="v$.nickname.$error"
       label="Nickname"
-      :rules="nicknameRules"
-    />
+    >
+      <template v-slot:error>
+        <span :key="error.$uid" v-for="error of v$.nickname.$errors">
+          {{ error.$message }}
+        </span>
+      </template>
+    </q-input>
 
     <div class="row justify-center">
       <q-btn
         type="submit"
-        :loading="submitting"
+        :loading="state.submitting"
         label="Register"
         class="q-mt-md q-pa-md"
         style="width: 100%"
@@ -70,86 +98,97 @@
 </template>
 
 <script lang="ts">
-import { QInput } from 'quasar';
-import { ref, defineComponent } from 'vue';
-import {
-  emailRules,
-  passwordRules,
-  firstnameRules,
-  lastnameRules,
-  nicknameRules,
-} from 'src/utils/rules';
+import useVuelidate from '@vuelidate/core';
+import { defineComponent, reactive } from 'vue';
 import { useStore } from '../store';
+import { helpers, required, email, minLength } from '@vuelidate/validators';
 import { UserRegisterPayload } from '../store/user/types';
+
+const isFirstLetterUppercase = (value: string) => {
+  return value.charAt(0).toUpperCase() === value.charAt(0);
+};
+
+const rules = {
+  email: {
+    required: helpers.withMessage('E-mail is required', required),
+    email: helpers.withMessage('Invalid e-mail address', email),
+  },
+  password: {
+    required: helpers.withMessage('Password is required', required),
+    minLength: helpers.withMessage(
+      'Password must be at least 8 characters long',
+      minLength(8)
+    ),
+  },
+  firstname: {
+    required: helpers.withMessage('Firstname is required', required),
+    isFirstLetterUppercase: helpers.withMessage(
+      'The first letter of firstname must be uppercase',
+      isFirstLetterUppercase
+    ),
+  },
+  lastname: {
+    required: helpers.withMessage('Lastname is required', required),
+    isFirstLetterUppercase: helpers.withMessage(
+      'The first letter of lastname must be uppercase',
+      isFirstLetterUppercase
+    ),
+  },
+  nickname: {
+    required: helpers.withMessage('Nickname is required', required),
+    minLength: helpers.withMessage(
+      'Nickname must have at least 3 characters',
+      minLength(3)
+    ),
+  },
+};
 
 export default defineComponent({
   name: 'RegisterForm',
 
   setup() {
-    const email = ref<string | null>(null);
-    const emailRef = ref<QInput | null>(null);
-
-    const password = ref<string | null>(null);
-    const passwordRef = ref<QInput | null>(null);
-    const isPwd = ref<boolean>(true);
-
-    const firstname = ref<string | null>(null);
-    const firstnameRef = ref<QInput | null>(null);
-
-    const lastname = ref<string | null>(null);
-    const lastnameRef = ref<QInput | null>(null);
-
-    const nickname = ref<string | null>(null);
-    const nicknameRef = ref<QInput | null>(null);
-
-    const submitting = ref<boolean>(false);
+    const state = reactive({
+      email: '',
+      password: '',
+      firstname: '',
+      lastname: '',
+      nickname: '',
+      isPwd: true,
+      submitting: false,
+    });
 
     const $store = useStore();
 
-    const onSubmit = () => {
-      Promise.all([
-        emailRef.value?.validate(),
-        firstnameRef.value?.validate(),
-        lastnameRef.value?.validate(),
-        nicknameRef.value?.validate(),
-        passwordRef.value?.validate(),
-      ])
-        .then((result) => {
-          if (result.every((v) => v === true)) {
+    const v$ = useVuelidate(rules, state);
+
+    const handleSubmit = () => {
+      state.submitting = true;
+
+      v$.value
+        .$validate()
+        .then((isValid) => {
+          if (isValid) {
             const payload: UserRegisterPayload = {
-              email: email.value as string,
-              password: password.value as string,
-              firstname: firstname.value as string,
-              lastname: lastname.value as string,
-              nickname: nickname.value as string,
+              email: state.email,
+              password: state.password,
+              firstname: state.firstname,
+              lastname: state.lastname,
+              nickname: state.nickname,
             };
 
             $store.dispatch('user/registerUser', payload).catch(console.log);
-            console.log('Register');
+            state.submitting = false;
+          } else {
+            state.submitting = false;
           }
         })
         .catch(console.log);
     };
 
     return {
-      email,
-      emailRef,
-      password,
-      passwordRef,
-      isPwd,
-      firstname,
-      firstnameRef,
-      lastname,
-      lastnameRef,
-      nickname,
-      nicknameRef,
-      submitting,
-      emailRules,
-      passwordRules,
-      firstnameRules,
-      lastnameRules,
-      nicknameRules,
-      onSubmit,
+      state,
+      v$,
+      handleSubmit,
     };
   },
 });
