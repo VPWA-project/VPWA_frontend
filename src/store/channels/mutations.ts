@@ -1,5 +1,5 @@
 import { MutationTree } from 'vuex';
-import { Channel, ChannelsStateInterface } from './state';
+import { Channel, ChannelsStateInterface, ChannelType } from './state';
 
 const mutation: MutationTree<ChannelsStateInterface> = {
   createChannel: (state: ChannelsStateInterface, payload: Channel) => {
@@ -24,6 +24,22 @@ const mutation: MutationTree<ChannelsStateInterface> = {
 
   joinChannel: (state: ChannelsStateInterface, payload: Channel) => {
     state.channels.push(payload)
+  },
+
+  setActiveChannel: (state: ChannelsStateInterface, payload: Channel) => {
+    state.activeChannel = payload
+  },
+
+  leaveChannel: (state: ChannelsStateInterface, payload: Channel) => {
+    const index = state.channels.map(channel => channel.id).indexOf(payload.id)
+
+    if(index >= -1) {
+      state.channels.splice(index, 1)
+      
+      if(payload.type === ChannelType.Public) {
+        state.availableChannels.push(payload)
+      }
+    }
   }
 };
 

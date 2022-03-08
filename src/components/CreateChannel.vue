@@ -3,7 +3,7 @@
     <q-card>
       <div style="max-width: 800px; margin-left: auto; margin-right: auto">
         <q-card-section class="flex-center col">
-          <div class="row flex-center justify-between">
+          <div class="row flex-center justify-between no-wrap">
             <h3 style="font-size: 1.5rem">
               Create a new
               {{ `${state.isChannelPublic ? 'public' : 'private'}` }} channel
@@ -53,9 +53,31 @@
               </template>
             </q-input>
 
+            <q-select
+              outlined
+              v-model="invitations"
+              use-input
+              use-chips
+              multiple
+              stack-label
+              input-debounce="0"
+              label="Invitations"
+              class="q-mt-md"
+              :options="options"
+              @filter="fetchUsers"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    User not found
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+
             <q-btn
               type="submit"
-              :loading="submitting"
+              :loading="state.submitting"
               flat
               label="Create channel"
               class="q-mt-lg"
@@ -73,7 +95,7 @@
 </template>
 
 <script lang="ts">
-import { useQuasar } from 'quasar';
+import { QSelect, useQuasar } from 'quasar';
 import { ChannelType } from 'src/store/channels/state';
 import { CreateChannelPayload } from 'src/store/channels/types';
 import { defineComponent, reactive, ref, toRef } from 'vue';
@@ -99,13 +121,13 @@ export default defineComponent({
       if (newValue === false) {
         this.state.channelName = '';
         this.state.isChannelPublic = true;
+        this.state.submitting = false;
       }
     },
   },
   emits: ['close'],
   setup(props, { emit }) {
     const isDialogOpen = toRef(props, 'open');
-    const submitting = ref<boolean>(false);
 
     const $store = useStore();
     const $q = useQuasar();
@@ -113,6 +135,7 @@ export default defineComponent({
     const state = reactive({
       channelName: '',
       isChannelPublic: true,
+      submitting: false,
     });
 
     const v$ = useVuelidate(rules, state);
@@ -121,7 +144,29 @@ export default defineComponent({
       emit('close');
     };
 
+    const stringOptions = ['sangalaa', 'adam', '5cos', 'lucyklus', 'stuff'];
+
+    const invitations = ref<QSelect | null>(null);
+    const options = ref(stringOptions);
+
+    const fetchUsers = (val: string, update: (value: () => void) => void) => {
+      setTimeout(() => {
+        update(() => {
+          if (val === '') {
+            options.value = stringOptions;
+          } else {
+            const needle = val.toLowerCase();
+            options.value = stringOptions.filter(
+              (v) => v.toLowerCase().indexOf(needle) > -1
+            );
+          }
+        });
+      }, 1500);
+    };
+
     const handleSubmit = () => {
+      state.submitting = true;
+
       v$.value
         .$validate()
         .then((result) => {
@@ -141,9 +186,13 @@ export default defineComponent({
                   color: 'blue',
                 });
 
+                state.submitting = false;
+
                 handleCloseButton();
               })
               .catch(console.log);
+          } else {
+            state.submitting = false;
           }
         })
         .catch(console.log);
@@ -151,11 +200,13 @@ export default defineComponent({
 
     return {
       isDialogOpen,
-      submitting,
       handleSubmit,
       handleCloseButton,
       state,
       v$,
+      invitations,
+      options,
+      fetchUsers,
     };
   },
 });

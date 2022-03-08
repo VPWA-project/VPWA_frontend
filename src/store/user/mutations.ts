@@ -1,17 +1,31 @@
 import { MutationTree } from 'vuex';
-import { UserStateInterface } from './state';
+import { User, UserStateInterface, UserStatus } from './state';
 import { UserRegisterPayload, UserStatePayload } from './types';
 
 const mutation: MutationTree<UserStateInterface> = {
   loginUser(state: UserStateInterface, payload: UserStatePayload) {
     // TODO
-    state.email = payload.email;
+    if(!state.loggedInUser) state.loggedInUser = {
+      id: 1,
+      firstname: '',
+      lastname: '',
+      status: UserStatus.Online,
+      nickname: '',
+      email: payload.email
+    }
   },
   registerUser(state: UserStateInterface, payload: UserRegisterPayload) {
-    state.firstname = payload.firstname;
-    state.lastname = payload.lastname;
-    state.nickname = payload.nickname;
-    state.email = payload.email;
+    
+    const user: User = {
+      id: Math.floor(Math.random() * 10),
+      email: payload.email,
+      firstname: payload.firstname,
+      lastname: payload.lastname,
+      nickname: payload.nickname,
+      status: UserStatus.Online
+    }
+
+    state.loggedInUser = user
   },
 };
 
