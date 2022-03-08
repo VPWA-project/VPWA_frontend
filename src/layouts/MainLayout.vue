@@ -64,27 +64,27 @@
                 >
               </q-item>
 
-              <q-item clickable>
+              <q-item clickable @click="changeUserStatus(UserStatus.Online)">
                 <q-item-section avatar>
-                  <q-icon name="circle" />
+                  <q-badge color="green" rounded />
                 </q-item-section>
                 <q-item-section>
                   <q-item-label>Online</q-item-label>
                 </q-item-section>
               </q-item>
 
-              <q-item clickable>
+              <q-item clickable @click="changeUserStatus(UserStatus.Dnd)">
                 <q-item-section avatar>
-                  <q-icon name="remove_circle_outline" />
+                  <q-badge color="red" rounded />
                 </q-item-section>
                 <q-item-section>
                   <q-item-label>DND</q-item-label>
                 </q-item-section>
               </q-item>
 
-              <q-item clickable>
+              <q-item clickable @click="changeUserStatus(UserStatus.Offline)">
                 <q-item-section avatar>
-                  <q-icon name="circle" />
+                  <q-badge color="black" rounded />
                 </q-item-section>
                 <q-item-section>
                   <q-item-label>Offline</q-item-label>
@@ -104,23 +104,12 @@
                   <q-item-label>Only @mentions</q-item-label>
                 </q-item-section>
                 <q-item-section avatar>
-                  <q-toggle
-                    color="blue"
-                    v-model="allowOnlyMentions"
-                  />
+                  <q-toggle color="blue" v-model="allowOnlyMentions" />
                 </q-item-section>
               </q-item>
 
               <q-separator spaced inset />
 
-              <q-item clickable>
-                <q-item-section avatar>
-                  <q-icon name="settings" />
-                </q-item-section>
-                <q-item-section>
-                  <q-item-label>Settings</q-item-label>
-                </q-item-section>
-              </q-item>
               <q-item clickable>
                 <q-item-section avatar>
                   <q-icon name="logout" />
@@ -134,7 +123,7 @@
 
           <q-item-section avatar>
             <q-avatar rounded color="primary" text-color="white"
-              >{{ nameInitials }}<q-badge color="red" rounded floating
+              >{{ nameInitials }}<q-badge :color="userStatus" rounded floating
             /></q-avatar>
           </q-item-section>
           <q-item-section>
@@ -208,6 +197,7 @@ import { useStore } from '../store';
 import ChannelLink from 'src/components/ChannelLink.vue';
 import SearchChannels from 'src/components/SearchChannels.vue';
 import { Channel } from 'src/store/channels/state';
+import { UserStatus } from 'src/store/user/state';
 
 export default defineComponent({
   name: 'MainLayout',
@@ -242,6 +232,7 @@ export default defineComponent({
       allowOnlyMentions,
       confirm: ref(false),
       user: computed(() => $store.state.user),
+      UserStatus,
 
       toggleLeftDrawer() {
         leftDrawerOpen.value = !leftDrawerOpen.value;
@@ -253,6 +244,10 @@ export default defineComponent({
         } else {
           btnIcon.value = 'expand_more';
         }
+      },
+
+      changeUserStatus(status: UserStatus) {
+        $store.dispatch('user/changeUserStatus', status).catch(console.log);
       },
 
       nameInitials: computed(() => {
@@ -275,6 +270,19 @@ export default defineComponent({
         const lastName: string = $store.state.user.loggedInUser
           ?.lastname as string;
         return firstName + ' ' + lastName;
+      }),
+
+      userStatus: computed(() => {
+        if ($store.state.user.loggedInUser?.status === UserStatus.Online) {
+          return 'green';
+        }
+        if ($store.state.user.loggedInUser?.status === UserStatus.Dnd) {
+          return 'red';
+        }
+        if ($store.state.user.loggedInUser?.status === UserStatus.Offline) {
+          return 'black';
+        }
+        return 'green';
       }),
 
       /*

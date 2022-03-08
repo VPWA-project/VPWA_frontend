@@ -1,6 +1,6 @@
 import { ActionTree } from 'vuex';
 import { StateInterface } from '../index';
-import { UserStateInterface } from './state';
+import { UserStateInterface, UserStatus } from './state';
 import { UserStatePayload } from './types';
 import { UserRegisterPayload } from './types';
 
@@ -16,6 +16,9 @@ const actions: ActionTree<UserStateInterface, StateInterface> = {
     setTimeout(function () {
       context.commit('registerUser', payload);
     }, 2000);
+  },
+  changeUserStatus(context, payload: UserStatus) {
+    context.commit('changeUserStatus', payload);
   },
 };
 

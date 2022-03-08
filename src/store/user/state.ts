@@ -1,15 +1,16 @@
 export enum UserStatus {
   Online = 'ONLINE',
-  DND = 'DND',
-  Ofline = 'OFFLINE'
+  Dnd = 'DND',
+  Offline = 'OFFLINE',
 }
+
 export interface User {
   id: number;
   firstname: string;
   lastname: string;
   nickname: string;
   email: string;
-  status: UserStatus
+  status: UserStatus;
 }
 
 export interface UserStateInterface {
@@ -25,9 +26,9 @@ const state = (): UserStateInterface => {
       lastname: 'Mrkvicka',
       nickname: 'jozino',
       email: 'jozino@gmail.com',
-      status: UserStatus.Online
+      status: UserStatus.Online,
     },
-    users: []
+    users: [],
   };
 };
 
