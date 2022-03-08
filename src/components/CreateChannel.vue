@@ -3,7 +3,7 @@
     <q-card>
       <div style="max-width: 800px; margin-left: auto; margin-right: auto">
         <q-card-section class="flex-center col">
-          <div class="row flex-center justify-between">
+          <div class="row flex-center justify-between no-wrap">
             <h3 style="font-size: 1.5rem">
               Create a new
               {{ `${state.isChannelPublic ? 'public' : 'private'}` }} channel
