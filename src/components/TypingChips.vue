@@ -1,5 +1,5 @@
 <template>
-  <div class="q-py-sm">
+  <div :class="{ 'q-py-sm' : typingPeople.length > 0 }">
     <q-card v-show="state.showMessage" class="q-my-sm">
       <q-card-section class="bg-primary text-white">
         <div class="text-subtitle2">{{ state.nickname }} is typing</div>
@@ -29,6 +29,25 @@
 <script lang="ts">
 import { defineComponent, reactive } from 'vue';
 
+const typingPeople = [
+  {
+    id: 1,
+    nickname: 'sangalaa',
+    text: 'Hi all',
+  },
+  {
+    id: 2,
+    nickname: 'adam',
+    text: 'Bye',
+  },
+];
+
+type TypingPerson = {
+  id: number;
+  nickname: string;
+  text: string;
+};
+
 export default defineComponent({
   setup() {
     const state = reactive({
@@ -37,25 +56,6 @@ export default defineComponent({
       text: '',
       lastOpenedPersonId: -1,
     });
-
-    const typingPeople = [
-      {
-        id: 1,
-        nickname: 'sangalaa',
-        text: 'Hi all',
-      },
-      {
-        id: 2,
-        nickname: 'adam',
-        text: 'Bye',
-      },
-    ];
-
-    type TypingPerson = {
-      id: number;
-      nickname: string;
-      text: string;
-    };
 
     const openShowMessage = () => (state.showMessage = true);
     const closeShowMessage = () => {
