@@ -1,37 +1,47 @@
 <template>
-  <form @submit.prevent.stop="onSubmit">
+  <form @submit.prevent.stop="handleSubmit">
     <h2 class="text-h6 text-center">Login</h2>
 
     <q-input
       class="q-mt-lg"
       outlined
-      ref="emailRef"
-      v-model="email"
+      v-model="state.email"
+      :error="v$.email.$error"
       label="Email"
-      :rules="emailRules"
-    />
+    >
+      <template v-slot:error>
+        <span :key="error.$uid" v-for="error of v$.email.$errors">
+          {{ error.$message }}
+        </span>
+      </template></q-input
+    >
     <q-input
       class="q-mt-md"
       outlined
-      ref="passwordRef"
-      v-model="password"
-      :type="isPwd ? 'password' : 'text'"
+      v-model="state.password"
+      :error="v$.password.$error"
+      :type="state.isPwd ? 'password' : 'text'"
       label="Password"
-      :rules="passwordRules"
     >
       <template v-slot:append>
         <q-icon
-          :name="isPwd ? 'visibility_off' : 'visibility'"
+          :name="state.isPwd ? 'visibility_off' : 'visibility'"
           class="cursor-pointer"
-          @click="isPwd = !isPwd"
+          @click="state.isPwd = !state.isPwd"
         />
+      </template>
+
+      <template v-slot:error>
+        <span :key="error.$uid" v-for="error of v$.password.$errors">
+          {{ error.$message }}
+        </span>
       </template>
     </q-input>
 
     <div class="row justify-center">
       <q-btn
         type="submit"
-        :loading="submitting"
+        :loading="state.submitting"
         label="Login"
         class="q-mt-md q-pa-md"
         style="width: 100%"
@@ -46,61 +56,74 @@
 </template>
 
 <script lang="ts">
-import { QInput } from 'quasar';
-import { ref, defineComponent } from 'vue';
-import { emailRules, passwordRules } from 'src/utils/rules';
+import { defineComponent, reactive } from 'vue';
 import { useStore } from '../store';
 import { UserStatePayload } from '../store/user/types';
+import { helpers, required, email, minLength } from '@vuelidate/validators';
+import useVuelidate from '@vuelidate/core';
+
+const rules = {
+  email: {
+    required: helpers.withMessage('E-mail is required', required),
+    email: helpers.withMessage('Invalid e-mail address', email),
+  },
+  password: {
+    required: helpers.withMessage('Password is required', required),
+    minLength: helpers.withMessage(
+      'Password must be at least 8 characters long',
+      minLength(8)
+    ),
+  },
+};
 
 export default defineComponent({
   name: 'LoginForm',
 
   setup() {
-    const email = ref<string | null>(null);
-    const emailRef = ref<QInput | null>(null);
-
-    const password = ref<string | null>(null);
-    const passwordRef = ref<QInput | null>(null);
-    const isPwd = ref<boolean>(true);
-
-    const submitting = ref<boolean>(false);
-
     const $store = useStore();
 
-    const onSubmit = () => {
-      Promise.all([emailRef.value?.validate(), passwordRef.value?.validate()])
-        .then((result) => {
-          if (result.every((v) => v === true)) {
+    const state = reactive({
+      email: '',
+      password: '',
+      isPwd: true,
+      submitting: false,
+    });
+
+    const v$ = useVuelidate(rules, state);
+
+    const handleSubmit = () => {
+      state.submitting = true;
+
+      v$.value
+        .$validate()
+        .then((isValid) => {
+          if (isValid) {
             const payload: UserStatePayload = {
-              email: email.value as string,
-              password: password.value as string,
+              email: state.email,
+              password: state.password,
             };
 
             $store
               .dispatch('user/loginUser', payload)
               .then(() => {
+                state.submitting = false;
+
                 $store
                   .dispatch('channels/fetchUserChannels', 1)
                   .catch(console.log);
               })
               .catch(console.log);
-
-            console.log('Loggin in');
+          } else {
+            state.submitting = false;
           }
         })
         .catch(console.log);
     };
 
     return {
-      email,
-      emailRef,
-      password,
-      passwordRef,
-      isPwd,
-      submitting,
-      emailRules,
-      passwordRules,
-      onSubmit,
+      state,
+      v$,
+      handleSubmit,
     };
   },
 });

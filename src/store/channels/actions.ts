@@ -1,4 +1,3 @@
-import { isContext } from 'vm';
 import { ActionTree } from 'vuex';
 import { StateInterface } from '../index';
 import { Channel, ChannelsStateInterface, ChannelType } from './state';
