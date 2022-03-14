@@ -1,6 +1,13 @@
+import { User, UserStatus } from '../user/state';
+
 export enum ChannelType {
   Public = 'PUBLIC',
-  Private = 'PRIVATE'
+  Private = 'PRIVATE',
+}
+
+export enum InvitationState {
+  Refuse = 'REFUSE',
+  Accept = 'ACCEPT',
 }
 
 export interface Channel {
@@ -8,10 +15,22 @@ export interface Channel {
   name: string;
   type: ChannelType;
 }
+
+export interface Invitation {
+  id: number;
+  invitedBy: User;
+  channel: Channel;
+}
+
+export interface InvitationInfo {
+  id: number;
+  state: InvitationState;
+}
+
 export interface ChannelsStateInterface {
   channels: Array<Channel>; // user's channels
   availableChannels: Array<Channel>; // available public channels
-  invitations: Array<Channel>;
+  invitations: Array<Invitation>;
   activeChannel?: Channel;
 }
 
@@ -21,16 +40,33 @@ function state(): ChannelsStateInterface {
       {
         id: 1,
         name: 'Channel 1',
-        type: ChannelType.Public
+        type: ChannelType.Public,
       },
       {
         id: 2,
         name: 'Channel 2',
-        type: ChannelType.Private
-      }
+        type: ChannelType.Private,
+      },
     ],
     availableChannels: [],
-    invitations: []
+    invitations: [
+      {
+        id: 1,
+        invitedBy: {
+          id: 1,
+          firstname: 'Jozko',
+          lastname: 'Mrkvicka',
+          nickname: 'jozino',
+          email: 'jozino@gmail.com',
+          status: UserStatus.Online,
+        },
+        channel: {
+          id: 1,
+          name: 'Channel 1',
+          type: ChannelType.Public,
+        },
+      },
+    ],
   };
 }
 
