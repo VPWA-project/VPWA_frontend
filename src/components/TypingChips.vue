@@ -1,5 +1,5 @@
 <template>
-  <div :class="{ 'q-py-sm' : typingPeople.length > 0 }">
+  <div :class="{ 'q-py-sm': typingPeople.length > 0 }">
     <q-card v-show="state.showMessage" class="q-my-sm">
       <q-card-section class="bg-primary text-white">
         <div class="text-subtitle2">{{ state.nickname }} is typing</div>
@@ -16,12 +16,17 @@
 
     <q-chip
       clickable
+      outline
       @click="openMessage(person)"
       icon="textsms"
-      v-for="person in typingPeople"
+      v-for="person in typingPeople.slice(0, maxChipsToDisplay)"
       :key="person.id"
     >
       {{ person.nickname }} is typing...
+    </q-chip>
+
+    <q-chip ripple="false" outline v-if="typingPeople.length > maxChipsToDisplay">
+      and {{ typingPeople.length - maxChipsToDisplay }} more...
     </q-chip>
   </div>
 </template>
@@ -79,6 +84,7 @@ export default defineComponent({
     return {
       state,
       typingPeople,
+      maxChipsToDisplay: 5,
       closeShowMessage,
       openMessage,
     };
