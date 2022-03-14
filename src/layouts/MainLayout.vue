@@ -55,7 +55,7 @@
 
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
       <q-list>
-        <q-item clickable @click="changeMe">
+        <div clickable @click="changeMe" class="row justify-between cursor-pointer">
           <q-menu fit anchor="bottom left" self="top left">
             <q-list>
               <q-item class="no-padding">
@@ -121,19 +121,14 @@
             </q-list>
           </q-menu>
 
-          <q-item-section avatar>
-            <q-avatar rounded color="primary" text-color="white"
-              >{{ nameInitials }}<q-badge :color="userStatus" rounded floating
-            /></q-avatar>
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>{{ userName }}</q-item-label>
-            <q-item-label caption>{{ userNickName }}</q-item-label>
-          </q-item-section>
-          <q-item-section avatar>
-            <q-icon :name="btnIcon" size="1.4em" />
-          </q-item-section>
-        </q-item>
+          <UserBanner v-if="user.loggedInUser" v-bind="user.loggedInUser">
+            <template v-slot:append>
+              <q-item-section avatar>
+                <q-icon :name="btnIcon" size="1.4em" />
+              </q-item-section>
+            </template>
+          </UserBanner>
+        </div>
 
         <q-separator spaced inset />
 
@@ -204,6 +199,36 @@
       </q-scroll-area>
     </q-drawer>
 
+    <q-drawer show-if-above v-model="rightDrawerOpen" side="right" bordered>
+      <q-list>
+        <q-item>
+          <q-item-section>
+            <q-item-label class="text-grey-7">Online</q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <UserBanner
+          firstname="Frido"
+          lastname="Herak"
+          nickname="cigan123"
+          status="ONLINE"
+        />
+
+        <q-item>
+          <q-item-section>
+            <q-item-label class="text-grey-7">Offline</q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <UserBanner
+          firstname="Frido"
+          lastname="Herak"
+          nickname="cigan123"
+          status="OFFLINE"
+        />
+      </q-list>
+    </q-drawer>
+
     <q-page-container>
       <router-view />
     </q-page-container>
@@ -231,6 +256,7 @@ import {
 } from 'src/store/channels/state';
 import { UserStatus } from 'src/store/user/state';
 import MessageForm from 'src/components/MessageForm.vue';
+import UserBanner from '../components/UserBanner.vue';
 
 export default defineComponent({
   name: 'MainLayout',
@@ -238,11 +264,13 @@ export default defineComponent({
   components: {
     ChannelLink,
     SearchChannels,
-    MessageForm
-},
+    MessageForm,
+    UserBanner,
+  },
 
   setup() {
     const leftDrawerOpen = ref(false);
+    const rightDrawerOpen = ref(false);
     const browseChannelsOpen = ref(false);
     const allowOnlyMentions = ref(true);
 
@@ -262,6 +290,7 @@ export default defineComponent({
       btnIcon,
       message: '',
       leftDrawerOpen,
+      rightDrawerOpen,
       browseChannelsOpen,
       allowOnlyMentions,
       confirm: ref(false),
@@ -284,41 +313,6 @@ export default defineComponent({
       changeUserStatus(status: UserStatus) {
         $store.dispatch('user/changeUserStatus', status).catch(console.log);
       },
-
-      nameInitials: computed(() => {
-        const firstName: string = $store.state.user.loggedInUser
-          ?.firstname as string;
-        const lastName: string = $store.state.user.loggedInUser
-          ?.lastname as string;
-        return firstName[0] + lastName[0];
-      }),
-
-      userNickName: computed(() => {
-        const nickName: string = $store.state.user.loggedInUser
-          ?.nickname as string;
-        return '@' + nickName;
-      }),
-
-      userName: computed(() => {
-        const firstName: string = $store.state.user.loggedInUser
-          ?.firstname as string;
-        const lastName: string = $store.state.user.loggedInUser
-          ?.lastname as string;
-        return firstName + ' ' + lastName;
-      }),
-
-      userStatus: computed(() => {
-        if ($store.state.user.loggedInUser?.status === UserStatus.Online) {
-          return 'green';
-        }
-        if ($store.state.user.loggedInUser?.status === UserStatus.Dnd) {
-          return 'red';
-        }
-        if ($store.state.user.loggedInUser?.status === UserStatus.Offline) {
-          return 'black';
-        }
-        return 'green';
-      }),
 
       /*
       userGetter: computed<string>(() => {
