@@ -143,6 +143,45 @@
           </q-item-section>
         </q-item>
 
+        <q-scroll-area style="height: calc(80px)">
+          <q-list>
+            <ChannelLink
+              v-for="link in invitations"
+              :id="link.id"
+              :key="link.id"
+              :name="link.channel.name"
+              :type="link.channel.type"
+              ><template v-slot:append>
+                <div class="flex justify-end q-gutter-sm">
+                  <q-btn
+                    round
+                    size="sm"
+                    color="red"
+                    icon="highlight_off"
+                    @click="
+                      processInvitation({
+                        id: link.id,
+                        state: InvitationState.Refuse,
+                      })
+                    "
+                  />
+                  <q-btn
+                    round
+                    size="sm"
+                    color="green"
+                    icon="check_circle_outline"
+                    @click="
+                      processInvitation({
+                        id: link.id,
+                        state: InvitationState.Accept,
+                      })
+                    "
+                  />
+                </div> </template
+            ></ChannelLink>
+          </q-list>
+        </q-scroll-area>
+
         <q-item>
           <q-item-section>
             <q-item-label>Channels</q-item-label>
@@ -196,7 +235,11 @@ import { computed, defineComponent, ref } from 'vue';
 import { useStore } from '../store';
 import ChannelLink from 'src/components/ChannelLink.vue';
 import SearchChannels from 'src/components/SearchChannels.vue';
-import { Channel } from 'src/store/channels/state';
+import {
+  Channel,
+  InvitationState,
+  InvitationInfo,
+} from 'src/store/channels/state';
 import { UserStatus } from 'src/store/user/state';
 
 export default defineComponent({
@@ -233,6 +276,7 @@ export default defineComponent({
       confirm: ref(false),
       user: computed(() => $store.state.user),
       UserStatus,
+      InvitationState,
 
       toggleLeftDrawer() {
         leftDrawerOpen.value = !leftDrawerOpen.value;
@@ -305,8 +349,14 @@ export default defineComponent({
           )
           .catch(console.log);
       },
+      processInvitation: (inv: InvitationInfo) => {
+        $store.dispatch('channels/processInvitation', inv).catch(console.log);
+      },
       showBrowseChannels,
       switchChannel,
+      invitations: computed(() => {
+        return $store.state.channels.invitations;
+      }),
     };
   },
 });

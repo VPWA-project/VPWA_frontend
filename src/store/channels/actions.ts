@@ -1,6 +1,11 @@
 import { ActionTree } from 'vuex';
 import { StateInterface } from '../index';
-import { Channel, ChannelsStateInterface, ChannelType } from './state';
+import {
+  Channel,
+  ChannelsStateInterface,
+  ChannelType,
+  InvitationInfo,
+} from './state';
 import { CreateChannelPayload, SearchPublicChannelsPayload } from './types';
 
 const actions: ActionTree<ChannelsStateInterface, StateInterface> = {
@@ -13,23 +18,23 @@ const actions: ActionTree<ChannelsStateInterface, StateInterface> = {
 
   fetchUserChannels: (context, payload: number) => {
     // TODO: fetch user channels from database
-    
+
     const userChannels: Array<Channel> = [
       {
         id: 1,
         name: 'Channel 1',
-        type: ChannelType.Public
+        type: ChannelType.Public,
       },
       {
         id: 2,
         name: 'Channel 2',
-        type: ChannelType.Private
-      }
-    ]
-    
+        type: ChannelType.Private,
+      },
+    ];
+
     setTimeout(() => {
       context.commit('fetchUserChannels', userChannels);
-    }, 2000)
+    }, 2000);
   },
 
   searchPublicChannels: (context, payload: SearchPublicChannelsPayload) => {
@@ -53,10 +58,12 @@ const actions: ActionTree<ChannelsStateInterface, StateInterface> = {
       },
     ];
 
-    const {searchText} = payload
+    const { searchText } = payload;
 
-    if(!!searchText) {
-      availableChannels = availableChannels.filter(channel => channel.name.includes(searchText))
+    if (!!searchText) {
+      availableChannels = availableChannels.filter((channel) =>
+        channel.name.includes(searchText)
+      );
     }
 
     setTimeout(() => {
@@ -65,26 +72,30 @@ const actions: ActionTree<ChannelsStateInterface, StateInterface> = {
   },
 
   removeFromPublicChannels: (context, payload: number) => {
-    context.commit('removeFromPublicChannels', payload)
+    context.commit('removeFromPublicChannels', payload);
   },
 
   joinChannel: (context, payload: Channel) => {
     // TODO: add in server
 
     setTimeout(() => {
-      context.commit('joinChannel', payload)
-    }, 2000)
+      context.commit('joinChannel', payload);
+    }, 2000);
   },
 
   setActiveChannel: (context, payload: Channel) => {
-    context.commit('setActiveChannel', payload)
+    context.commit('setActiveChannel', payload);
   },
 
   leaveChannel: (context, payload: Channel) => {
     // TODO: send request to server
 
-    context.commit('leaveChannel', payload)
-  }
+    context.commit('leaveChannel', payload);
+  },
+
+  processInvitation: (context, payload: InvitationInfo) => {
+    context.commit('processInvitation', payload);
+  },
 };
 
 export default actions;
