@@ -1,56 +1,10 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-header elevated>
-      <q-toolbar style="height: 56px">
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
-        <q-toolbar-title>
-          {{ activeChannel ? activeChannel.name : '' }}
-        </q-toolbar-title>
-        <q-btn flat dense round icon="more_vert" clickable @click="changeMe">
-          <q-menu fit anchor="bottom right" self="top right">
-            <div class="q-gutter-sm">
-              <q-btn
-                label="Leave channel"
-                color="white"
-                text-color="black"
-                @click="confirm = true"
-              />
-              <q-dialog v-model="confirm" persistent>
-                <q-card>
-                  <q-card-section class="row items-center">
-                    <q-avatar
-                      icon="group_off"
-                      color="primary"
-                      text-color="white"
-                    />
-                    <span class="q-ml-sm"
-                      >Do you really want to leave this channel ?</span
-                    >
-                  </q-card-section>
-
-                  <q-card-actions align="right">
-                    <q-btn flat label="Cancel" color="primary" v-close-popup />
-                    <q-btn
-                      flat
-                      label="Leave channel"
-                      color="primary"
-                      @click="leaveChannel"
-                      v-close-popup
-                    />
-                  </q-card-actions>
-                </q-card>
-              </q-dialog>
-            </div>
-          </q-menu>
-        </q-btn>
-      </q-toolbar>
+      <Header
+      :toggleLeftDrawer="toggleLeftDrawer"
+      :activeChannel="activeChannel?.name"
+      />
     </q-header>
 
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
@@ -257,6 +211,7 @@ import {
 import { UserStatus } from 'src/store/user/state';
 import MessageForm from 'src/components/MessageForm.vue';
 import UserBanner from '../components/UserBanner.vue';
+import Header from 'src/components/Header.vue';
 
 export default defineComponent({
   name: 'MainLayout',
@@ -266,7 +221,8 @@ export default defineComponent({
     SearchChannels,
     MessageForm,
     UserBanner,
-  },
+    Header
+},
 
   setup() {
     const leftDrawerOpen = ref(false);
@@ -302,14 +258,6 @@ export default defineComponent({
         leftDrawerOpen.value = !leftDrawerOpen.value;
       },
 
-      changeMe() {
-        if (btnIcon.value == 'expand_more') {
-          btnIcon.value = 'expand_less';
-        } else {
-          btnIcon.value = 'expand_more';
-        }
-      },
-
       changeUserStatus(status: UserStatus) {
         $store.dispatch('user/changeUserStatus', status).catch(console.log);
       },
@@ -326,14 +274,6 @@ export default defineComponent({
       activeChannel: computed(() => {
         return $store.state.channels.activeChannel;
       }),
-      leaveChannel: () => {
-        $store
-          .dispatch(
-            'channels/leaveChannel',
-            $store.state.channels.activeChannel
-          )
-          .catch(console.log);
-      },
       processInvitation: (inv: InvitationInfo) => {
         $store.dispatch('channels/processInvitation', inv).catch(console.log);
       },
