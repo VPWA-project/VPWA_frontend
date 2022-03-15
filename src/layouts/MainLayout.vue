@@ -13,7 +13,7 @@
 
     <q-drawer
       show-if-above
-      v-model="state.isrightDrawerOpen"
+      v-model="state.isRightDrawerOpen"
       side="right"
       bordered
     >
@@ -53,7 +53,7 @@ export default defineComponent({
 
     const state = reactive({
       isLeftDrawerOpen: false,
-      isrightDrawerOpen: false,
+      isRightDrawerOpen: false,
     });
 
     return {
