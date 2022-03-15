@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
+  <q-layout view="lHr LpR lFr">
     <q-header elevated>
       <Header
         :toggleLeftDrawer="toggleLeftDrawer"
@@ -7,7 +7,12 @@
       />
     </q-header>
 
-    <q-drawer v-model="state.isLeftDrawerOpen" show-if-above bordered>
+    <q-drawer
+      v-model="state.isLeftDrawerOpen"
+      side="left"
+      show-if-above
+      bordered
+    >
       <LeftDrawer />
     </q-drawer>
 
@@ -24,7 +29,7 @@
       <router-view />
     </q-page-container>
 
-    <q-footer>
+    <q-footer elevated>
       <MessageForm />
     </q-footer>
   </q-layout>
