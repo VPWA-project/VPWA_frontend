@@ -25,7 +25,7 @@
       {{ person.nickname }} is typing...
     </q-chip>
 
-    <q-chip ripple="false" outline v-if="typingPeople.length > maxChipsToDisplay">
+    <q-chip :ripple="false" outline v-if="typingPeople.length > maxChipsToDisplay">
       and {{ typingPeople.length - maxChipsToDisplay }} more...
     </q-chip>
   </div>
