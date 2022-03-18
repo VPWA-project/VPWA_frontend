@@ -9,10 +9,8 @@
     <ChannelMember
       v-for="member in online"
       :key="member.id"
-      :firstname="member.firstname"
-      :lastname="member.lastname"
-      :nickname="member.nickname"
-      :status="member.status"
+      v-bind="member"
+      :channelMembers="state.channelMembers"
     />
 
     <q-item>
@@ -24,50 +22,55 @@
     <ChannelMember
       v-for="member in offline"
       :key="member.id"
-      :firstname="member.firstname"
-      :lastname="member.lastname"
-      :nickname="member.nickname"
-      :status="member.status"
+      v-bind="member"
+      :channelMembers="state.channelMembers"
     />
   </q-list>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, computed, reactive } from 'vue';
 import ChannelMember from './ChannelMember.vue';
 
 export default defineComponent({
   components: {
-    ChannelMember
-},
+    ChannelMember,
+  },
   setup() {
-    const channelMembers = [
-      {
-        id: 1,
-        firstname: 'John',
-        lastname: 'Doe',
-        nickname: 'john',
-        status: 'ONLINE'
-      },
-      {
-        id: 2,
-        firstname: 'Frank',
-        lastname: 'Doe',
-        nickname: 'frank',
-        status: 'DND'
-      },
-      {
-        id: 3,
-        firstname: 'Martin',
-        lastname: 'Doe',
-        nickname: 'martin',
-        status: 'OFFLINE'
-      }
-    ]
+    const state = reactive({
+      channelMembers: [
+        {
+          id: 1,
+          firstname: 'John',
+          lastname: 'Doe',
+          nickname: 'john',
+          status: 'ONLINE',
+        },
+        {
+          id: 2,
+          firstname: 'Frank',
+          lastname: 'Doe',
+          nickname: 'frank',
+          status: 'DND',
+        },
+        {
+          id: 3,
+          firstname: 'Martin',
+          lastname: 'Doe',
+          nickname: 'martin',
+          status: 'OFFLINE',
+        },
+      ],
+    });
 
     return {
-      online: channelMembers.filter(x => x.status !== 'OFFLINE'),
-      offline: channelMembers.filter(x => x.status === 'OFFLINE')
+      state,
+      online: computed(() =>
+        state.channelMembers.filter((x) => x.status !== 'OFFLINE')
+      ),
+      offline: computed(() =>
+        state.channelMembers.filter((x) => x.status === 'OFFLINE')
+      ),
     };
   },
 });
