@@ -61,8 +61,8 @@ function state(): ChannelsStateInterface {
           status: UserStatus.Online,
         },
         channel: {
-          id: 1,
-          name: 'Channel 1',
+          id: 10,
+          name: 'Channel 10',
           type: ChannelType.Public,
         },
       },

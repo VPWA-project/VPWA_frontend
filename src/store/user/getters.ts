@@ -1,11 +1,11 @@
 import { GetterTree } from 'vuex';
 import { StateInterface } from '../index';
-import { UserStateInterface } from './state';
+import { User, UserStateInterface } from './state';
 
 const getters: GetterTree<UserStateInterface, StateInterface> = {
-  userGetter(state): string | undefined {
-    return state.loggedInUser?.firstname
-  },
+  getLoggedInUser: (state): User | undefined => {
+    return state.loggedInUser
+  }
 };
 
 export default getters;

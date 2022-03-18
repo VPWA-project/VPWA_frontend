@@ -1,5 +1,5 @@
 <template>
-  <q-item clickable>
+  <q-item clickable :to="{name: 'chat', params: {id} }">
     <q-item-section v-if="type" avatar>
       <q-icon :name="getIconByType(type)" />
     </q-item-section>
@@ -17,7 +17,7 @@
 
 <script lang="ts">
 import { ChannelType } from 'src/store/channels/state';
-import { defineComponent, computed } from 'vue';
+import { defineComponent, computed, PropType } from 'vue';
 
 const getIconByType = (type: ChannelType): string => {
   if (type === ChannelType.Private) {
@@ -30,12 +30,16 @@ const getIconByType = (type: ChannelType): string => {
 export default defineComponent({
   name: 'ChannelLink',
   props: {
+    id: {
+      type: String,
+      required: true
+    },
     name: {
       type: String,
       required: true,
     },
     type: {
-      type: String,
+      type: String as PropType<ChannelType>,
       required: true,
     }
   },
