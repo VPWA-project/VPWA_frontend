@@ -29,7 +29,7 @@
             text-color="black"
             @click="toggleDialog"
           />
-          <q-dialog v-model="confirm" persistent>
+          <q-dialog v-model="state.isConfirmDialogOpen" persistent>
             <q-card>
               <q-card-section class="row items-center">
                 <q-avatar icon="group_off" color="primary" text-color="white" />
