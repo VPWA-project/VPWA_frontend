@@ -3,6 +3,7 @@
     <q-header elevated>
       <Header
         :toggleLeftDrawer="toggleLeftDrawer"
+        :toggleRightDrawer="toggleRightDrawer"
         :activeChannel="activeChannel?.name"
       />
     </q-header>
@@ -65,6 +66,8 @@ export default defineComponent({
       state,
       toggleLeftDrawer: () =>
         (state.isLeftDrawerOpen = !state.isLeftDrawerOpen),
+      toggleRightDrawer: () =>
+        (state.isRightDrawerOpen = !state.isRightDrawerOpen),
       activeChannel: computed(() => $store.state.channels.activeChannel),
       invitations: computed(() => $store.state.channels.invitations),
     };

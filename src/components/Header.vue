@@ -1,17 +1,28 @@
 <template>
   <q-toolbar style="height: 56px">
     <q-btn
+      v-if="toggleLeftDrawer"
       flat
       dense
       round
       icon="menu"
-      aria-label="Menu"
+      aria-label="Left menu"
       @click="toggleLeftDrawer"
     />
     <q-toolbar-title>
       {{ activeChannel }}
     </q-toolbar-title>
-    <q-btn flat dense round icon="more_vert" clickable>
+    <q-btn
+      v-if="toggleRightDrawer"
+      flat
+      dense
+      round
+      icon="menu"
+      aria-label="Right menu"
+      @click="toggleRightDrawer"
+    >
+    </q-btn>
+    <q-btn flat dense round icon="more_vert" class="q-ml-md">
       <q-menu fit anchor="bottom right" self="top right">
         <div class="q-gutter-sm">
           <q-btn
@@ -53,10 +64,8 @@ import { defineComponent, reactive, PropType } from 'vue';
 
 export default defineComponent({
   props: {
-    toggleLeftDrawer: {
-      type: Function as PropType<() => void>,
-      required: true,
-    },
+    toggleLeftDrawer: Function as PropType<() => void>,
+    toggleRightDrawer: Function as PropType<() => void>,
     activeChannel: String,
   },
   setup() {
