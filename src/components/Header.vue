@@ -6,7 +6,6 @@
       dense
       round
       icon="menu"
-      aria-label="Left menu"
       @click="toggleLeftDrawer"
     />
     <q-toolbar-title>
@@ -18,7 +17,6 @@
       dense
       round
       icon="menu"
-      aria-label="Right menu"
       @click="toggleRightDrawer"
     >
     </q-btn>
