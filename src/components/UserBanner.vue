@@ -1,5 +1,5 @@
 <template>
-  <q-item>
+  <q-item class="flex-row">
     <q-item-section avatar>
       <q-avatar rounded color="primary" text-color="white">
         {{ nameInitials }}
@@ -10,8 +10,8 @@
       <q-item-label>{{ userName }}</q-item-label>
       <q-item-label caption>{{ userNickName }}</q-item-label>
     </q-item-section>
+    <slot name="append"></slot>
   </q-item>
-  <slot name="append"></slot>
 </template>
 
 <script lang="ts">
@@ -32,7 +32,7 @@ export default defineComponent({
       type: String,
       required: true,
     },
-    status: String
+    status: String,
   },
   setup(props) {
     const { firstname, lastname, nickname, status } = toRefs(props);
