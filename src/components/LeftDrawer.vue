@@ -83,7 +83,6 @@
         v-for="link in channels"
         :key="link.id"
         v-bind="link"
-        @click="switchChannel(link)"
       />
     </q-list>
   </q-scroll-area>
