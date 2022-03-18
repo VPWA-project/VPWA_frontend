@@ -22,29 +22,35 @@
     </q-btn>
     <q-btn flat dense round icon="more_vert" class="q-ml-md">
       <q-menu fit anchor="bottom right" self="top right">
-        <div class="q-gutter-sm">
+        <div class="column q-gutter-sm">
           <q-btn
+            flat
             label="Leave channel"
             color="white"
             text-color="black"
-            @click="toggleDialog"
+            @click="toggleDialog(ConfirmDialogType.Leave)"
+          />
+          <q-btn
+            flat
+            label="Delete channel"
+            color="white"
+            text-color="black"
+            @click="toggleDialog(ConfirmDialogType.Delete)"
           />
           <q-dialog v-model="state.isConfirmDialogOpen" persistent>
             <q-card>
               <q-card-section class="row items-center">
                 <q-avatar icon="group_off" color="primary" text-color="white" />
-                <span class="q-ml-sm"
-                  >Do you really want to leave this channel ?</span
-                >
+                <span class="q-ml-sm">{{ confirmDialogText }}</span>
               </q-card-section>
 
               <q-card-actions align="right">
                 <q-btn flat label="Cancel" color="primary" v-close-popup />
                 <q-btn
                   flat
-                  label="Leave channel"
+                  :label="confirmDialogButtonText"
                   color="primary"
-                  @click="leaveChannel"
+                  @click="confirmDialog"
                   v-close-popup
                 />
               </q-card-actions>
@@ -58,7 +64,12 @@
 
 <script lang="ts">
 import { useStore } from 'src/store';
-import { defineComponent, reactive, PropType } from 'vue';
+import { defineComponent, reactive, PropType, computed } from 'vue';
+
+enum ConfirmDialogType {
+  Leave,
+  Delete,
+}
 
 export default defineComponent({
   props: {
@@ -71,19 +82,46 @@ export default defineComponent({
 
     const state = reactive({
       isConfirmDialogOpen: false,
+      confirmDialogType: ConfirmDialogType.Leave,
     });
 
     return {
       state,
-      leaveChannel: () =>
-        $store
-          .dispatch(
-            'channels/leaveChannel',
-            $store.state.channels.activeChannel
-          )
-          .catch(console.log),
-      toggleDialog: () =>
-        (state.isConfirmDialogOpen = !state.isConfirmDialogOpen),
+      ConfirmDialogType,
+      confirmDialog: () => {
+        if (state.confirmDialogType === ConfirmDialogType.Leave) {
+          $store
+            .dispatch(
+              'channels/leaveChannel',
+              $store.state.channels.activeChannel
+            )
+            .catch(console.log);
+        } else if (state.confirmDialogType === ConfirmDialogType.Delete) {
+          // TODO: Delete channel
+        }
+      },
+      toggleDialog: (type: ConfirmDialogType) => {
+        state.isConfirmDialogOpen = !state.isConfirmDialogOpen;
+        state.confirmDialogType = type;
+      },
+      confirmDialogText: computed(() => {
+        if (state.confirmDialogType === ConfirmDialogType.Leave) {
+          return 'Do you really want to leave this channel ?';
+        }
+        if (state.confirmDialogType === ConfirmDialogType.Delete) {
+          return 'Do you really want to delete this channel?';
+        }
+        return '';
+      }),
+      confirmDialogButtonText: computed(() => {
+        if (state.confirmDialogType === ConfirmDialogType.Leave) {
+          return 'Leave channel';
+        }
+        if (state.confirmDialogType === ConfirmDialogType.Delete) {
+          return 'Delete channel';
+        }
+        return '';
+      }),
     };
   },
 });
