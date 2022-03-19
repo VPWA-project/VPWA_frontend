@@ -1,5 +1,5 @@
 <template>
-  <q-item clickable :to="{name: 'chat', params: {id} }">
+  <q-item clickable :href="'#/chat/' + id">
     <q-item-section v-if="type" avatar>
       <q-icon :name="getIconByType(type)" />
     </q-item-section>
@@ -9,8 +9,7 @@
     </q-item-section>
 
     <q-item-section>
-      <slot name="append">
-      </slot>
+      <slot name="append"> </slot>
     </q-item-section>
   </q-item>
 </template>
@@ -32,7 +31,7 @@ export default defineComponent({
   props: {
     id: {
       type: String,
-      required: true
+      required: true,
     },
     name: {
       type: String,
@@ -41,7 +40,7 @@ export default defineComponent({
     type: {
       type: String as PropType<ChannelType>,
       required: true,
-    }
+    },
   },
   setup() {
     return {
