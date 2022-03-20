@@ -61,6 +61,7 @@ import { useStore } from '../store';
 import { UserStatePayload } from '../store/user/types';
 import { helpers, required, email, minLength } from '@vuelidate/validators';
 import useVuelidate from '@vuelidate/core';
+import { useRouter } from 'vue-router';
 
 const rules = {
   email: {
@@ -81,6 +82,7 @@ export default defineComponent({
 
   setup() {
     const $store = useStore();
+    const router = useRouter();
 
     const state = reactive({
       email: '',
@@ -110,6 +112,9 @@ export default defineComponent({
 
                 $store
                   .dispatch('channels/fetchUserChannels', 1)
+                  .then(() => {
+                    router.push('/').catch(console.log);
+                  })
                   .catch(console.log);
               })
               .catch(console.log);
