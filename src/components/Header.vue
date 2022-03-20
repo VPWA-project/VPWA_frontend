@@ -28,14 +28,18 @@
             @click="toggleDialog(ConfirmDialogType.Leave)"
             v-close-popup
           >
-            <q-item-section>Leave channel</q-item-section>
+            <q-item-section>
+              <q-item-label>Leave channel</q-item-label>
+            </q-item-section>
           </q-item>
           <q-item
             clickable
             @click="toggleDialog(ConfirmDialogType.Delete)"
             v-close-popup
           >
-            <q-item-section>Delete channel</q-item-section>
+            <q-item-section>
+              <q-item-label>Delete channel</q-item-label>
+            </q-item-section>
           </q-item>
         </q-list>
       </q-menu>
