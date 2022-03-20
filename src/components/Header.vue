@@ -22,43 +22,43 @@
     </q-btn>
     <q-btn flat dense round icon="more_vert" class="q-ml-md">
       <q-menu fit anchor="bottom right" self="top right">
-        <div class="column q-gutter-sm">
-          <q-btn
-            flat
-            label="Leave channel"
-            color="white"
-            text-color="black"
+        <q-list class="column q-gutter-sm" style="width: 150px">
+          <q-item
+            clickable
             @click="toggleDialog(ConfirmDialogType.Leave)"
-          />
-          <q-btn
-            flat
-            label="Delete channel"
-            color="white"
-            text-color="black"
+            v-close-popup
+          >
+            <q-item-section>Leave channel</q-item-section>
+          </q-item>
+          <q-item
+            clickable
             @click="toggleDialog(ConfirmDialogType.Delete)"
-          />
-          <q-dialog v-model="state.isConfirmDialogOpen" persistent>
-            <q-card>
-              <q-card-section class="row items-center">
-                <q-avatar icon="group_off" color="primary" text-color="white" />
-                <span class="q-ml-sm">{{ confirmDialogText }}</span>
-              </q-card-section>
-
-              <q-card-actions align="right">
-                <q-btn flat label="Cancel" color="primary" v-close-popup />
-                <q-btn
-                  flat
-                  :label="confirmDialogButtonText"
-                  color="primary"
-                  @click="confirmDialog"
-                  v-close-popup
-                />
-              </q-card-actions>
-            </q-card>
-          </q-dialog>
-        </div>
+            v-close-popup
+          >
+            <q-item-section>Delete channel</q-item-section>
+          </q-item>
+        </q-list>
       </q-menu>
     </q-btn>
+    <q-dialog v-model="state.isConfirmDialogOpen">
+      <q-card>
+        <q-card-section class="row items-center">
+          <q-avatar icon="group_off" color="primary" text-color="white" />
+          <span class="q-ml-sm">{{ confirmDialogText }}</span>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="Cancel" color="primary" v-close-popup />
+          <q-btn
+            flat
+            :label="confirmDialogButtonText"
+            color="primary"
+            @click="confirmDialog"
+            v-close-popup
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-toolbar>
 </template>
 
