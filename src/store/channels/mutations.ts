@@ -43,6 +43,18 @@ const mutation: MutationTree<ChannelsStateInterface> = {
     state.channels.push(payload);
   },
 
+  appendChannelMessage: (
+    state: ChannelsStateInterface,
+    payload: { channelId: number; message: string }
+  ) => {
+    state.channels
+      .find(({ id }) => id == payload.channelId)!
+      .messages.push({
+        tag: false,
+        message: payload.message,
+      });
+  },
+
   setActiveChannel: (state: ChannelsStateInterface, payload: Channel) => {
     state.activeChannel = payload;
   },
@@ -78,6 +90,12 @@ const mutation: MutationTree<ChannelsStateInterface> = {
           id: invitation.channel.id,
           name: invitation.channel.name,
           type: invitation.channel.type,
+          messages: [
+            { tag: false, message: 'New Channel' },
+            { tag: true, message: 'New Channel' },
+            { tag: false, message: 'New Channel' },
+            { tag: false, message: 'New Channel' },
+          ],
         });
       }
 

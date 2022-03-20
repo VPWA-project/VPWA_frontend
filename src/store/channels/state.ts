@@ -10,10 +10,16 @@ export enum InvitationState {
   Accept = 'ACCEPT',
 }
 
+export interface Message {
+  tag: boolean;
+  message: string;
+}
+
 export interface Channel {
   id: number;
   name: string;
   type: ChannelType;
+  messages: Message[];
 }
 
 export interface Invitation {
@@ -41,11 +47,23 @@ function state(): ChannelsStateInterface {
         id: 1,
         name: 'Channel 1',
         type: ChannelType.Public,
+        messages: [
+          { tag: true, message: 'Hello' },
+          { tag: false, message: 'Good morning' },
+          { tag: false, message: 'Bye' },
+          { tag: true, message: 'How are you ?' },
+        ],
       },
       {
         id: 2,
         name: 'Channel 2',
         type: ChannelType.Private,
+        messages: [
+          { tag: false, message: 'Hi, my name is Jozko' },
+          { tag: true, message: 'Hello, Jozko !' },
+          { tag: false, message: 'How is it going ?' },
+          { tag: false, message: 'Pretty well' },
+        ],
       },
     ],
     availableChannels: [],
@@ -64,9 +82,21 @@ function state(): ChannelsStateInterface {
           id: 10,
           name: 'Channel 10',
           type: ChannelType.Public,
+          messages: [
+            { tag: false, message: 'Hi, my name is Jozko' },
+            { tag: true, message: 'Hello, Jozko !' },
+            { tag: false, message: 'How is it going ?' },
+            { tag: false, message: 'Pretty well' },
+          ],
         },
       },
     ],
+    activeChannel: {
+      id: 1,
+      name: 'Channel 11',
+      type: ChannelType.Public,
+      messages: [],
+    },
   };
 }
 

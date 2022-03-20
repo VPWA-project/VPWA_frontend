@@ -1,5 +1,5 @@
 <template>
-  <q-item class="full-width">
+  <q-item class="q-py-md full-width">
     <q-item-section avatar>
       <q-avatar rounded color="primary" text-color="white">
         {{ nameInitials }}

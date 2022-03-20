@@ -1,6 +1,7 @@
 <template>
   <div class="q-pa-md full-width">
     <q-infinite-scroll @load="onLoad" reverse>
+      <!--<q-infinite-scroll reverse>-->
       <template v-slot:loading>
         <div class="row justify-center q-my-md">
           <q-spinner color="primary" name="dots" size="40px" />
@@ -8,32 +9,31 @@
       </template>
 
       <div v-for="(message, index) in selectedChannelMessages" :key="index">
-        <div>
+        <div class="row items-end">
+          <q-avatar
+            size="35px"
+            class="q-mr-md"
+            rounded
+            color="primary"
+            text-color="white"
+          >
+            JM</q-avatar
+          >
           <q-chat-message
             v-if="message.tag"
             push
             name="me"
-            avatar="https://cdn.quasar.dev/img/avatar1.jpg"
             :text="[message.message]"
             bg-color="red"
           />
           <q-chat-message
             v-if="!message.tag"
             push
+            class="q-mb-none"
             name="me"
-            avatar="https://cdn.quasar.dev/img/avatar1.jpg"
             :text="[message.message]"
             bg-color="green"
           />
-          <q-popup-proxy>
-            <div>
-              <q-banner class="text-h6"> Meno Priezvisko </q-banner>
-              <div class="row">
-                <q-badge color="green" rounded />
-                <q-banner class="q-pt-none"> Status </q-banner>
-              </div>
-            </div>
-          </q-popup-proxy>
         </div>
       </div>
     </q-infinite-scroll>
@@ -42,7 +42,8 @@
 
 <script lang="ts">
 import { defineComponent, ref, watch } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
+import { useRoute } from 'vue-router';
+import { useStore } from 'src/store';
 
 export default defineComponent({
   // props: {
@@ -51,41 +52,27 @@ export default defineComponent({
 
   setup() {
     const items = ref(['a', 'b', 'c', 'd', 'e', 'f', 'g']);
-    const router = useRouter();
+    const $store = useStore();
     const route = useRoute();
-    const channelId = ref(1);
+    const channelId = ref(2);
+    var selectedChannelMessages = ref([{ tag: false, message: 'Boom' }]);
+    var selectedChannel = {
+      id: 1,
+      messages: [{ tag: false, message: 'Hi' }],
+    };
+
+    const channelsMessages = $store.state.channels.channels;
 
     watch(
       () => route.params.id,
-      (id) => (channelId.value = id as unknown as number)
+      (id) => {
+        channelId.value = id as unknown as number;
+        selectedChannel = channelsMessages.find(
+          ({ id }) => id == channelId.value
+        )!;
+        selectedChannelMessages.value = selectedChannel?.messages.map((a) => a);
+      }
     );
-
-    const channelsMessages = ref([
-      {
-        id: 1,
-        messages: [
-          { tag: true, message: 'Hello' },
-          { tag: false, message: 'Good morning' },
-          { tag: false, message: 'Bye' },
-          { tag: true, message: 'How are you ?' },
-        ],
-      },
-      {
-        id: 2,
-        messages: [
-          { tag: false, message: 'Hi, my name is Jozko' },
-          { tag: true, message: 'Hello, Jozko !' },
-          { tag: false, message: 'How is it going ?' },
-          { tag: false, message: 'Pretty well' },
-        ],
-      },
-    ]);
-
-    var selectedChannel = channelsMessages.value.find(
-      ({ id }) => id == channelId.value
-    );
-
-    let selectedChannelMessages = selectedChannel?.messages.map((a) => a);
 
     return {
       items,
@@ -93,9 +80,8 @@ export default defineComponent({
       selectedChannelMessages,
 
       onLoad: (_: number, done: (stop: boolean | undefined) => void) => {
-        //console.log(result);
         setTimeout(() => {
-          selectedChannelMessages?.splice(
+          selectedChannelMessages?.value.splice(
             0,
             0,
             { tag: false, message: 'a' },

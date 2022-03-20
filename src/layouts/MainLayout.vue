@@ -43,6 +43,7 @@ import MessageForm from 'src/components/MessageForm.vue';
 import Header from 'src/components/Header.vue';
 import LeftDrawer from '../components/LeftDrawer.vue';
 import RightDrawer from 'src/components/RightDrawer.vue';
+import { Channel } from 'src/store/channels/state';
 
 export default defineComponent({
   name: 'MainLayout',

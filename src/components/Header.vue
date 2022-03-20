@@ -11,15 +11,7 @@
     <q-toolbar-title>
       {{ activeChannel }}
     </q-toolbar-title>
-    <q-btn
-      v-if="toggleRightDrawer"
-      flat
-      dense
-      round
-      icon="menu"
-      @click="toggleRightDrawer"
-    >
-    </q-btn>
+
     <q-btn flat dense round icon="more_vert" class="q-ml-md">
       <q-menu fit anchor="bottom right" self="top right">
         <div class="column q-gutter-sm">
@@ -58,6 +50,15 @@
           </q-dialog>
         </div>
       </q-menu>
+    </q-btn>
+    <q-btn
+      v-if="toggleRightDrawer"
+      flat
+      dense
+      round
+      icon="menu"
+      @click="toggleRightDrawer"
+    >
     </q-btn>
   </q-toolbar>
 </template>
