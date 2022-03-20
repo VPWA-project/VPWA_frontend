@@ -25,15 +25,6 @@
             :text="[message.message]"
             bg-color="green"
           />
-          <q-popup-proxy>
-            <div>
-              <q-banner class="text-h6"> Meno Priezvisko </q-banner>
-              <div class="row">
-                <q-badge color="green" rounded />
-                <q-banner class="q-pt-none"> Status </q-banner>
-              </div>
-            </div>
-          </q-popup-proxy>
         </div>
       </div>
     </q-infinite-scroll>
