@@ -71,7 +71,17 @@
         >
       </q-item-section>
       <q-item-section avatar>
-        <q-btn round flat icon="add_circle" @click="showBrowseChannels" />
+        <div>
+          <q-btn
+            class="rounded-borders shadow-1 q-px-sm border"
+            color="black"
+            clickable
+            flat
+            @click="showBrowseChannels"
+            icon-right="add_circle"
+            label="Add"
+          />
+        </div>
       </q-item-section>
     </q-item>
   </q-list>
@@ -147,3 +157,9 @@ export default defineComponent({
   },
 });
 </script>
+
+<style scoped>
+.border {
+  border-radius: 15px;
+}
+</style>
