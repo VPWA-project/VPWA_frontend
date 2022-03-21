@@ -1,9 +1,9 @@
 <template>
   <q-list>
-    <div
+    <q-item
       clickable
       @click="toggleUserBannerIcon"
-      class="row justify-between cursor-pointer"
+      class="row justify-between cursor-pointer no-padding"
     >
       <UserMenu />
       <UserBanner v-if="user.loggedInUser" v-bind="user.loggedInUser">
@@ -13,7 +13,7 @@
           </q-item-section>
         </template>
       </UserBanner>
-    </div>
+    </q-item>
 
     <q-separator inset />
 
@@ -25,44 +25,42 @@
       </q-item-section>
     </q-item>
 
-    <q-scroll-area style="height: calc(80px)">
-      <q-list>
-        <ChannelLink
-          v-for="link in invitations"
-          :id="link.id"
-          :key="link.id"
-          :name="link.channel.name"
-          :type="link.channel.type"
-          ><template v-slot:append>
-            <div class="flex justify-end q-gutter-sm">
-              <q-btn
-                round
-                size="sm"
-                color="red"
-                icon="highlight_off"
-                @click="
-                  processInvitation({
-                    id: link.id,
-                    state: InvitationState.Refuse,
-                  })
-                "
-              />
-              <q-btn
-                round
-                size="sm"
-                color="green"
-                icon="check_circle_outline"
-                @click="
-                  processInvitation({
-                    id: link.id,
-                    state: InvitationState.Accept,
-                  })
-                "
-              />
-            </div> </template
-        ></ChannelLink>
-      </q-list>
-    </q-scroll-area>
+    <q-list>
+      <ChannelLink
+        v-for="link in invitations"
+        :id="link.id"
+        :key="link.id"
+        :name="link.channel.name"
+        :type="link.channel.type"
+        ><template v-slot:append>
+          <div class="flex justify-end q-gutter-sm">
+            <q-btn
+              round
+              size="sm"
+              color="red"
+              icon="highlight_off"
+              @click="
+                processInvitation({
+                  id: link.id,
+                  state: InvitationState.Refuse,
+                })
+              "
+            />
+            <q-btn
+              round
+              size="sm"
+              color="green"
+              icon="check_circle_outline"
+              @click="
+                processInvitation({
+                  id: link.id,
+                  state: InvitationState.Accept,
+                })
+              "
+            />
+          </div> </template
+      ></ChannelLink>
+    </q-list>
 
     <q-item>
       <q-item-section>
@@ -91,16 +89,9 @@
     @close="state.isBrowseChannelsOpen = false"
   />
 
-  <q-scroll-area style="height: calc(100% - 190px)">
-    <q-list>
-      <ChannelLink
-        v-for="link in channels"
-        :key="link.id"
-        v-bind="link"
-        @click="switchChannel(link)"
-      />
-    </q-list>
-  </q-scroll-area>
+  <q-list>
+    <ChannelLink v-for="link in channels" :key="link.id" v-bind="link" />
+  </q-list>
 </template>
 
 <script lang="ts">

@@ -11,10 +11,14 @@
           <q-menu fit>
             <q-list style="width: 150px">
               <q-item clickable @click="confirmKickUser(id)" v-close-popup>
-                <q-item-section>Kick</q-item-section>
+                <q-item-section>
+                  <q-item-label>Kick</q-item-label>
+                </q-item-section>
               </q-item>
               <q-item clickable @click="confirmBanUser(id)" v-close-popup>
-                <q-item-section>Ban</q-item-section>
+                <q-item-section>
+                  <q-item-label>Ban</q-item-label>
+                </q-item-section>
               </q-item>
             </q-list>
           </q-menu>
@@ -69,19 +73,20 @@ export default defineComponent({
     const confirmKickUser = (id: number) => {
       const member = channelMembers.value.find((member) => member.id === id);
 
-      if(!member) {
-          return
+      if (!member) {
+        return;
       }
 
       $q.dialog({
         title: 'Confirm',
-        message: `Would you like to really kick ${member.firstname + ' ' + member.lastname}`,
+        message: `Would you like to really kick ${
+          member.firstname + ' ' + member.lastname
+        }`,
         cancel: true,
         persistent: false,
-      })
-      .onOk(() => {
-          kickUser(id)
-      })
+      }).onOk(() => {
+        kickUser(id);
+      });
     };
 
     const kickUser = (id: number) => {
@@ -93,21 +98,22 @@ export default defineComponent({
     };
 
     const confirmBanUser = (id: number) => {
-        const member = channelMembers.value.find((member) => member.id === id);
+      const member = channelMembers.value.find((member) => member.id === id);
 
-      if(!member) {
-          return
+      if (!member) {
+        return;
       }
 
       $q.dialog({
         title: 'Confirm',
-        message: `Would you like to really ban ${member.firstname + ' ' + member.lastname}`,
+        message: `Would you like to really ban ${
+          member.firstname + ' ' + member.lastname
+        }`,
         cancel: true,
         persistent: false,
-      })
-      .onOk(() => {
-          banUser(id)
-      })
+      }).onOk(() => {
+        banUser(id);
+      });
     };
 
     const banUser = (id: number) => {

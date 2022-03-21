@@ -103,6 +103,7 @@ import { defineComponent, reactive } from 'vue';
 import { useStore } from '../store';
 import { helpers, required, email, minLength } from '@vuelidate/validators';
 import { UserRegisterPayload } from '../store/user/types';
+import { useRouter } from 'vue-router';
 
 const isFirstLetterUppercase = (value: string) => {
   return value.charAt(0).toUpperCase() === value.charAt(0);
@@ -158,6 +159,7 @@ export default defineComponent({
     });
 
     const $store = useStore();
+    const router = useRouter();
 
     const v$ = useVuelidate(rules, state);
 
@@ -176,8 +178,13 @@ export default defineComponent({
               nickname: state.nickname,
             };
 
-            $store.dispatch('user/registerUser', payload).catch(console.log);
             state.submitting = false;
+            $store
+              .dispatch('user/registerUser', payload)
+              .then(() => {
+                router.push('/').catch(console.log);
+              })
+              .catch(console.log);
           } else {
             state.submitting = false;
           }
