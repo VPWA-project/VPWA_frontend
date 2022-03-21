@@ -1,5 +1,5 @@
 <template>
-  <q-item class="full-width">
+  <q-item class="q-py-md full-width">
     <q-item-section avatar>
       <q-avatar rounded color="primary" text-color="white">
         {{ nameInitials }}
@@ -7,7 +7,7 @@
       /></q-avatar>
     </q-item-section>
     <q-item-section>
-      <q-item-label>{{ userName }}</q-item-label>
+      <q-item-label class="text-subtitle1">{{ userName }}</q-item-label>
       <q-item-label caption>{{ userNickName }}</q-item-label>
     </q-item-section>
     <slot name="append"></slot>

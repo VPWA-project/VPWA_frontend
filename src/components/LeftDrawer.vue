@@ -15,11 +15,13 @@
       </UserBanner>
     </div>
 
-    <q-separator spaced inset />
+    <q-separator inset />
 
     <q-item>
       <q-item-section>
-        <q-item-label>Invitations</q-item-label>
+        <q-item-label class="text-weight-medium text-subtitle1"
+          >Invitations</q-item-label
+        >
       </q-item-section>
     </q-item>
 
@@ -64,10 +66,22 @@
 
     <q-item>
       <q-item-section>
-        <q-item-label>Channels</q-item-label>
+        <q-item-label class="text-weight-medium text-subtitle1"
+          >Channels</q-item-label
+        >
       </q-item-section>
       <q-item-section avatar>
-        <q-btn round flat icon="add_circle" @click="showBrowseChannels" />
+        <div>
+          <q-btn
+            class="rounded-borders shadow-1 q-px-sm border"
+            color="black"
+            clickable
+            flat
+            @click="showBrowseChannels"
+            icon-right="add_circle"
+            label="Add"
+          />
+        </div>
       </q-item-section>
     </q-item>
   </q-list>
@@ -83,6 +97,7 @@
         v-for="link in channels"
         :key="link.id"
         v-bind="link"
+        @click="switchChannel(link)"
       />
     </q-list>
   </q-scroll-area>
@@ -106,7 +121,7 @@ export default defineComponent({
     UserMenu,
     UserBanner,
     ChannelLink,
-    SearchChannels
+    SearchChannels,
   },
   setup() {
     const $store = useStore();
@@ -137,8 +152,14 @@ export default defineComponent({
       channels: computed(() => {
         return $store.state.channels.channels;
       }),
-      showBrowseChannels: () => state.isBrowseChannelsOpen = true,
+      showBrowseChannels: () => (state.isBrowseChannelsOpen = true),
     };
   },
 });
 </script>
+
+<style scoped>
+.border {
+  border-radius: 15px;
+}
+</style>

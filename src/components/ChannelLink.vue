@@ -1,17 +1,19 @@
 <template>
-  <q-item clickable :href="'#/chat/' + id">
-    <q-item-section v-if="type" avatar>
-      <q-icon :name="getIconByType(type)" />
-    </q-item-section>
+  <q-card class="q-ma-sm border">
+    <q-item clickable :href="'#/chat/' + id" class="border">
+      <q-item-section v-if="type" avatar>
+        <q-icon :name="getIconByType(type)" />
+      </q-item-section>
 
-    <q-item-section>
-      <q-item-label>{{ name }}</q-item-label>
-    </q-item-section>
+      <q-item-section>
+        <q-item-label>{{ name }}</q-item-label>
+      </q-item-section>
 
-    <q-item-section>
-      <slot name="append"> </slot>
-    </q-item-section>
-  </q-item>
+      <q-item-section>
+        <slot name="append"> </slot>
+      </q-item-section>
+    </q-item>
+  </q-card>
 </template>
 
 <script lang="ts">
@@ -51,3 +53,9 @@ export default defineComponent({
   },
 });
 </script>
+
+<style scoped>
+.border {
+  border-radius: 15px;
+}
+</style>
