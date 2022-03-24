@@ -36,6 +36,15 @@
         </q-list>
       </q-menu>
     </q-btn>
+    <q-btn
+      v-if="toggleRightDrawer"
+      flat
+      dense
+      round
+      icon="menu"
+      @click="toggleRightDrawer"
+    >
+    </q-btn>
     <q-dialog v-model="state.isConfirmDialogOpen">
       <q-card>
         <q-card-section class="row items-center">

@@ -1,5 +1,5 @@
 <template>
-  <div class="q-pa-md full-width">
+  <div class="q-pa-md full-width bg-white">
     <q-infinite-scroll @load="onLoad" reverse>
       <!--<q-infinite-scroll reverse>-->
       <template v-slot:loading>
@@ -32,7 +32,7 @@
             class="q-mb-none"
             name="me"
             :text="[message.message]"
-            bg-color="green"
+            bg-color="blue-grey-2"
           />
         </div>
       </div>

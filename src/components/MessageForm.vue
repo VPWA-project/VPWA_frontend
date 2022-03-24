@@ -1,5 +1,7 @@
 <template>
-  <q-toolbar class="bg-grey-3 text-black">
+  <div
+    class="bg-cyan-9 text-black q-px-sm q-mb-sm q-mx-sm rounded-borders border-all-15"
+  >
     <div class="col">
       <TypingChips />
       <q-form
@@ -18,7 +20,7 @@
         <q-btn round flat icon="send" type="submit" />
       </q-form>
     </div>
-  </q-toolbar>
+  </div>
 </template>
 
 <script lang="ts">
@@ -62,3 +64,9 @@ export default defineComponent({
   components: { TypingChips },
 });
 </script>
+
+<style scoped>
+.border-all-15 {
+  border-radius: 15px;
+}
+</style>

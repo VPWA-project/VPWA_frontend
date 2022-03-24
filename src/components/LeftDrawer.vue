@@ -3,7 +3,7 @@
     <q-item
       clickable
       @click="toggleUserBannerIcon"
-      class="row justify-between cursor-pointer no-padding"
+      class="row cursor-pointer no-padding"
     >
       <UserMenu />
       <UserBanner v-if="user.loggedInUser" v-bind="user.loggedInUser">
@@ -15,82 +15,83 @@
       </UserBanner>
     </q-item>
 
-    <q-separator inset />
+    <div class="q-ma-md q-py-md bg-grey-2 border-15 rounded-borders">
+      <q-item>
+        <q-item-section>
+          <q-item-label class="text-weight-medium text-subtitle1"
+            >Invitations</q-item-label
+          >
+        </q-item-section>
+      </q-item>
 
-    <q-item>
-      <q-item-section>
-        <q-item-label class="text-weight-medium text-subtitle1"
-          >Invitations</q-item-label
-        >
-      </q-item-section>
-    </q-item>
+      <q-list>
+        <ChannelLink
+          v-for="link in invitations"
+          :id="link.id"
+          :key="link.id"
+          :name="link.channel.name"
+          :type="link.channel.type"
+          ><template v-slot:append>
+            <div class="flex justify-end q-gutter-sm">
+              <q-btn
+                round
+                size="sm"
+                color="red"
+                icon="highlight_off"
+                @click="
+                  processInvitation({
+                    id: link.id,
+                    state: InvitationState.Refuse,
+                  })
+                "
+              />
+              <q-btn
+                round
+                size="sm"
+                color="green"
+                icon="check_circle_outline"
+                @click="
+                  processInvitation({
+                    id: link.id,
+                    state: InvitationState.Accept,
+                  })
+                "
+              />
+            </div> </template
+        ></ChannelLink>
+      </q-list>
+    </div>
 
-    <q-list>
-      <ChannelLink
-        v-for="link in invitations"
-        :id="link.id"
-        :key="link.id"
-        :name="link.channel.name"
-        :type="link.channel.type"
-        ><template v-slot:append>
-          <div class="flex justify-end q-gutter-sm">
+    <div class="q-ma-md q-py-md bg-grey-2 border-15 rounded-borders">
+      <q-item>
+        <q-item-section>
+          <q-item-label class="text-weight-medium text-subtitle1"
+            >Channels</q-item-label
+          >
+        </q-item-section>
+        <q-item-section avatar>
+          <div>
             <q-btn
-              round
-              size="sm"
-              color="red"
-              icon="highlight_off"
-              @click="
-                processInvitation({
-                  id: link.id,
-                  state: InvitationState.Refuse,
-                })
-              "
+              class="rounded-borders bg-white q-px-sm border-15"
+              color="black"
+              clickable
+              flat
+              @click="showBrowseChannels"
+              icon-right="add_circle"
+              label="Add"
             />
-            <q-btn
-              round
-              size="sm"
-              color="green"
-              icon="check_circle_outline"
-              @click="
-                processInvitation({
-                  id: link.id,
-                  state: InvitationState.Accept,
-                })
-              "
-            />
-          </div> </template
-      ></ChannelLink>
-    </q-list>
+          </div>
+        </q-item-section>
+      </q-item>
+      <SearchChannels
+        :open="state.isBrowseChannelsOpen"
+        @close="state.isBrowseChannelsOpen = false"
+      />
 
-    <q-item>
-      <q-item-section>
-        <q-item-label class="text-weight-medium text-subtitle1"
-          >Channels</q-item-label
-        >
-      </q-item-section>
-      <q-item-section avatar>
-        <div>
-          <q-btn
-            class="rounded-borders shadow-1 q-px-sm border"
-            color="black"
-            clickable
-            flat
-            @click="showBrowseChannels"
-            icon-right="add_circle"
-            label="Add"
-          />
-        </div>
-      </q-item-section>
-    </q-item>
-  </q-list>
-
-  <SearchChannels
-    :open="state.isBrowseChannelsOpen"
-    @close="state.isBrowseChannelsOpen = false"
-  />
-
-  <q-list>
-    <ChannelLink v-for="link in channels" :key="link.id" v-bind="link" />
+      <q-list>
+        <ChannelLink v-for="link in channels" :key="link.id" v-bind="link" />
+      </q-list>
+    </div>
   </q-list>
 </template>
 
@@ -150,7 +151,7 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.border {
+.border-15 {
   border-radius: 15px;
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <q-item class="q-py-md full-width">
+  <q-item class="q-ma-md q-py-md bg-grey-2 border-15 rounded-borders">
     <q-item-section avatar>
       <q-avatar rounded color="primary" text-color="white">
         {{ nameInitials }}
@@ -64,3 +64,9 @@ export default defineComponent({
   },
 });
 </script>
+
+<style scoped>
+.border-15 {
+  border-radius: 15px;
+}
+</style>
