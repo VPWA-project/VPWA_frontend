@@ -1,6 +1,8 @@
 <template>
   <q-layout view="lHr LpR lFr">
-    <q-header elevated>
+    <q-header
+      class="rounded-borders bg-cyan-9 q-px-sm q-mt-sm q-mx-sm border-15"
+    >
       <Header
         :toggleLeftDrawer="toggleLeftDrawer"
         :toggleRightDrawer="toggleRightDrawer"
@@ -12,7 +14,8 @@
       v-model="state.isLeftDrawerOpen"
       side="left"
       show-if-above
-      bordered
+      style="border-radius: 0px 15px 15px 0px"
+      class="bg-blue-grey-2"
     >
       <LeftDrawer />
     </q-drawer>
@@ -21,7 +24,8 @@
       show-if-above
       v-model="state.isRightDrawerOpen"
       side="right"
-      bordered
+      style="border-radius: 15px 0px 0px 15px"
+      class="bg-blue-grey-2"
     >
       <RightDrawer />
     </q-drawer>
@@ -30,7 +34,7 @@
       <router-view />
     </q-page-container>
 
-    <q-footer elevated>
+    <q-footer class="bg-white">
       <MessageForm />
     </q-footer>
   </q-layout>
@@ -43,7 +47,6 @@ import MessageForm from 'src/components/MessageForm.vue';
 import Header from 'src/components/Header.vue';
 import LeftDrawer from '../components/LeftDrawer.vue';
 import RightDrawer from 'src/components/RightDrawer.vue';
-import { Channel } from 'src/store/channels/state';
 
 export default defineComponent({
   name: 'MainLayout',
@@ -75,3 +78,9 @@ export default defineComponent({
   },
 });
 </script>
+
+<style scoped>
+.border-15 {
+  border-radius: 15px;
+}
+</style>
