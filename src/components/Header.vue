@@ -2,6 +2,7 @@
   <q-toolbar style="height: 56px">
     <q-btn
       v-if="toggleLeftDrawer"
+      class="lt-lg"
       flat
       dense
       round
@@ -38,6 +39,7 @@
     </q-btn>
     <q-btn
       v-if="toggleRightDrawer"
+      class="lt-lg"
       flat
       dense
       round
