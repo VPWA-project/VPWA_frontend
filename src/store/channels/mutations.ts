@@ -52,6 +52,7 @@ const mutation: MutationTree<ChannelsStateInterface> = {
       .messages.push({
         tag: false,
         message: payload.message,
+        createdAt: new Date(),
       });
   },
 
@@ -90,12 +91,7 @@ const mutation: MutationTree<ChannelsStateInterface> = {
           id: invitation.channel.id,
           name: invitation.channel.name,
           type: invitation.channel.type,
-          messages: [
-            { tag: false, message: 'New Channel' },
-            { tag: true, message: 'New Channel' },
-            { tag: false, message: 'New Channel' },
-            { tag: false, message: 'New Channel' },
-          ],
+          messages: [],
         });
       }
 

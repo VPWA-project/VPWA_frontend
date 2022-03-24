@@ -7,8 +7,8 @@
         </div>
       </template>
 
-      <div v-for="(message, index) in selectedChannelMessages" :key="index">
-        <div class="row items-end">
+      <div v-for="(message, index) in messages" :key="index">
+        <div class="row items-center">
           <q-avatar
             size="35px"
             class="q-mr-md"
@@ -19,19 +19,12 @@
             JM</q-avatar
           >
           <q-chat-message
-            v-if="message.tag"
             push
+            :class="{ 'q-mb-none': message.tag }"
             name="me"
             :text="[message.message]"
-            bg-color="red"
-          />
-          <q-chat-message
-            v-if="!message.tag"
-            push
-            class="q-mb-none"
-            name="me"
-            :text="[message.message]"
-            bg-color="blue-grey-2"
+            :bg-color="message.tag ? 'red' : 'bg-blue'"
+            :stamp="timeStamp(message.createdAt)"
           />
         </div>
       </div>
@@ -40,9 +33,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watch } from 'vue';
-import { useRoute } from 'vue-router';
-import { useStore } from 'src/store';
+import { computed, defineComponent, ref } from 'vue';
+import moment from 'moment';
 
 export default defineComponent({
   // props: {
@@ -51,47 +43,75 @@ export default defineComponent({
 
   setup() {
     const items = ref(['a', 'b', 'c', 'd', 'e', 'f', 'g']);
-    const $store = useStore();
-    const route = useRoute();
-    const channelId = ref(2);
-    var selectedChannelMessages = ref([{ tag: false, message: 'Boom' }]);
-    var selectedChannel = {
-      id: 1,
-      messages: [{ tag: false, message: 'Hi' }],
-    };
-
-    const channelsMessages = $store.state.channels.channels;
-
-    watch(
-      () => route.params.id,
-      (id) => {
-        channelId.value = id as unknown as number;
-        selectedChannel = channelsMessages.find(
-          ({ id }) => id == channelId.value
-        )!;
-        selectedChannelMessages.value = selectedChannel?.messages.map((a) => a);
-      }
-    );
+    const messages = ref([
+      {
+        tag: true,
+        message: 'Hello',
+        createdAt: moment(moment.now()).subtract(2, 'days').toDate(),
+      },
+      {
+        tag: false,
+        message: 'Good morning',
+        createdAt: moment(moment.now()).subtract(1, 'days').toDate(),
+      },
+      {
+        tag: false,
+        message: 'Bye',
+        createdAt: moment(moment.now()).subtract(1, 'hours').toDate(),
+      },
+      {
+        tag: true,
+        message: 'How are you ?',
+        createdAt: moment(moment.now()).subtract(1, 'minutes').toDate(),
+      },
+    ]);
 
     return {
       items,
-      channelsMessages,
-      selectedChannelMessages,
-
+      messages,
       onLoad: (_: number, done: (stop: boolean | undefined) => void) => {
         setTimeout(() => {
-          selectedChannelMessages?.value.splice(
+          messages.value.splice(
             0,
             0,
-            { tag: false, message: 'a' },
-            { tag: false, message: 'b' },
-            { tag: false, message: 'c' },
-            { tag: false, message: 'd' },
-            { tag: false, message: 'e' }
+            {
+              tag: false,
+              message: 'a',
+              createdAt: moment(moment.now()).subtract(3, 'days').toDate(),
+            },
+            {
+              tag: false,
+              message: 'b',
+              createdAt: moment(moment.now()).subtract(3, 'days').toDate(),
+            },
+            {
+              tag: false,
+              message: 'c',
+              createdAt: moment(moment.now()).subtract(3, 'days').toDate(),
+            },
+            {
+              tag: false,
+              message: 'd',
+              createdAt: moment(moment.now()).subtract(3, 'days').toDate(),
+            },
+            {
+              tag: false,
+              message: 'e',
+              createdAt: moment(moment.now()).subtract(3, 'days').toDate(),
+            }
           );
           done(false);
         }, 2000);
       },
+
+      timeStamp: computed(() => {
+        return (time: Date) => {
+          const today = moment.now();
+          const diff = moment(time).diff(today);
+
+          return moment.duration(diff).humanize(true);
+        };
+      }),
     };
   },
 });
