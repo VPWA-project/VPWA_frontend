@@ -8,24 +8,29 @@
       </template>
 
       <div v-for="(message, index) in messages" :key="index">
+        <q-chat-message :label="date(message.createdAt)" />
         <div class="row items-center">
-          <q-avatar
-            size="35px"
-            class="q-mr-md"
-            rounded
-            color="primary"
-            text-color="white"
-          >
-            JM</q-avatar
-          >
           <q-chat-message
             push
             :class="{ 'q-mb-none': message.tag }"
-            name="me"
+            :name="fullName(message.firstname, message.lastname)"
             :text="[message.message]"
             :bg-color="message.tag ? 'red' : 'bg-blue'"
             :stamp="timeStamp(message.createdAt)"
-          />
+          >
+            <template v-slot:avatar>
+              <q-avatar
+                class="q-mr-md"
+                rounded
+                color="primary"
+                text-color="white"
+              >
+                {{
+                  nameInitials(message.firstname, message.lastname)
+                }}</q-avatar
+              >
+            </template>
+          </q-chat-message>
         </div>
       </div>
     </q-infinite-scroll>
@@ -37,37 +42,43 @@ import { computed, defineComponent, ref } from 'vue';
 import moment from 'moment';
 
 export default defineComponent({
-  // props: {
-  //   messages: Array
-  // },
-
   setup() {
-    const items = ref(['a', 'b', 'c', 'd', 'e', 'f', 'g']);
     const messages = ref([
       {
-        tag: true,
+        firstname: 'John',
+        lastname: 'Doe',
+        nickname: 'john',
+        tag: false,
         message: 'Hello',
         createdAt: moment(moment.now()).subtract(2, 'days').toDate(),
       },
       {
-        tag: false,
+        firstname: 'Frank',
+        lastname: 'Doe',
+        nickname: 'frank',
+        tag: true,
         message: 'Good morning',
         createdAt: moment(moment.now()).subtract(1, 'days').toDate(),
       },
       {
+        firstname: 'Martin',
+        lastname: 'Doe',
+        nickname: 'martin',
         tag: false,
-        message: 'Bye',
+        message: 'Hi',
         createdAt: moment(moment.now()).subtract(1, 'hours').toDate(),
       },
       {
-        tag: true,
-        message: 'How are you ?',
+        firstname: 'Jozko',
+        lastname: 'Mrkvicka',
+        nickname: 'jozino',
+        tag: false,
+        message: 'Hi, how are you ?',
         createdAt: moment(moment.now()).subtract(1, 'minutes').toDate(),
       },
     ]);
 
     return {
-      items,
       messages,
       onLoad: (_: number, done: (stop: boolean | undefined) => void) => {
         setTimeout(() => {
@@ -75,26 +86,41 @@ export default defineComponent({
             0,
             0,
             {
+              firstname: 'John',
+              lastname: 'Doe',
+              nickname: 'john',
               tag: false,
               message: 'a',
               createdAt: moment(moment.now()).subtract(3, 'days').toDate(),
             },
             {
+              firstname: 'John',
+              lastname: 'Doe',
+              nickname: 'john',
               tag: false,
               message: 'b',
               createdAt: moment(moment.now()).subtract(3, 'days').toDate(),
             },
             {
+              firstname: 'John',
+              lastname: 'Doe',
+              nickname: 'john',
               tag: false,
               message: 'c',
               createdAt: moment(moment.now()).subtract(3, 'days').toDate(),
             },
             {
+              firstname: 'John',
+              lastname: 'Doe',
+              nickname: 'john',
               tag: false,
               message: 'd',
               createdAt: moment(moment.now()).subtract(3, 'days').toDate(),
             },
             {
+              firstname: 'John',
+              lastname: 'Doe',
+              nickname: 'john',
               tag: false,
               message: 'e',
               createdAt: moment(moment.now()).subtract(3, 'days').toDate(),
@@ -106,12 +132,25 @@ export default defineComponent({
 
       timeStamp: computed(() => {
         return (time: Date) => {
-          const today = moment.now();
-          const diff = moment(time).diff(today);
-
-          return moment.duration(diff).humanize(true);
+          return moment(time).fromNow();
         };
       }),
+
+      date: computed(() => {
+        return (time: Date) => moment(time).format('DD/MM/YYYY');
+      }),
+
+      nameInitials: computed(
+        () => (firstname: string, lastname: string) =>
+          firstname.charAt(0).toUpperCase() + lastname.charAt(0).toUpperCase()
+      ),
+
+      fullName: computed(
+        () => (firstname: string, lastname: string) =>
+          firstname + ' ' + lastname
+      ),
+
+      nickname: computed(() => (nickname: string) => '@' + nickname)
     };
   },
 });
