@@ -89,7 +89,7 @@
       />
 
       <q-list>
-        <ChannelLink v-for="link in channels" :key="link.id" v-bind="link" @click="switchChannel(link)" />
+        <ChannelLink v-for="link in channels" :key="link.id" v-bind="link" />
       </q-list>
     </div>
   </q-list>
@@ -102,11 +102,12 @@ import {
   InvitationInfo,
   InvitationState,
 } from 'src/store/channels/state';
-import { defineComponent, computed, reactive } from 'vue';
+import { defineComponent, computed, reactive, watch } from 'vue';
 import UserMenu from './UserMenu.vue';
 import UserBanner from './UserBanner.vue';
 import ChannelLink from './ChannelLink.vue';
 import SearchChannels from './SearchChannels.vue';
+import { useRoute } from 'vue-router';
 
 export default defineComponent({
   components: {
@@ -117,6 +118,17 @@ export default defineComponent({
   },
   setup() {
     const $store = useStore();
+    const route = useRoute();
+
+    watch(
+      () => route.params.id,
+      (id) => {
+        const channel = $store.state.channels.channels.find(
+          (channel) => channel.id === parseInt(id as string)
+        );
+        $store.dispatch('channels/setActiveChannel', channel).catch(console.log);
+      }
+    );
 
     const state = reactive({
       userBannerIcon: 'expand_more',

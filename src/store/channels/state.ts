@@ -91,17 +91,6 @@ function state(): ChannelsStateInterface {
         },
       },
     ],
-    activeChannel: {
-      id: 1,
-      name: 'Channel 11',
-      type: ChannelType.Public,
-      messages: [
-        { tag: false, message: 'Active channel' },
-        { tag: true, message: 'Active channel' },
-        { tag: false, message: 'Active channel' },
-        { tag: false, message: 'Active channel' },
-      ],
-    },
   };
 }
 
