@@ -102,7 +102,7 @@ import {
   InvitationInfo,
   InvitationState,
 } from 'src/store/channels/state';
-import { defineComponent, computed, reactive, watch } from 'vue';
+import { defineComponent, computed, reactive, watch, onMounted } from 'vue';
 import UserMenu from './UserMenu.vue';
 import UserBanner from './UserBanner.vue';
 import ChannelLink from './ChannelLink.vue';
@@ -120,15 +120,23 @@ export default defineComponent({
     const $store = useStore();
     const route = useRoute();
 
+    const setActiveChannel = (id: string) => {
+      const channel = $store.state.channels.channels.find(
+        (channel) => channel.id === parseInt(id)
+      );
+      $store.dispatch('channels/setActiveChannel', channel).catch(console.log);
+    };
+
     watch(
       () => route.params.id,
       (id) => {
-        const channel = $store.state.channels.channels.find(
-          (channel) => channel.id === parseInt(id as string)
-        );
-        $store.dispatch('channels/setActiveChannel', channel).catch(console.log);
+        setActiveChannel(id as string);
       }
     );
+
+    onMounted(() => {
+      setActiveChannel(route.params.id as string);
+    });
 
     const state = reactive({
       userBannerIcon: 'expand_more',
