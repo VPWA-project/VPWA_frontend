@@ -8,7 +8,13 @@
       </template>
 
       <div v-for="(message, index) in messages" :key="index">
-        <q-chat-message :label="date(message.createdAt)" />
+        <q-chat-message
+          v-if="
+            index == 0 ||
+            !areDatesSame(message.createdAt, messages[index - 1].createdAt)
+          "
+          :label="date(message.createdAt)"
+        />
         <div class="row items-center">
           <q-chat-message
             push
@@ -25,10 +31,8 @@
                 color="primary"
                 text-color="white"
               >
-                {{
-                  nameInitials(message.firstname, message.lastname)
-                }}</q-avatar
-              >
+                {{ nameInitials(message.firstname, message.lastname) }}
+              </q-avatar>
             </template>
           </q-chat-message>
         </div>
@@ -150,7 +154,15 @@ export default defineComponent({
           firstname + ' ' + lastname
       ),
 
-      nickname: computed(() => (nickname: string) => '@' + nickname)
+      nickname: computed(() => (nickname: string) => '@' + nickname),
+
+      areDatesSame: (current: Date, previous: Date) => {
+        return (
+          current.getDate() === previous.getDate() &&
+          current.getMonth() === previous.getMonth() &&
+          current.getFullYear() === previous.getFullYear()
+        );
+      },
     };
   },
 });
