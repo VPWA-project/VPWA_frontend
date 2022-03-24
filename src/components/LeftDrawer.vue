@@ -39,10 +39,11 @@
                 color="red"
                 icon="highlight_off"
                 @click="
-                  processInvitation({
-                    id: link.id,
-                    state: InvitationState.Refuse,
-                  })
+                  confirmInvitationRefuse(
+                    link.id,
+                    InvitationState.Refuse,
+                    link.channel.name
+                  )
                 "
               />
               <q-btn
@@ -108,6 +109,7 @@ import UserBanner from './UserBanner.vue';
 import ChannelLink from './ChannelLink.vue';
 import SearchChannels from './SearchChannels.vue';
 import { useRoute } from 'vue-router';
+import { useQuasar } from 'quasar';
 
 export default defineComponent({
   components: {
@@ -118,6 +120,7 @@ export default defineComponent({
   },
   setup() {
     const $store = useStore();
+    const $q = useQuasar();
     const route = useRoute();
 
     const setActiveChannel = (id: string) => {
@@ -143,11 +146,29 @@ export default defineComponent({
       isBrowseChannelsOpen: false,
     });
 
+    const processInvitation = (inv: InvitationInfo) =>
+      $store.dispatch('channels/processInvitation', inv).catch(console.log);
+
+    const confirmInvitationRefuse = (
+      linkId: number,
+      state: InvitationState,
+      channelName: string
+    ) => {
+      $q.dialog({
+        title: 'Confirm',
+        message: `Would you like to really refuse invitation to channel ${channelName}`,
+        cancel: true,
+        persistent: false,
+      }).onOk(() => {
+        processInvitation({ id: linkId, state }).catch(console.log);
+      });
+    };
+
     return {
       state,
       InvitationState,
-      processInvitation: (inv: InvitationInfo) =>
-        $store.dispatch('channels/processInvitation', inv).catch(console.log),
+      processInvitation,
+      confirmInvitationRefuse,
       switchChannel: (channel: Channel) =>
         $store
           .dispatch('channels/setActiveChannel', channel)
