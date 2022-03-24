@@ -89,7 +89,7 @@
       />
 
       <q-list>
-        <ChannelLink v-for="link in channels" :key="link.id" v-bind="link" />
+        <ChannelLink v-for="link in channels" :key="link.id" v-bind="link" @click="switchChannel(link)" />
       </q-list>
     </div>
   </q-list>
