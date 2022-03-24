@@ -27,7 +27,7 @@
       <q-list>
         <ChannelLink
           v-for="link in invitations"
-          :id="link.id"
+          :id="link.channel.id"
           :key="link.id"
           :name="link.channel.name"
           :type="link.channel.type"
