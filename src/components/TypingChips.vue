@@ -1,16 +1,21 @@
 <template>
   <div :class="{ 'q-py-sm': typingPeople.length > 0 }">
-    <q-card v-show="state.showMessage" class="q-my-sm">
-      <q-card-section class="bg-primary text-white">
+    <q-card v-show="state.showMessage" class="q-my-sm border-all-15">
+      <q-card-section class="bg-grey-2 text-black">
         <div class="text-subtitle2">{{ state.nickname }} is typing</div>
       </q-card-section>
-
-      <q-separator />
 
       <q-card-section> {{ state.text }} </q-card-section>
 
       <q-card-actions align="right">
-        <q-btn flat @click="closeShowMessage">Close</q-btn>
+        <q-btn
+          class="rounded-borders self-end bg-grey-2 q-px-sm border-all-15"
+          color="black"
+          clickable
+          flat
+          @click="closeShowMessage"
+          icon="close"
+        />
       </q-card-actions>
     </q-card>
 
@@ -18,14 +23,18 @@
       clickable
       outline
       @click="openMessage(person)"
-      icon="textsms"
       v-for="person in typingPeople.slice(0, maxChipsToDisplay)"
       :key="person.id"
     >
-      {{ person.nickname }} is typing...
+      {{ person.nickname }}
+      <q-spinner-dots class="q-pl-xs q-mt-xs" size="1.5rem" />
     </q-chip>
 
-    <q-chip :ripple="false" outline v-if="typingPeople.length > maxChipsToDisplay">
+    <q-chip
+      :ripple="false"
+      outline
+      v-if="typingPeople.length > maxChipsToDisplay"
+    >
       and {{ typingPeople.length - maxChipsToDisplay }} more...
     </q-chip>
   </div>
@@ -91,3 +100,9 @@ export default defineComponent({
   },
 });
 </script>
+
+<style scoped>
+.border-all-15 {
+  border-radius: 15px;
+}
+</style>

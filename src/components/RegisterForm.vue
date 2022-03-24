@@ -3,8 +3,9 @@
     <h2 class="text-h6 text-center">Register</h2>
 
     <q-input
-      class="q-mt-lg"
-      outlined
+      class="q-mt-lg rounded-borders border-all-15 bg-white q-pb-none q-pl-md q-pr-md"
+      color="cyan-9"
+      borderless
       v-model="state.email"
       :error="v$.email.$error"
       label="Email"
@@ -17,8 +18,9 @@
     </q-input>
 
     <q-input
-      class="q-mt-md"
-      outlined
+      class="q-mt-lg rounded-borders border-all-15 bg-white q-pb-none q-pl-md q-pr-md"
+      color="cyan-9"
+      borderless
       v-model="state.password"
       :error="v$.password.$error"
       :type="state.isPwd ? 'password' : 'text'"
@@ -39,8 +41,9 @@
     </q-input>
 
     <q-input
-      class="q-mt-md"
-      outlined
+      class="q-mt-lg rounded-borders border-all-15 bg-white q-pb-none q-pl-md q-pr-md"
+      color="cyan-9"
+      borderless
       v-model="state.firstname"
       :error="v$.firstname.$error"
       label="Firstname"
@@ -53,8 +56,9 @@
     </q-input>
 
     <q-input
-      class="q-mt-md"
-      outlined
+      class="q-mt-lg rounded-borders border-all-15 bg-white q-pb-none q-pl-md q-pr-md"
+      color="cyan-9"
+      borderless
       v-model="state.lastname"
       :error="v$.lastname.$error"
       label="Lastname"
@@ -67,8 +71,9 @@
     </q-input>
 
     <q-input
-      class="q-mt-md"
-      outlined
+      class="q-mt-lg rounded-borders border-all-15 bg-white q-pb-none q-pl-md q-pr-md"
+      color="cyan-9"
+      borderless
       v-model="state.nickname"
       :error="v$.nickname.$error"
       label="Nickname"
@@ -85,9 +90,9 @@
         type="submit"
         :loading="state.submitting"
         label="Register"
-        class="q-mt-md q-pa-md"
+        class="q-mt-lg q-pa-md rounded-borders border-all-15"
         style="width: 100%"
-        color="blue"
+        color="cyan-9"
       >
         <template v-slot:loading>
           <q-spinner-facebook />
@@ -200,3 +205,9 @@ export default defineComponent({
   },
 });
 </script>
+
+<style scoped>
+.border-all-15 {
+  border-radius: 15px;
+}
+</style>

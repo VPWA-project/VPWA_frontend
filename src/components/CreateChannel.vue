@@ -1,6 +1,13 @@
 <template>
-  <q-dialog v-model="isDialogOpen" maximized full-width full-height>
-    <q-card>
+  <q-dialog
+    v-model="isDialogOpen"
+    :full-width="$q.screen.lt.sm"
+    :full-height="$q.screen.lt.sm"
+    :maximized="$q.screen.lt.sm"
+  >
+    <q-card
+      class="full-height full-width bg-grey-3 rounded-borders border-all-15"
+    >
       <div style="max-width: 800px; margin-left: auto; margin-right: auto">
         <q-card-section class="flex-center col">
           <div class="row flex-center justify-between no-wrap">
@@ -24,7 +31,7 @@
             }`"
             v-model="state.isChannelPublic"
             keep-color
-            :color="`${state.isChannelPublic ? 'green' : 'orange'}`"
+            :color="`${state.isChannelPublic ? 'cyan-9' : 'blue-grey'}`"
           />
           <p class="text-grey-7" v-show="!state.isChannelPublic">
             A private channel is only visible to its members and only members of
@@ -37,9 +44,10 @@
             <q-input
               v-model="state.channelName"
               :error="v$.channelName.$error"
-              class="q-mt-lg"
+              class="q-mt-lg rounded-borders border-all-15 bg-white q-pb-none q-pl-md q-pr-md"
+              color="cyan-9"
+              borderless
               type="text"
-              outlined
               bottom-slots
               label="Name"
             >
@@ -54,7 +62,6 @@
             </q-input>
 
             <q-select
-              outlined
               v-model="invitations"
               use-input
               use-chips
@@ -62,7 +69,9 @@
               stack-label
               input-debounce="0"
               label="Invitations"
-              class="q-mt-md"
+              class="q-mt-lg rounded-borders border-all-15 bg-white q-pb-none q-pl-md q-pr-md"
+              color="cyan-9"
+              borderless
               :options="options"
               @filter="fetchUsers"
             >
@@ -80,8 +89,9 @@
               :loading="state.submitting"
               flat
               label="Create channel"
-              class="q-mt-lg"
-              style="color: #ff0080"
+              class="rounded-borders q-mt-lg bg-white border-all-15"
+              color="black"
+              clickable
             >
               <template v-slot:loading>
                 <q-spinner-facebook />
@@ -211,3 +221,9 @@ export default defineComponent({
   },
 });
 </script>
+
+<style scoped>
+.border-all-15 {
+  border-radius: 15px;
+}
+</style>

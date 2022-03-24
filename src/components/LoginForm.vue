@@ -3,9 +3,10 @@
     <h2 class="text-h6 text-center">Login</h2>
 
     <q-input
-      class="q-mt-lg"
-      outlined
+      class="q-mt-lg rounded-borders border-all-15 bg-white q-pb-none q-pl-md q-pr-md"
+      color="cyan-9"
       v-model="state.email"
+      borderless
       :error="v$.email.$error"
       label="Email"
     >
@@ -16,8 +17,9 @@
       </template></q-input
     >
     <q-input
-      class="q-mt-md"
-      outlined
+      color="cyan-9"
+      class="q-mt-lg rounded-borders border-all-15 bg-white q-pb-none q-pl-md q-pr-md"
+      borderless
       v-model="state.password"
       :error="v$.password.$error"
       :type="state.isPwd ? 'password' : 'text'"
@@ -26,7 +28,7 @@
       <template v-slot:append>
         <q-icon
           :name="state.isPwd ? 'visibility_off' : 'visibility'"
-          class="cursor-pointer"
+          class="cursor-pointer q-pr-md"
           @click="state.isPwd = !state.isPwd"
         />
       </template>
@@ -43,9 +45,9 @@
         type="submit"
         :loading="state.submitting"
         label="Login"
-        class="q-mt-md q-pa-md"
+        class="q-mt-lg q-pa-md rounded-borders border-all-15"
         style="width: 100%"
-        color="blue"
+        color="cyan-9"
       >
         <template v-slot:loading>
           <q-spinner-facebook />
@@ -133,3 +135,9 @@ export default defineComponent({
   },
 });
 </script>
+
+<style scoped>
+.border-all-15 {
+  border-radius: 15px;
+}
+</style>
