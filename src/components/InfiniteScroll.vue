@@ -156,13 +156,13 @@ export default defineComponent({
 
       nickname: computed(() => (nickname: string) => '@' + nickname),
 
-      areDatesSame: (current: Date, previous: Date) => {
+      areDatesSame: computed(() => (current: Date, previous: Date) => {
         return (
           current.getDate() === previous.getDate() &&
           current.getMonth() === previous.getMonth() &&
           current.getFullYear() === previous.getFullYear()
         );
-      },
+      }),
     };
   },
 });
