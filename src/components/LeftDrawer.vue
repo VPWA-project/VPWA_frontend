@@ -25,12 +25,7 @@
       </q-item>
 
       <q-list>
-        <ChannelLink
-          v-for="link in invitations"
-          :id="link.channel.id"
-          :key="link.id"
-          :name="link.channel.name"
-          :type="link.channel.type"
+        <ChannelLink v-for="link in invitations" :key="link.id" v-bind="link.channel"
           ><template v-slot:append>
             <div class="flex justify-end q-gutter-sm">
               <q-btn
