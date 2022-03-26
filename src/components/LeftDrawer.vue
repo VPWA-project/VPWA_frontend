@@ -6,7 +6,11 @@
       class="cursor-pointer no-padding"
     >
       <UserMenu />
-      <UserBanner v-if="user.loggedInUser" v-bind="user.loggedInUser">
+      <UserBanner
+        v-bind:class="background"
+        v-if="user.loggedInUser"
+        v-bind="user.loggedInUser"
+      >
         <template v-slot:append>
           <q-item-section avatar>
             <q-icon :name="state.userBannerIcon" size="1.4em" />
@@ -25,7 +29,10 @@
       </q-item>
 
       <q-list>
-        <ChannelLink v-for="link in invitations" :key="link.id" v-bind="link.channel"
+        <ChannelLink
+          v-for="link in invitations"
+          :key="link.id"
+          v-bind="link.channel"
           ><template v-slot:append>
             <div class="flex justify-end q-gutter-sm">
               <q-btn
@@ -162,6 +169,7 @@ export default defineComponent({
     return {
       state,
       InvitationState,
+      background: 'bg-grey-2',
       processInvitation,
       confirmInvitationRefuse,
       switchChannel: (channel: Channel) =>

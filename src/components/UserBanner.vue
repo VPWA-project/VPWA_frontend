@@ -1,5 +1,8 @@
 <template>
-  <div class="row q-ma-md q-py-md q-px-md bg-grey-2 border-15 rounded-borders">
+  <div
+    :class="backgroundColor"
+    class="row q-ma-md q-py-md q-px-md border-15 rounded-borders"
+  >
     <q-item-section avatar>
       <q-avatar rounded color="cyan-8" text-color="white">
         {{ nameInitials }}
@@ -33,9 +36,10 @@ export default defineComponent({
       required: true,
     },
     status: String,
+    background: String,
   },
   setup(props) {
-    const { firstname, lastname, nickname, status } = toRefs(props);
+    const { firstname, lastname, nickname, status, background } = toRefs(props);
 
     return {
       userStatus: computed(() => {
@@ -60,6 +64,7 @@ export default defineComponent({
       userNickName: computed(() => '@' + nickname.value),
 
       userName: computed(() => firstname.value + ' ' + lastname.value),
+      backgroundColor: computed(() => background.value),
     };
   },
 });

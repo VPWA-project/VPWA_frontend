@@ -22,6 +22,7 @@
     <q-chip
       clickable
       outline
+      color="white"
       @click="openMessage(person)"
       v-for="person in typingPeople.slice(0, maxChipsToDisplay)"
       :key="person.id"

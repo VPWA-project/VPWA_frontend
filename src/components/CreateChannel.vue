@@ -8,21 +8,23 @@
     <q-card
       class="full-height full-width bg-grey-3 rounded-borders border-all-15"
     >
-      <div style="max-width: 800px; margin-left: auto; margin-right: auto">
-        <q-card-section class="flex-center col">
-          <div class="row flex-center justify-between no-wrap">
-            <h3 style="font-size: 1.5rem">
-              Create a new
-              {{ `${state.isChannelPublic ? 'public' : 'private'}` }} channel
-            </h3>
-            <q-btn
-              round
-              flat
-              color="black"
-              icon="close"
-              @click="handleCloseButton"
-            />
-          </div>
+      <div
+        class="column q-pa-md q-gutter-y-md"
+        style="max-width: 800px; margin-left: auto; margin-right: auto"
+      >
+        <q-btn
+          class="rounded-borders self-end bg-white q-px-sm border-all-15"
+          color="black"
+          clickable
+          flat
+          @click="handleCloseButton"
+          icon="close"
+        />
+        <h3 class="self-center" style="font-size: 1.5rem">
+          Create a new
+          {{ `${state.isChannelPublic ? 'public' : 'private'}` }} channel
+        </h3>
+        <q-card-section class="col q-pa-none q-mx-sm q-mt-none">
           <q-toggle
             :label="`${
               state.isChannelPublic
@@ -37,9 +39,6 @@
             A private channel is only visible to its members and only members of
             private channel can read its content.
           </p>
-        </q-card-section>
-
-        <q-card-section class="col q-pt-none">
           <q-form @submit.prevent.stop="handleSubmit">
             <q-input
               v-model="state.channelName"

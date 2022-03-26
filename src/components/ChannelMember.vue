@@ -1,5 +1,6 @@
 <template>
   <UserBanner
+    v-bind:class="background"
     :firstname="firstname"
     :lastname="lastname"
     :nickname="nickname"
@@ -10,14 +11,14 @@
         <q-btn flat class="no-border" icon="more_vert">
           <q-menu fit>
             <q-list style="width: 150px">
+              <q-item clickable @click="confirmRevokeUser(id)" v-close-popup>
+                <q-item-section>
+                  <q-item-label>Revoke</q-item-label>
+                </q-item-section>
+              </q-item>
               <q-item clickable @click="confirmKickUser(id)" v-close-popup>
                 <q-item-section>
                   <q-item-label>Kick</q-item-label>
-                </q-item-section>
-              </q-item>
-              <q-item clickable @click="confirmBanUser(id)" v-close-popup>
-                <q-item-section>
-                  <q-item-label>Ban</q-item-label>
                 </q-item-section>
               </q-item>
             </q-list>
@@ -61,6 +62,7 @@ export default defineComponent({
       type: Array as PropType<Array<User>>,
       required: true,
     },
+    background: String,
   },
   components: {
     UserBanner,
@@ -70,7 +72,7 @@ export default defineComponent({
 
     const channelMembers = toRef(props, 'channelMembers');
 
-    const confirmKickUser = (id: number) => {
+    const confirmRevokeUser = (id: number) => {
       const member = channelMembers.value.find((member) => member.id === id);
 
       if (!member) {
@@ -79,7 +81,7 @@ export default defineComponent({
 
       $q.dialog({
         title: 'Confirm',
-        message: `Would you like to really kick ${
+        message: `Would you really like to revoke ${
           member.firstname + ' ' + member.lastname
         }`,
         cancel: true,
@@ -97,7 +99,7 @@ export default defineComponent({
       }
     };
 
-    const confirmBanUser = (id: number) => {
+    const confirmKickUser = (id: number) => {
       const member = channelMembers.value.find((member) => member.id === id);
 
       if (!member) {
@@ -106,7 +108,7 @@ export default defineComponent({
 
       $q.dialog({
         title: 'Confirm',
-        message: `Would you like to really ban ${
+        message: `Would you really like to kick ${
           member.firstname + ' ' + member.lastname
         }`,
         cancel: true,
@@ -126,7 +128,7 @@ export default defineComponent({
 
     return {
       confirmKickUser,
-      confirmBanUser,
+      confirmRevokeUser,
     };
   },
 });

@@ -17,7 +17,7 @@
           v-model="state.message"
           placeholder="Type a message"
         />
-        <q-btn round flat icon="send" type="submit" />
+        <q-btn round color="cyan-8" icon="send" type="submit" />
       </q-form>
     </div>
   </div>

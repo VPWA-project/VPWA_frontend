@@ -12,6 +12,7 @@
       v-model="state.isLeftDrawerOpen"
       side="left"
       show-if-above
+      :breakpoint="1440"
       style="border-radius: 0px 15px 15px 0px"
       class="bg-blue-grey-2"
     >
@@ -20,6 +21,7 @@
 
     <q-drawer
       show-if-above
+      :breakpoint="1440"
       v-model="state.isRightDrawerOpen"
       side="right"
       style="border-radius: 15px 0px 0px 15px"
