@@ -1,36 +1,60 @@
 <template>
-  <q-menu fit anchor="bottom left" self="top left">
+  <q-menu
+    anchor="bottom middle"
+    self="top middle"
+    class="bg-grey-2"
+    style="
+      border-radius: 15px;
+      overflow: auto;
+      min-width: 268px;
+      max-width: 268px;
+    "
+  >
     <q-list>
       <q-item class="no-padding">
         <q-item-label class="q-pa-md text-grey-7">Your status</q-item-label>
       </q-item>
 
-      <q-item clickable @click="changeUserStatus(UserStatus.Online)">
-        <q-item-section avatar>
-          <q-badge color="green" rounded />
-        </q-item-section>
-        <q-item-section>
-          <q-item-label>Online</q-item-label>
-        </q-item-section>
-      </q-item>
+      <div class="column q-mx-md q-gutter-y-xs">
+        <q-item
+          clickable
+          @click="changeUserStatus(UserStatus.Online)"
+          class="border-all-15 bg-white"
+        >
+          <q-item-section avatar>
+            <q-badge color="green" rounded />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Online</q-item-label>
+          </q-item-section>
+        </q-item>
 
-      <q-item clickable @click="changeUserStatus(UserStatus.Dnd)">
-        <q-item-section avatar>
-          <q-badge color="red" rounded />
-        </q-item-section>
-        <q-item-section>
-          <q-item-label>DND</q-item-label>
-        </q-item-section>
-      </q-item>
+        <q-item
+          clickable
+          @click="changeUserStatus(UserStatus.Dnd)"
+          class="border-all-15 bg-white"
+        >
+          <q-item-section avatar>
+            <q-badge color="red" rounded />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>DND</q-item-label>
+          </q-item-section>
+        </q-item>
 
-      <q-item clickable @click="changeUserStatus(UserStatus.Offline)">
-        <q-item-section avatar>
-          <q-badge color="black" rounded />
-        </q-item-section>
-        <q-item-section>
-          <q-item-label>Offline</q-item-label>
-        </q-item-section>
-      </q-item>
+        <q-item
+          clickable
+          @click="changeUserStatus(UserStatus.Offline)"
+          class="border-all-15 bg-white"
+        >
+          <q-item-section avatar>
+            <q-badge color="black" rounded />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Offline</q-item-label>
+          </q-item-section>
+        </q-item>
+      </div>
 
       <q-separator spaced inset />
 
@@ -40,18 +64,22 @@
         >
       </q-item>
 
-      <q-item tag="label" v-ripple>
+      <q-item
+        tag="label"
+        v-ripple
+        class="border-all-15 q-mx-md bg-white q-mx-xs"
+      >
         <q-item-section>
           <q-item-label>Only @mentions</q-item-label>
         </q-item-section>
         <q-item-section avatar>
-          <q-toggle color="blue" v-model="state.allowOnlyMentions" />
+          <q-toggle color="cyan-9" v-model="state.allowOnlyMentions" />
         </q-item-section>
       </q-item>
 
       <q-separator spaced inset />
 
-      <q-item clickable>
+      <q-item clickable class="border-all-15 bg-white q-mx-md q-mb-md">
         <q-item-section avatar>
           <q-icon name="logout" />
         </q-item-section>
@@ -73,8 +101,8 @@ export default defineComponent({
     const $store = useStore();
 
     const state = reactive({
-      allowOnlyMentions: false
-    })
+      allowOnlyMentions: false,
+    });
 
     return {
       state,
@@ -85,3 +113,9 @@ export default defineComponent({
   },
 });
 </script>
+
+<style scoped>
+.border-all-15 {
+  border-radius: 15px;
+}
+</style>

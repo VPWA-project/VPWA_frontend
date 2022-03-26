@@ -13,7 +13,11 @@
     </q-toolbar-title>
 
     <q-btn flat dense round icon="more_vert" class="q-ml-md">
-      <q-menu fit anchor="bottom right" self="top right">
+      <q-menu
+        anchor="bottom right"
+        self="top right"
+        style="border-radius: 15px"
+      >
         <q-list class="column q-gutter-sm" style="width: 150px">
           <q-item
             clickable

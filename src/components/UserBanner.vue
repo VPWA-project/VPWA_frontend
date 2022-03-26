@@ -1,7 +1,7 @@
 <template>
   <div class="row q-ma-md q-py-md q-px-md bg-grey-2 border-15 rounded-borders">
     <q-item-section avatar>
-      <q-avatar rounded color="primary" text-color="white">
+      <q-avatar rounded color="cyan-8" text-color="white">
         {{ nameInitials }}
         <q-badge v-if="userStatus" :color="userStatus" rounded floating
       /></q-avatar>

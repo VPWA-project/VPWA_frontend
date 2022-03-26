@@ -14,7 +14,7 @@
             size="35px"
             class="q-mr-md"
             rounded
-            color="primary"
+            color="cyan-7"
             text-color="white"
           >
             JM</q-avatar
@@ -24,7 +24,7 @@
             push
             name="me"
             :text="[message.message]"
-            bg-color="red"
+            bg-color="cyan-8"
           />
           <q-chat-message
             v-if="!message.tag"
