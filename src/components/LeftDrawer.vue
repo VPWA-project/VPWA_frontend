@@ -25,12 +25,7 @@
       </q-item>
 
       <q-list>
-        <ChannelLink
-          v-for="link in invitations"
-          :id="link.id"
-          :key="link.id"
-          :name="link.channel.name"
-          :type="link.channel.type"
+        <ChannelLink v-for="link in invitations" :key="link.id" v-bind="link.channel"
           ><template v-slot:append>
             <div class="flex justify-end q-gutter-sm">
               <q-btn
@@ -39,10 +34,11 @@
                 color="red"
                 icon="highlight_off"
                 @click="
-                  processInvitation({
-                    id: link.id,
-                    state: InvitationState.Refuse,
-                  })
+                  confirmInvitationRefuse(
+                    link.id,
+                    InvitationState.Refuse,
+                    link.channel.name
+                  )
                 "
               />
               <q-btn
@@ -102,11 +98,13 @@ import {
   InvitationInfo,
   InvitationState,
 } from 'src/store/channels/state';
-import { defineComponent, computed, reactive } from 'vue';
+import { defineComponent, computed, reactive, watch, onMounted } from 'vue';
 import UserMenu from './UserMenu.vue';
 import UserBanner from './UserBanner.vue';
 import ChannelLink from './ChannelLink.vue';
 import SearchChannels from './SearchChannels.vue';
+import { useRoute } from 'vue-router';
+import { useQuasar } from 'quasar';
 
 export default defineComponent({
   components: {
@@ -117,17 +115,55 @@ export default defineComponent({
   },
   setup() {
     const $store = useStore();
+    const $q = useQuasar();
+    const route = useRoute();
+
+    const setActiveChannel = (id: string) => {
+      const channel = $store.state.channels.channels.find(
+        (channel) => channel.id === parseInt(id)
+      );
+      $store.dispatch('channels/setActiveChannel', channel).catch(console.log);
+    };
+
+    watch(
+      () => route.params.id,
+      (id) => {
+        setActiveChannel(id as string);
+      }
+    );
+
+    onMounted(() => {
+      setActiveChannel(route.params.id as string);
+    });
 
     const state = reactive({
       userBannerIcon: 'expand_more',
       isBrowseChannelsOpen: false,
     });
 
+    const processInvitation = (inv: InvitationInfo) =>
+      $store.dispatch('channels/processInvitation', inv).catch(console.log);
+
+    const confirmInvitationRefuse = (
+      linkId: number,
+      state: InvitationState,
+      channelName: string
+    ) => {
+      $q.dialog({
+        title: 'Confirm',
+        message: `Would you like to really refuse invitation to channel ${channelName}`,
+        cancel: true,
+        persistent: false,
+      }).onOk(() => {
+        processInvitation({ id: linkId, state }).catch(console.log);
+      });
+    };
+
     return {
       state,
       InvitationState,
-      processInvitation: (inv: InvitationInfo) =>
-        $store.dispatch('channels/processInvitation', inv).catch(console.log),
+      processInvitation,
+      confirmInvitationRefuse,
       switchChannel: (channel: Channel) =>
         $store
           .dispatch('channels/setActiveChannel', channel)

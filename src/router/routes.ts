@@ -3,10 +3,12 @@ import { RouteRecordRaw } from 'vue-router';
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
+    name: 'dashboard',
     component: () => import('layouts/MainLayout.vue'),
   },
   {
     path: '/account',
+    name: 'account',
     component: () => import('pages/Account.vue'),
   },
   {

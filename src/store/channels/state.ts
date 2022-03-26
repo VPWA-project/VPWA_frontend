@@ -1,4 +1,5 @@
 import { User, UserStatus } from '../user/state';
+import moment from 'moment';
 
 export enum ChannelType {
   Public = 'PUBLIC',
@@ -13,6 +14,7 @@ export enum InvitationState {
 export interface Message {
   tag: boolean;
   message: string;
+  createdAt: Date;
 }
 
 export interface Channel {
@@ -48,10 +50,26 @@ function state(): ChannelsStateInterface {
         name: 'Channel 1',
         type: ChannelType.Public,
         messages: [
-          { tag: true, message: 'Hello' },
-          { tag: false, message: 'Good morning' },
-          { tag: false, message: 'Bye' },
-          { tag: true, message: 'How are you ?' },
+          {
+            tag: true,
+            message: 'Hello',
+            createdAt: moment(moment.now()).subtract(2, 'days').toDate(),
+          },
+          {
+            tag: false,
+            message: 'Good morning',
+            createdAt: moment(moment.now()).subtract(1, 'days').toDate(),
+          },
+          {
+            tag: false,
+            message: 'Bye',
+            createdAt: moment(moment.now()).subtract(1, 'hours').toDate(),
+          },
+          {
+            tag: true,
+            message: 'How are you ?',
+            createdAt: moment(moment.now()).subtract(1, 'minutes').toDate(),
+          },
         ],
       },
       {
@@ -59,10 +77,26 @@ function state(): ChannelsStateInterface {
         name: 'Channel 2',
         type: ChannelType.Private,
         messages: [
-          { tag: false, message: 'Hi, my name is Jozko' },
-          { tag: true, message: 'Hello, Jozko !' },
-          { tag: false, message: 'How is it going ?' },
-          { tag: false, message: 'Pretty well' },
+          {
+            tag: false,
+            message: 'Hi, my name is Jozko',
+            createdAt: moment(moment.now()).subtract(2, 'days').toDate(),
+          },
+          {
+            tag: true,
+            message: 'Hello, Jozko !',
+            createdAt: moment(moment.now()).subtract(1, 'days').toDate(),
+          },
+          {
+            tag: false,
+            message: 'How is it going ?',
+            createdAt: moment(moment.now()).subtract(1, 'hours').toDate(),
+          },
+          {
+            tag: false,
+            message: 'Pretty well',
+            createdAt: moment(moment.now()).subtract(1, 'minutes').toDate(),
+          },
         ],
       },
     ],
@@ -83,25 +117,30 @@ function state(): ChannelsStateInterface {
           name: 'Channel 10',
           type: ChannelType.Public,
           messages: [
-            { tag: false, message: 'Hi, my name is Jozko' },
-            { tag: true, message: 'Hello, Jozko !' },
-            { tag: false, message: 'How is it going ?' },
-            { tag: false, message: 'Pretty well' },
+            {
+              tag: false,
+              message: 'Hi, my name is Jozko',
+              createdAt: moment(moment.now()).subtract(2, 'days').toDate(),
+            },
+            {
+              tag: true,
+              message: 'Hello, Jozko !',
+              createdAt: moment(moment.now()).subtract(1, 'days').toDate(),
+            },
+            {
+              tag: false,
+              message: 'How is it going ?',
+              createdAt: moment(moment.now()).subtract(1, 'hours').toDate(),
+            },
+            {
+              tag: false,
+              message: 'Pretty well',
+              createdAt: moment(moment.now()).subtract(1, 'minutes').toDate(),
+            },
           ],
         },
       },
     ],
-    activeChannel: {
-      id: 1,
-      name: 'Channel 11',
-      type: ChannelType.Public,
-      messages: [
-        { tag: false, message: 'Active channel' },
-        { tag: true, message: 'Active channel' },
-        { tag: false, message: 'Active channel' },
-        { tag: false, message: 'Active channel' },
-      ],
-    },
   };
 }
 

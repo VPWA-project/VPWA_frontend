@@ -24,23 +24,13 @@ const actions: ActionTree<ChannelsStateInterface, StateInterface> = {
         id: 1,
         name: 'Channel 1',
         type: ChannelType.Public,
-        messages: [
-          { tag: true, message: 'Hello' },
-          { tag: false, message: 'Good morning' },
-          { tag: false, message: 'Bye' },
-          { tag: true, message: 'How are you ?' },
-        ],
+        messages: [],
       },
       {
         id: 2,
         name: 'Channel 2',
         type: ChannelType.Private,
-        messages: [
-          { tag: false, message: 'Hi, my name is Jozko' },
-          { tag: true, message: 'Hello, Jozko !' },
-          { tag: false, message: 'How is it going ?' },
-          { tag: false, message: 'Pretty well' },
-        ],
+        messages: [],
       },
     ];
 
@@ -57,34 +47,19 @@ const actions: ActionTree<ChannelsStateInterface, StateInterface> = {
         id: 3,
         name: 'Channel 3',
         type: ChannelType.Public,
-        messages: [
-          { tag: false, message: 'Channel 3' },
-          { tag: true, message: 'Channel 3' },
-          { tag: false, message: 'Channel 3' },
-          { tag: false, message: 'Channel 3' },
-        ],
+        messages: [],
       },
       {
         id: 4,
         name: 'Channel 4',
         type: ChannelType.Public,
-        messages: [
-          { tag: false, message: 'Channel 4' },
-          { tag: true, message: 'Channel 4' },
-          { tag: false, message: 'Channel 4' },
-          { tag: false, message: 'Channel 4' },
-        ],
+        messages: [],
       },
       {
         id: 5,
         name: 'Channel 5',
         type: ChannelType.Public,
-        messages: [
-          { tag: false, message: 'Channel 5' },
-          { tag: true, message: 'Channel 5' },
-          { tag: false, message: 'Channel 5' },
-          { tag: false, message: 'Channel 5' },
-        ],
+        messages: [],
       },
     ];
 

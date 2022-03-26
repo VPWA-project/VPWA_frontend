@@ -2,6 +2,7 @@
   <q-toolbar style="height: 56px">
     <q-btn
       v-if="toggleLeftDrawer"
+      class="lt-lg"
       flat
       dense
       round
@@ -38,6 +39,7 @@
     </q-btn>
     <q-btn
       v-if="toggleRightDrawer"
+      class="lt-lg"
       flat
       dense
       round
@@ -70,6 +72,7 @@
 <script lang="ts">
 import { useStore } from 'src/store';
 import { defineComponent, reactive, PropType, computed } from 'vue';
+import { useRouter } from 'vue-router';
 
 enum ConfirmDialogType {
   Leave,
@@ -84,6 +87,7 @@ export default defineComponent({
   },
   setup() {
     const $store = useStore();
+    const router = useRouter()
 
     const state = reactive({
       isConfirmDialogOpen: false,
@@ -100,6 +104,9 @@ export default defineComponent({
               'channels/leaveChannel',
               $store.state.channels.activeChannel
             )
+            .then(() => {
+              router.push({name: 'dashboard'}).catch(console.log)
+            })
             .catch(console.log);
         } else if (state.confirmDialogType === ConfirmDialogType.Delete) {
           // TODO: Delete channel
