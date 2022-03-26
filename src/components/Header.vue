@@ -84,7 +84,6 @@
 import { useStore } from 'src/store';
 import { defineComponent, reactive, PropType, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import { Channel } from 'src/store/channels/state';
 
 enum ConfirmDialogType {
   Leave,
@@ -95,7 +94,6 @@ export default defineComponent({
   props: {
     toggleLeftDrawer: Function as PropType<() => void>,
     toggleRightDrawer: Function as PropType<() => void>,
-    activeChannel: Object as () => Channel,
   },
   setup() {
     const $store = useStore();
@@ -146,6 +144,7 @@ export default defineComponent({
         }
         return '';
       }),
+      activeChannel: computed(() => $store.state.channels.activeChannel),
     };
   },
 });

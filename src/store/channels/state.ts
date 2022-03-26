@@ -40,6 +40,7 @@ export interface ChannelsStateInterface {
   availableChannels: Array<Channel>; // available public channels
   invitations: Array<Invitation>;
   activeChannel?: Channel;
+  amIChannelMember: boolean
 }
 
 function state(): ChannelsStateInterface {
@@ -141,6 +142,7 @@ function state(): ChannelsStateInterface {
         },
       },
     ],
+    amIChannelMember: false
   };
 }
 

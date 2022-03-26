@@ -58,6 +58,10 @@ const mutation: MutationTree<ChannelsStateInterface> = {
 
   setActiveChannel: (state: ChannelsStateInterface, payload: Channel) => {
     state.activeChannel = payload;
+
+    state.amIChannelMember = !!state.channels.find(
+      (channel) => channel.id === payload.id
+    );
   },
 
   leaveChannel: (state: ChannelsStateInterface, payload: Channel) => {

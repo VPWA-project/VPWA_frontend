@@ -1,5 +1,5 @@
 <template>
-  <q-list>
+  <q-list v-if="amIChannelMember">
     <q-item>
       <q-item-section>
         <q-item-label class="text-grey-7">Online</q-item-label>
@@ -44,6 +44,7 @@
 </template>
 
 <script lang="ts">
+import { useStore } from 'src/store';
 import { User } from 'src/store/user/state';
 import { defineComponent, computed, reactive } from 'vue';
 import ChannelMember from './ChannelMember.vue';
@@ -55,6 +56,7 @@ export default defineComponent({
     InviteUsers,
   },
   setup() {
+    const $store = useStore();
     const state = reactive({
       channelMembers: [
         {
@@ -94,6 +96,7 @@ export default defineComponent({
         state.channelMembers.filter((x) => x.status === 'OFFLINE')
       ),
       showInviteUsers: () => (state.isInviteUsersOpen = true),
+      amIChannelMember: computed(() => $store.state.channels.amIChannelMember),
     };
   },
 });

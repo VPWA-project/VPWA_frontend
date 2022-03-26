@@ -93,9 +93,20 @@ export default defineComponent({
     const route = useRoute();
 
     const setActiveChannel = (id: string) => {
-      const channel = $store.state.channels.channels.find(
+      let channel = $store.state.channels.channels.find(
         (channel) => channel.id === parseInt(id)
       );
+
+      if (!channel)
+        channel = $store.state.channels.availableChannels.find(
+          (channel) => channel.id === parseInt(id)
+        );
+
+      if (!channel)
+        channel = $store.state.channels.invitations.find(
+          (invitation) => invitation.channel.id === parseInt(id)
+        )?.channel;
+
       $store.dispatch('channels/setActiveChannel', channel).catch(console.log);
     };
 
