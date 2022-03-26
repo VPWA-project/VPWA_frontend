@@ -27,7 +27,7 @@
       :key="person.id"
     >
       {{ person.nickname }}
-      <q-spinner-dots class="q-pl-xs q-mt-xs" size="1.5rem" />
+      <q-spinner-dots class="q-pl-xs q-mt-xs" size="24px" />
     </q-chip>
 
     <q-chip
