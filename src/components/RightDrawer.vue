@@ -44,6 +44,7 @@
 </template>
 
 <script lang="ts">
+import { User } from 'src/store/user/state';
 import { defineComponent, computed, reactive } from 'vue';
 import ChannelMember from './ChannelMember.vue';
 import InviteUsers from './InviteUsers.vue';
@@ -58,6 +59,7 @@ export default defineComponent({
       channelMembers: [
         {
           id: 1,
+          email: '',
           firstname: 'John',
           lastname: 'Doe',
           nickname: 'john',
@@ -65,6 +67,7 @@ export default defineComponent({
         },
         {
           id: 2,
+          email: '',
           firstname: 'Frank',
           lastname: 'Doe',
           nickname: 'frank',
@@ -72,12 +75,13 @@ export default defineComponent({
         },
         {
           id: 3,
+          email: '',
           firstname: 'Martin',
           lastname: 'Doe',
           nickname: 'martin',
           status: 'OFFLINE',
         },
-      ],
+      ] as User[],
       isInviteUsersOpen: false,
     });
 

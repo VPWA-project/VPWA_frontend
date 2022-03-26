@@ -42,7 +42,7 @@
             label="Search channel"
             @keydown="clearTimer"
             @keyup="clearTimer"
-            @focus="(e) => search()"
+            @focus="() => search()"
           >
             <template v-slot:prepend>
               <q-icon name="search" />
