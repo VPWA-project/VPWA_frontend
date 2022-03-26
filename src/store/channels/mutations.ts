@@ -48,8 +48,8 @@ const mutation: MutationTree<ChannelsStateInterface> = {
     payload: { channelId: number; message: string }
   ) => {
     state.channels
-      .find(({ id }) => id == payload.channelId)!
-      .messages.push({
+      .find(({ id }) => id === payload.channelId)
+      ?.messages.push({
         tag: false,
         message: payload.message,
         createdAt: new Date(),
