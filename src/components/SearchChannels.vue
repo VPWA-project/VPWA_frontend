@@ -1,28 +1,42 @@
 <template>
-  <q-dialog v-model="isDialogOpen" maximized full-width full-height>
-    <q-card class="full-height full-height">
-      <div style="max-width: 800px; margin-left: auto; margin-right: auto">
-        <q-card-section class="flex-center row justify-between">
+  <q-dialog
+    v-model="isDialogOpen"
+    :full-width="$q.screen.lt.sm"
+    :full-height="$q.screen.lt.sm"
+    :maximized="$q.screen.lt.sm"
+  >
+    <q-card
+      class="full-height full-width bg-grey-3 rounded-borders border-all-15"
+    >
+      <div
+        class="column q-pa-md q-gutter-y-md"
+        style="max-width: 800px; margin-left: auto; margin-right: auto"
+      >
+        <q-btn
+          class="rounded-borders self-end bg-white q-px-sm border-all-15"
+          color="black"
+          clickable
+          flat
+          @click="handleCloseButton"
+          icon="close"
+        />
+        <h3 class="self-center" style="font-size: 1.5rem">Channels</h3>
+
+        <q-card-section class="col q-pa-none q-mx-sm q-mt-none">
           <q-btn
+            class="rounded-borders bg-white q-mt-none border-all-15"
+            color="black"
+            clickable
             flat
-            color="primary"
-            @click="handleCloseButton"
-            label="Cancel"
-          />
-          <h3 style="font-size: 1.5rem">Channels</h3>
-          <q-btn
-            flat
-            color="primary"
-            label="Create"
+            no-caps
+            icon="add_circle_outline"
+            label="Create new channel"
             @click="createChannelOpen = true"
           />
-        </q-card-section>
-
-        <q-separator inset />
-
-        <q-card-section class="col q-pb-none">
           <q-input
-            outlined
+            class="q-mt-lg rounded-borders border-all-15 bg-white q-pb-none q-pl-md q-pr-md"
+            color="cyan-9"
+            borderless
             bottom-slots
             v-model="searchText"
             label="Search channel"
@@ -43,13 +57,11 @@
           </q-input>
         </q-card-section>
 
-        <q-separator inset />
-
         <div v-show="showSpinner" class="row flex-center q-mt-md">
-          <q-spinner color="primary" size="3em" />
+          <q-spinner color="cyan-9" size="3em" />
         </div>
 
-        <q-card-section class="col q-pt-none">
+        <q-card-section class="col q-pa-none">
           <ChannelLink
             v-for="link in availableChannels"
             :key="link.id"
@@ -164,3 +176,9 @@ export default defineComponent({
   components: { ChannelLink, CreateChannel },
 });
 </script>
+
+<style scoped>
+.border-all-15 {
+  border-radius: 15px;
+}
+</style>

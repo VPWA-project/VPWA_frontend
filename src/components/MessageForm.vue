@@ -1,6 +1,6 @@
 <template>
   <div
-    class="bg-cyan-9 text-black q-px-sm q-mb-sm q-mx-sm rounded-borders border-all-15"
+    class="bg-cyan-9 text-black q-px-sm q-mx-sm rounded-borders border-all-15"
   >
     <div class="col">
       <TypingChips />
@@ -67,6 +67,6 @@ export default defineComponent({
 
 <style scoped>
 .border-all-15 {
-  border-radius: 15px;
+  border-radius: 15px 15px 0px 0px;
 }
 </style>

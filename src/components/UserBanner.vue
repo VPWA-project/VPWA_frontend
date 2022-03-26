@@ -1,7 +1,7 @@
 <template>
-  <q-item class="q-ma-md q-py-md bg-grey-2 border-15 rounded-borders">
+  <div class="row q-ma-md q-py-md q-px-md bg-grey-2 border-15 rounded-borders">
     <q-item-section avatar>
-      <q-avatar rounded color="primary" text-color="white">
+      <q-avatar rounded color="cyan-8" text-color="white">
         {{ nameInitials }}
         <q-badge v-if="userStatus" :color="userStatus" rounded floating
       /></q-avatar>
@@ -11,7 +11,7 @@
       <q-item-label caption>{{ userNickName }}</q-item-label>
     </q-item-section>
     <slot name="append"></slot>
-  </q-item>
+  </div>
 </template>
 
 <script lang="ts">

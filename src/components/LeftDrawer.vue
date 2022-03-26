@@ -1,9 +1,9 @@
 <template>
   <q-list>
-    <q-item
+    <div
       clickable
       @click="toggleUserBannerIcon"
-      class="row cursor-pointer no-padding"
+      class="cursor-pointer no-padding"
     >
       <UserMenu />
       <UserBanner v-if="user.loggedInUser" v-bind="user.loggedInUser">
@@ -13,7 +13,7 @@
           </q-item-section>
         </template>
       </UserBanner>
-    </q-item>
+    </div>
 
     <div class="q-ma-md q-py-md bg-grey-2 border-15 rounded-borders">
       <q-item>

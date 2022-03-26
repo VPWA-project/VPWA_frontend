@@ -25,16 +25,33 @@
       v-bind="member"
       :channelMembers="state.channelMembers"
     />
+    <q-item>
+      <q-btn
+        class="rounded-borders bg-white q-px-sm border-15"
+        color="black"
+        clickable
+        flat
+        @click="showInviteUsers"
+        icon-right="add_circle"
+        label="Invite user"
+      />
+    </q-item>
+    <InviteUsers
+      :open="state.isInviteUsersOpen"
+      @close="state.isInviteUsersOpen = false"
+    />
   </q-list>
 </template>
 
 <script lang="ts">
 import { defineComponent, computed, reactive } from 'vue';
 import ChannelMember from './ChannelMember.vue';
+import InviteUsers from './InviteUsers.vue';
 
 export default defineComponent({
   components: {
     ChannelMember,
+    InviteUsers,
   },
   setup() {
     const state = reactive({
@@ -61,6 +78,7 @@ export default defineComponent({
           status: 'OFFLINE',
         },
       ],
+      isInviteUsersOpen: false,
     });
 
     return {
@@ -71,6 +89,7 @@ export default defineComponent({
       offline: computed(() =>
         state.channelMembers.filter((x) => x.status === 'OFFLINE')
       ),
+      showInviteUsers: () => (state.isInviteUsersOpen = true),
     };
   },
 });

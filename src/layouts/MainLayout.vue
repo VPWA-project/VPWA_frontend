@@ -1,8 +1,6 @@
 <template>
   <q-layout view="lHr LpR lFr">
-    <q-header
-      class="rounded-borders bg-cyan-9 q-px-sm q-mt-sm q-mx-sm border-15"
-    >
+    <q-header class="rounded-borders bg-cyan-9 q-px-sm q-mx-sm border-15">
       <Header
         :toggleLeftDrawer="toggleLeftDrawer"
         :toggleRightDrawer="toggleRightDrawer"
@@ -81,6 +79,6 @@ export default defineComponent({
 
 <style scoped>
 .border-15 {
-  border-radius: 15px;
+  border-radius: 0px 0px 15px 15px;
 }
 </style>

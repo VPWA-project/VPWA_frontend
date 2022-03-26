@@ -3,13 +3,16 @@
     <div
       class="q-pa-md full-width row justify-center items-center content-center"
     >
-      <q-card style="width: 480px">
+      <q-card
+        style="width: 480px"
+        class="rounded-borders border-all-15 bg-grey-2"
+      >
         <q-tabs
           v-model="tab"
           dense
-          class="text-grey"
-          active-color="primary"
-          indicator-color="primary"
+          class="text-black"
+          active-color="cyan-9"
+          indicator-color="cyan-9"
           align="justify"
           narrow-indicator
         >
@@ -46,3 +49,9 @@ export default defineComponent({
   },
 });
 </script>
+
+<style scoped>
+.border-all-15 {
+  border-radius: 15px;
+}
+</style>
