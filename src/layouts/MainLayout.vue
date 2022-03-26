@@ -1,6 +1,6 @@
 <template>
   <q-layout view="lHr LpR lFr">
-    <q-header class="rounded-borders bg-cyan-9 q-px-sm q-mx-sm border-15">
+    <q-header class="bg-cyan-9 q-px-sm q-mx-sm border-15">
       <Header
         :toggleLeftDrawer="toggleLeftDrawer"
         :toggleRightDrawer="toggleRightDrawer"
@@ -11,6 +11,7 @@
       v-model="state.isLeftDrawerOpen"
       side="left"
       show-if-above
+      :breakpoint="1440"
       style="border-radius: 0px 15px 15px 0px"
       class="bg-blue-grey-2"
     >
@@ -19,6 +20,7 @@
 
     <q-drawer
       show-if-above
+      :breakpoint="1440"
       v-model="state.isRightDrawerOpen"
       side="right"
       style="border-radius: 15px 0px 0px 15px"
@@ -51,8 +53,8 @@ export default defineComponent({
     Header,
     LeftDrawer,
     RightDrawer,
-    Footer
-},
+    Footer,
+  },
 
   setup() {
     const state = reactive({

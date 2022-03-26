@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-cyan-9 text-black q-px-sm q-mx-sm rounded-borders border-15">
+  <div class="bg-cyan-9 text-black q-px-sm q-mx-sm border-15">
     <div class="col">
       <TypingChips />
       <q-form
@@ -15,7 +15,7 @@
           v-model="state.message"
           placeholder="Type a message"
         />
-        <q-btn round flat icon="send" type="submit" />
+        <q-btn round color="cyan-8" icon="send" type="submit" />
       </q-form>
     </div>
   </div>

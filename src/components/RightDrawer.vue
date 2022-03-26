@@ -1,33 +1,11 @@
 <template>
   <q-list v-if="amIChannelMember">
-    <q-item>
-      <q-item-section>
-        <q-item-label class="text-grey-7">Online</q-item-label>
-      </q-item-section>
-    </q-item>
-
-    <ChannelMember
-      v-for="member in online"
-      :key="member.id"
-      v-bind="member"
-      :channelMembers="state.channelMembers"
-    />
-
-    <q-item>
-      <q-item-section>
-        <q-item-label class="text-grey-7">Offline</q-item-label>
-      </q-item-section>
-    </q-item>
-
-    <ChannelMember
-      v-for="member in offline"
-      :key="member.id"
-      v-bind="member"
-      :channelMembers="state.channelMembers"
-    />
-    <q-item>
+    <q-item class="q-mt-sm column">
+      <q-item-label class="text-weight-medium text-subtitle1"
+        >Channel members</q-item-label
+      >
       <q-btn
-        class="rounded-borders bg-white q-px-sm border-15"
+        class="bg-white q-mt-md q-px-sm border-15"
         color="black"
         clickable
         flat
@@ -40,6 +18,46 @@
       :open="state.isInviteUsersOpen"
       @close="state.isInviteUsersOpen = false"
     />
+
+    <div class="q-ma-md q-py-md bg-grey-2 border-15">
+      <q-item>
+        <q-item-section>
+          <q-item-label class="text-weight-medium text-subtitle1"
+            >Online</q-item-label
+          >
+        </q-item-section>
+      </q-item>
+
+      <q-list>
+        <ChannelMember
+          v-bind:class="background"
+          v-for="member in online"
+          :key="member.id"
+          v-bind="member"
+          :channelMembers="state.channelMembers"
+        />
+      </q-list>
+    </div>
+
+    <div class="q-ma-md q-py-md bg-grey-2 border-15">
+      <q-item>
+        <q-item-section>
+          <q-item-label class="text-weight-medium text-subtitle1"
+            >Offline</q-item-label
+          >
+        </q-item-section>
+      </q-item>
+
+      <q-list>
+        <ChannelMember
+          background="bg-white"
+          v-for="member in offline"
+          :key="member.id"
+          v-bind="member"
+          :channelMembers="state.channelMembers"
+        />
+      </q-list>
+    </div>
   </q-list>
 </template>
 
@@ -89,6 +107,7 @@ export default defineComponent({
 
     return {
       state,
+      background: 'bg-white',
       online: computed(() =>
         state.channelMembers.filter((x) => x.status !== 'OFFLINE')
       ),

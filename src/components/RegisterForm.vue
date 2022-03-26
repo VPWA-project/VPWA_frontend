@@ -3,7 +3,7 @@
     <h2 class="text-h6 text-center">Register</h2>
 
     <q-input
-      class="q-mt-lg rounded-borders border-15 bg-white q-pb-none q-pl-md q-pr-md"
+      class="q-mt-lg border-15 bg-white q-pb-none q-pl-md q-pr-md"
       color="cyan-9"
       borderless
       v-model="state.email"
@@ -18,7 +18,7 @@
     </q-input>
 
     <q-input
-      class="q-mt-lg rounded-borders border-15 bg-white q-pb-none q-pl-md q-pr-md"
+      class="q-mt-lg border-15 bg-white q-pb-none q-pl-md q-pr-md"
       color="cyan-9"
       borderless
       v-model="state.password"
@@ -41,7 +41,7 @@
     </q-input>
 
     <q-input
-      class="q-mt-lg rounded-borders border-15 bg-white q-pb-none q-pl-md q-pr-md"
+      class="q-mt-lg border-15 bg-white q-pb-none q-pl-md q-pr-md"
       color="cyan-9"
       borderless
       v-model="state.firstname"
@@ -56,7 +56,7 @@
     </q-input>
 
     <q-input
-      class="q-mt-lg rounded-borders border-15 bg-white q-pb-none q-pl-md q-pr-md"
+      class="q-mt-lg border-15 bg-white q-pb-none q-pl-md q-pr-md"
       color="cyan-9"
       borderless
       v-model="state.lastname"
@@ -71,7 +71,7 @@
     </q-input>
 
     <q-input
-      class="q-mt-lg rounded-borders border-15 bg-white q-pb-none q-pl-md q-pr-md"
+      class="q-mt-lg border-15 bg-white q-pb-none q-pl-md q-pr-md"
       color="cyan-9"
       borderless
       v-model="state.nickname"
@@ -90,7 +90,7 @@
         type="submit"
         :loading="state.submitting"
         label="Register"
-        class="q-mt-lg q-pa-md rounded-borders border-15"
+        class="q-mt-lg q-pa-md border-15"
         style="width: 100%"
         color="cyan-9"
       >

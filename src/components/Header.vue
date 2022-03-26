@@ -14,7 +14,7 @@
     </q-toolbar-title>
 
     <q-btn
-      v-if="activeChannel"
+      v-if="amIChannelMember"
       flat
       dense
       round
@@ -145,6 +145,7 @@ export default defineComponent({
         return '';
       }),
       activeChannel: computed(() => $store.state.channels.activeChannel),
+      amIChannelMember: computed(() => $store.state.channels.amIChannelMember),
     };
   },
 });

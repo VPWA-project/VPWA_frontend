@@ -6,7 +6,11 @@
       class="cursor-pointer no-padding"
     >
       <UserMenu />
-      <UserBanner v-if="user.loggedInUser" v-bind="user.loggedInUser">
+      <UserBanner
+        background="bg-grey-2"
+        v-if="user.loggedInUser"
+        v-bind="user.loggedInUser"
+      >
         <template v-slot:append>
           <q-item-section avatar>
             <q-icon :name="state.userBannerIcon" size="1.4em" />
@@ -15,7 +19,7 @@
       </UserBanner>
     </div>
 
-    <div class="q-ma-md q-py-md bg-grey-2 border-15 rounded-borders">
+    <div class="q-ma-md q-py-md bg-grey-2 border-15">
       <q-item>
         <q-item-section>
           <q-item-label class="text-weight-medium text-subtitle1"
@@ -36,7 +40,7 @@
       </q-list>
     </div>
 
-    <div class="q-ma-md q-py-md bg-grey-2 border-15 rounded-borders">
+    <div class="q-ma-md q-py-md bg-grey-2 border-15">
       <q-item>
         <q-item-section>
           <q-item-label class="text-weight-medium text-subtitle1"
@@ -46,7 +50,7 @@
         <q-item-section avatar>
           <div>
             <q-btn
-              class="rounded-borders bg-white q-px-sm border-15"
+              class="bg-white q-px-sm border-15"
               color="black"
               clickable
               flat

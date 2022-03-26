@@ -9,7 +9,7 @@
 
       <q-card-actions align="right">
         <q-btn
-          class="rounded-borders self-end bg-grey-2 q-px-sm border-15"
+          class="self-end bg-grey-2 q-px-sm border-15"
           color="black"
           clickable
           flat
@@ -22,6 +22,7 @@
     <q-chip
       clickable
       outline
+      color="white"
       @click="openMessage(person)"
       v-for="person in typingPeople.slice(0, maxChipsToDisplay)"
       :key="person.id"
@@ -33,6 +34,7 @@
     <q-chip
       :ripple="false"
       outline
+      color="white"
       v-if="typingPeople.length > maxChipsToDisplay"
     >
       and {{ typingPeople.length - maxChipsToDisplay }} more...

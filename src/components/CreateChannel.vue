@@ -5,22 +5,24 @@
     :full-height="$q.screen.lt.sm"
     :maximized="$q.screen.lt.sm"
   >
-    <q-card class="full-height full-width bg-grey-3 rounded-borders border-15">
-      <div style="max-width: 800px; margin-left: auto; margin-right: auto">
-        <q-card-section class="flex-center col">
-          <div class="row flex-center justify-between no-wrap">
-            <h3 style="font-size: 1.5rem">
-              Create a new
-              {{ `${state.isChannelPublic ? 'public' : 'private'}` }} channel
-            </h3>
-            <q-btn
-              round
-              flat
-              color="black"
-              icon="close"
-              @click="handleCloseButton"
-            />
-          </div>
+    <q-card class="full-height full-width bg-grey-3 border-15">
+      <div
+        class="column q-pa-md q-gutter-y-md"
+        style="max-width: 800px; margin-left: auto; margin-right: auto"
+      >
+        <q-btn
+          class="self-end bg-white q-px-sm border-15"
+          color="black"
+          clickable
+          flat
+          @click="handleCloseButton"
+          icon="close"
+        />
+        <h3 class="self-center" style="font-size: 1.5rem">
+          Create a new
+          {{ `${state.isChannelPublic ? 'public' : 'private'}` }} channel
+        </h3>
+        <q-card-section class="col q-pa-none q-mx-sm q-mt-none">
           <q-toggle
             :label="`${
               state.isChannelPublic
@@ -35,14 +37,11 @@
             A private channel is only visible to its members and only members of
             private channel can read its content.
           </p>
-        </q-card-section>
-
-        <q-card-section class="col q-pt-none">
           <q-form @submit.prevent.stop="handleSubmit">
             <q-input
               v-model="state.channelName"
               :error="v$.channelName.$error"
-              class="q-mt-lg rounded-borders border-15 bg-white q-pb-none q-pl-md q-pr-md"
+              class="q-mt-lg border-15 bg-white q-pb-none q-pl-md q-pr-md"
               color="cyan-9"
               borderless
               type="text"
@@ -67,7 +66,7 @@
               stack-label
               input-debounce="0"
               label="Invitations"
-              class="q-mt-lg rounded-borders border-15 bg-white q-pb-none q-pl-md q-pr-md"
+              class="q-mt-lg border-15 bg-white q-pb-none q-pl-md q-pr-md"
               color="cyan-9"
               borderless
               :options="options"
@@ -87,7 +86,7 @@
               :loading="state.submitting"
               flat
               label="Create channel"
-              class="rounded-borders q-mt-lg bg-white border-15"
+              class="q-mt-lg bg-white border-15"
               color="black"
               clickable
             >

@@ -21,14 +21,14 @@
             :class="{ 'q-mb-none': message.tag }"
             :name="fullName(message.firstname, message.lastname)"
             :text="[message.message]"
-            :bg-color="message.tag ? 'red' : 'bg-blue'"
+            :bg-color="message.tag ? 'cyan-5' : 'blue-grey-2'"
             :stamp="timeStamp(message.createdAt)"
           >
             <template v-slot:avatar>
               <q-avatar
                 class="q-mr-md"
                 rounded
-                color="primary"
+                color="cyan-7"
                 text-color="white"
               >
                 {{ nameInitials(message.firstname, message.lastname) }}
