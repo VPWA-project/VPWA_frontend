@@ -38,11 +38,6 @@ export default defineComponent({
     const $store = useStore();
     const route = useRoute();
 
-    var selectedChannel = {
-      id: 1,
-      messages: [{ tag: false, message: 'Hi' }],
-    };
-
     const handleSubmit = () => {
       const trimmedMessage = state.message.trim();
       if (!!trimmedMessage) {
@@ -64,9 +59,3 @@ export default defineComponent({
   components: { TypingChips },
 });
 </script>
-
-<style scoped>
-.border-all-15 {
-  border-radius: 15px 15px 0px 0px;
-}
-</style>

@@ -176,9 +176,3 @@ export default defineComponent({
   components: { ChannelLink, CreateChannel },
 });
 </script>
-
-<style scoped>
-.border-all-15 {
-  border-radius: 15px;
-}
-</style>
