@@ -4,7 +4,7 @@
       <Header
         :toggleLeftDrawer="toggleLeftDrawer"
         :toggleRightDrawer="toggleRightDrawer"
-        :activeChannel="activeChannel?.name"
+        :activeChannel="activeChannel"
       />
     </q-header>
 
@@ -33,8 +33,8 @@
     </q-page-container>
 
     <q-footer class="bg-white">
-      <MessageForm v-if="activeChannel" />
-      <InvitationResolveForm v-else channelName="Channel 10" />
+      <MessageForm />
+      <InvitationResolveForm v-bind="activeChannel" />
     </q-footer>
   </q-layout>
 </template>
