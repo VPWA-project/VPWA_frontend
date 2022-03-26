@@ -16,7 +16,7 @@ const actions: ActionTree<ChannelsStateInterface, StateInterface> = {
     }, 2000);
   },
 
-  fetchUserChannels: (context, payload: number) => {
+  fetchUserChannels: (context) => {
     // TODO: fetch user channels from database
 
     const userChannels: Array<Channel> = [
