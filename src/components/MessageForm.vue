@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="bg-cyan-9 text-black q-px-sm q-mx-sm rounded-borders border-all-15"
-  >
+  <div class="bg-cyan-9 text-black q-px-sm q-mx-sm rounded-borders border-15">
     <div class="col">
       <TypingChips />
       <q-form
@@ -38,11 +36,6 @@ export default defineComponent({
     const $store = useStore();
     const route = useRoute();
 
-    var selectedChannel = {
-      id: 1,
-      messages: [{ tag: false, message: 'Hi' }],
-    };
-
     const handleSubmit = () => {
       const trimmedMessage = state.message.trim();
       if (!!trimmedMessage) {
@@ -64,9 +57,3 @@ export default defineComponent({
   components: { TypingChips },
 });
 </script>
-
-<style scoped>
-.border-all-15 {
-  border-radius: 15px 15px 0px 0px;
-}
-</style>

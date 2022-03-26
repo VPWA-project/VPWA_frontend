@@ -10,10 +10,17 @@
       @click="toggleLeftDrawer"
     />
     <q-toolbar-title>
-      {{ activeChannel }}
+      {{ activeChannel?.name }}
     </q-toolbar-title>
 
-    <q-btn flat dense round icon="more_vert" class="q-ml-md">
+    <q-btn
+      v-if="activeChannel"
+      flat
+      dense
+      round
+      icon="more_vert"
+      class="q-ml-md"
+    >
       <q-menu
         anchor="bottom right"
         self="top right"
@@ -87,11 +94,10 @@ export default defineComponent({
   props: {
     toggleLeftDrawer: Function as PropType<() => void>,
     toggleRightDrawer: Function as PropType<() => void>,
-    activeChannel: String,
   },
   setup() {
     const $store = useStore();
-    const router = useRouter()
+    const router = useRouter();
 
     const state = reactive({
       isConfirmDialogOpen: false,
@@ -109,7 +115,7 @@ export default defineComponent({
               $store.state.channels.activeChannel
             )
             .then(() => {
-              router.push({name: 'dashboard'}).catch(console.log)
+              router.push({ name: 'dashboard' }).catch(console.log);
             })
             .catch(console.log);
         } else if (state.confirmDialogType === ConfirmDialogType.Delete) {
@@ -138,13 +144,8 @@ export default defineComponent({
         }
         return '';
       }),
+      activeChannel: computed(() => $store.state.channels.activeChannel),
     };
   },
 });
 </script>
-
-<style scoped>
-.border-all-15 {
-  border-radius: 15px;
-}
-</style>

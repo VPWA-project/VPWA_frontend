@@ -1,5 +1,5 @@
 <template>
-  <div class="q-pa-md full-width bg-white">
+  <div v-if="amIChannelMember" class="q-pa-md full-width bg-white">
     <q-infinite-scroll @load="onLoad" reverse>
       <template v-slot:loading>
         <div class="row justify-center q-my-md">
@@ -44,9 +44,11 @@
 <script lang="ts">
 import { computed, defineComponent, ref } from 'vue';
 import moment from 'moment';
+import { useStore } from 'src/store';
 
 export default defineComponent({
   setup() {
+    const $store = useStore();
     const messages = ref([
       {
         firstname: 'John',
@@ -163,6 +165,7 @@ export default defineComponent({
           current.getFullYear() === previous.getFullYear()
         );
       }),
+      amIChannelMember: computed(() => $store.state.channels.amIChannelMember),
     };
   },
 });

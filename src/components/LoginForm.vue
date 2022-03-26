@@ -3,7 +3,7 @@
     <h2 class="text-h6 text-center">Login</h2>
 
     <q-input
-      class="q-mt-lg rounded-borders border-all-15 bg-white q-pb-none q-pl-md q-pr-md"
+      class="q-mt-lg rounded-borders border-15 bg-white q-pb-none q-pl-md q-pr-md"
       color="cyan-9"
       v-model="state.email"
       borderless
@@ -18,7 +18,7 @@
     >
     <q-input
       color="cyan-9"
-      class="q-mt-lg rounded-borders border-all-15 bg-white q-pb-none q-pl-md q-pr-md"
+      class="q-mt-lg rounded-borders border-15 bg-white q-pb-none q-pl-md q-pr-md"
       borderless
       v-model="state.password"
       :error="v$.password.$error"
@@ -45,7 +45,7 @@
         type="submit"
         :loading="state.submitting"
         label="Login"
-        class="q-mt-lg q-pa-md rounded-borders border-all-15"
+        class="q-mt-lg q-pa-md rounded-borders border-15"
         style="width: 100%"
         color="cyan-9"
       >
@@ -135,9 +135,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style scoped>
-.border-all-15 {
-  border-radius: 15px;
-}
-</style>

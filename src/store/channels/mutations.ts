@@ -48,16 +48,20 @@ const mutation: MutationTree<ChannelsStateInterface> = {
     payload: { channelId: number; message: string }
   ) => {
     state.channels
-      .find(({ id }) => id == payload.channelId)!
-      .messages.push({
+      .find(({ id }) => id === payload.channelId)
+      ?.messages.push({
         tag: false,
         message: payload.message,
         createdAt: new Date(),
       });
   },
 
-  setActiveChannel: (state: ChannelsStateInterface, payload: Channel) => {
+  setActiveChannel: (state: ChannelsStateInterface, payload: Channel | undefined) => {
     state.activeChannel = payload;
+
+    state.amIChannelMember = !!state.channels.find(
+      (channel) => channel.id === payload?.id
+    );
   },
 
   leaveChannel: (state: ChannelsStateInterface, payload: Channel) => {

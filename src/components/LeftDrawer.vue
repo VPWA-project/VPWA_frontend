@@ -25,36 +25,14 @@
       </q-item>
 
       <q-list>
-        <ChannelLink v-for="link in invitations" :key="link.id" v-bind="link.channel"
-          ><template v-slot:append>
-            <div class="flex justify-end q-gutter-sm">
-              <q-btn
-                round
-                size="sm"
-                color="red"
-                icon="highlight_off"
-                @click="
-                  confirmInvitationRefuse(
-                    link.id,
-                    InvitationState.Refuse,
-                    link.channel.name
-                  )
-                "
-              />
-              <q-btn
-                round
-                size="sm"
-                color="green"
-                icon="check_circle_outline"
-                @click="
-                  processInvitation({
-                    id: link.id,
-                    state: InvitationState.Accept,
-                  })
-                "
-              />
-            </div> </template
-        ></ChannelLink>
+        <InvitationLink
+          v-for="link in invitations"
+          :key="link.id"
+          :id="link.id"
+          :channelId="link.channel.id"
+          :name="link.channel.name"
+          :type="link.channel.type"
+        />
       </q-list>
     </div>
 
@@ -93,18 +71,14 @@
 
 <script lang="ts">
 import { useStore } from 'src/store';
-import {
-  Channel,
-  InvitationInfo,
-  InvitationState,
-} from 'src/store/channels/state';
+import { Channel, InvitationState } from 'src/store/channels/state';
 import { defineComponent, computed, reactive, watch, onMounted } from 'vue';
 import UserMenu from './UserMenu.vue';
 import UserBanner from './UserBanner.vue';
 import ChannelLink from './ChannelLink.vue';
 import SearchChannels from './SearchChannels.vue';
 import { useRoute } from 'vue-router';
-import { useQuasar } from 'quasar';
+import InvitationLink from './InvitationLink.vue';
 
 export default defineComponent({
   components: {
@@ -112,16 +86,27 @@ export default defineComponent({
     UserBanner,
     ChannelLink,
     SearchChannels,
+    InvitationLink,
   },
   setup() {
     const $store = useStore();
-    const $q = useQuasar();
     const route = useRoute();
 
     const setActiveChannel = (id: string) => {
-      const channel = $store.state.channels.channels.find(
+      let channel = $store.state.channels.channels.find(
         (channel) => channel.id === parseInt(id)
       );
+
+      if (!channel)
+        channel = $store.state.channels.availableChannels.find(
+          (channel) => channel.id === parseInt(id)
+        );
+
+      if (!channel)
+        channel = $store.state.channels.invitations.find(
+          (invitation) => invitation.channel.id === parseInt(id)
+        )?.channel;
+
       $store.dispatch('channels/setActiveChannel', channel).catch(console.log);
     };
 
@@ -141,29 +126,9 @@ export default defineComponent({
       isBrowseChannelsOpen: false,
     });
 
-    const processInvitation = (inv: InvitationInfo) =>
-      $store.dispatch('channels/processInvitation', inv).catch(console.log);
-
-    const confirmInvitationRefuse = (
-      linkId: number,
-      state: InvitationState,
-      channelName: string
-    ) => {
-      $q.dialog({
-        title: 'Confirm',
-        message: `Would you like to really refuse invitation to channel ${channelName}`,
-        cancel: true,
-        persistent: false,
-      }).onOk(() => {
-        processInvitation({ id: linkId, state }).catch(console.log);
-      });
-    };
-
     return {
       state,
       InvitationState,
-      processInvitation,
-      confirmInvitationRefuse,
       switchChannel: (channel: Channel) =>
         $store
           .dispatch('channels/setActiveChannel', channel)
@@ -185,9 +150,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style scoped>
-.border-15 {
-  border-radius: 15px;
-}
-</style>

@@ -4,7 +4,6 @@
       <Header
         :toggleLeftDrawer="toggleLeftDrawer"
         :toggleRightDrawer="toggleRightDrawer"
-        :activeChannel="activeChannel?.name"
       />
     </q-header>
 
@@ -33,32 +32,29 @@
     </q-page-container>
 
     <q-footer class="bg-white">
-      <MessageForm />
+      <Footer />
     </q-footer>
   </q-layout>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, reactive } from 'vue';
-import { useStore } from '../store';
-import MessageForm from 'src/components/MessageForm.vue';
+import { defineComponent, reactive } from 'vue';
 import Header from 'src/components/Header.vue';
 import LeftDrawer from '../components/LeftDrawer.vue';
 import RightDrawer from 'src/components/RightDrawer.vue';
+import Footer from 'src/components/Footer.vue';
 
 export default defineComponent({
   name: 'MainLayout',
 
   components: {
-    MessageForm,
     Header,
     LeftDrawer,
     RightDrawer,
-  },
+    Footer
+},
 
   setup() {
-    const $store = useStore();
-
     const state = reactive({
       isLeftDrawerOpen: false,
       isRightDrawerOpen: false,
@@ -70,15 +66,7 @@ export default defineComponent({
         (state.isLeftDrawerOpen = !state.isLeftDrawerOpen),
       toggleRightDrawer: () =>
         (state.isRightDrawerOpen = !state.isRightDrawerOpen),
-      activeChannel: computed(() => $store.state.channels.activeChannel),
-      invitations: computed(() => $store.state.channels.invitations),
     };
   },
 });
 </script>
-
-<style scoped>
-.border-15 {
-  border-radius: 0px 0px 15px 15px;
-}
-</style>
