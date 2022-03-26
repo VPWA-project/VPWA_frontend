@@ -33,7 +33,8 @@
     </q-page-container>
 
     <q-footer class="bg-white">
-      <MessageForm />
+      <MessageForm v-if="activeChannel" />
+      <InvitationResolveForm v-else channelName="Channel 10" />
     </q-footer>
   </q-layout>
 </template>
@@ -45,6 +46,7 @@ import MessageForm from 'src/components/MessageForm.vue';
 import Header from 'src/components/Header.vue';
 import LeftDrawer from '../components/LeftDrawer.vue';
 import RightDrawer from 'src/components/RightDrawer.vue';
+import InvitationResolveForm from 'src/components/InvitationResolveForm.vue';
 
 export default defineComponent({
   name: 'MainLayout',
@@ -54,7 +56,8 @@ export default defineComponent({
     Header,
     LeftDrawer,
     RightDrawer,
-  },
+    InvitationResolveForm
+},
 
   setup() {
     const $store = useStore();
