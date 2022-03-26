@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-cyan-9 text-black q-pa-sm q-mx-sm border-all-15">
+  <div class="bg-cyan-9 text-black q-pa-sm q-mx-sm border-15">
     <div class="text-center text-white" style="font-size: 24px">
       {{ name }}
     </div>
@@ -7,7 +7,7 @@
       <q-btn
         flat
         label="Join channel"
-        class="bg-white border-all-15"
+        class="bg-white border-15"
         color="black"
         @click="joinChannel"
       />

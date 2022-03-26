@@ -5,9 +5,7 @@
     :full-height="$q.screen.lt.sm"
     :maximized="$q.screen.lt.sm"
   >
-    <q-card
-      class="full-height full-width bg-grey-3 rounded-borders border-all-15"
-    >
+    <q-card class="full-height full-width bg-grey-3 rounded-borders border-15">
       <div style="max-width: 800px; margin-left: auto; margin-right: auto">
         <q-card-section class="flex-center col">
           <div class="row flex-center justify-between no-wrap">
@@ -32,7 +30,7 @@
               stack-label
               input-debounce="0"
               label="Invitations"
-              class="q-mt-lg rounded-borders border-all-15 bg-white q-pb-none q-pl-md q-pr-md"
+              class="q-mt-lg rounded-borders border-15 bg-white q-pb-none q-pl-md q-pr-md"
               color="cyan-9"
               borderless
               :options="options"
@@ -52,7 +50,7 @@
               :loading="state.submitting"
               flat
               label="Invite user"
-              class="rounded-borders q-mt-lg bg-white border-all-15"
+              class="rounded-borders q-mt-lg bg-white border-15"
               color="black"
               clickable
             >

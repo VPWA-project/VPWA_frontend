@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="bg-cyan-9 text-black q-px-sm q-mx-sm rounded-borders border-all-15"
-  >
+  <div class="bg-cyan-9 text-black q-px-sm q-mx-sm rounded-borders border-15">
     <div class="col">
       <TypingChips />
       <q-form

@@ -1,6 +1,6 @@
 <template>
   <div :class="{ 'q-py-sm': typingPeople.length > 0 }">
-    <q-card v-show="state.showMessage" class="q-my-sm border-all-15">
+    <q-card v-show="state.showMessage" class="q-my-sm border-15">
       <q-card-section class="bg-grey-2 text-black">
         <div class="text-subtitle2">{{ state.nickname }} is typing</div>
       </q-card-section>
@@ -9,7 +9,7 @@
 
       <q-card-actions align="right">
         <q-btn
-          class="rounded-borders self-end bg-grey-2 q-px-sm border-all-15"
+          class="rounded-borders self-end bg-grey-2 q-px-sm border-15"
           color="black"
           clickable
           flat

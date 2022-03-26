@@ -5,15 +5,13 @@
     :full-height="$q.screen.lt.sm"
     :maximized="$q.screen.lt.sm"
   >
-    <q-card
-      class="full-height full-width bg-grey-3 rounded-borders border-all-15"
-    >
+    <q-card class="full-height full-width bg-grey-3 rounded-borders border-15">
       <div
         class="column q-pa-md q-gutter-y-md"
         style="max-width: 800px; margin-left: auto; margin-right: auto"
       >
         <q-btn
-          class="rounded-borders self-end bg-white q-px-sm border-all-15"
+          class="rounded-borders self-end bg-white q-px-sm border-15"
           color="black"
           clickable
           flat
@@ -24,7 +22,7 @@
 
         <q-card-section class="col q-pa-none q-mx-sm q-mt-none">
           <q-btn
-            class="rounded-borders bg-white q-mt-none border-all-15"
+            class="rounded-borders bg-white q-mt-none border-15"
             color="black"
             clickable
             flat
@@ -34,7 +32,7 @@
             @click="createChannelOpen = true"
           />
           <q-input
-            class="q-mt-lg rounded-borders border-all-15 bg-white q-pb-none q-pl-md q-pr-md"
+            class="q-mt-lg rounded-borders border-15 bg-white q-pb-none q-pl-md q-pr-md"
             color="cyan-9"
             borderless
             bottom-slots

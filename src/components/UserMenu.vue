@@ -19,7 +19,7 @@
         <q-item
           clickable
           @click="changeUserStatus(UserStatus.Online)"
-          class="border-all-15 bg-white"
+          class="border-15 bg-white"
         >
           <q-item-section avatar>
             <q-badge color="green" rounded />
@@ -32,7 +32,7 @@
         <q-item
           clickable
           @click="changeUserStatus(UserStatus.Dnd)"
-          class="border-all-15 bg-white"
+          class="border-15 bg-white"
         >
           <q-item-section avatar>
             <q-badge color="red" rounded />
@@ -45,7 +45,7 @@
         <q-item
           clickable
           @click="changeUserStatus(UserStatus.Offline)"
-          class="border-all-15 bg-white"
+          class="border-15 bg-white"
         >
           <q-item-section avatar>
             <q-badge color="black" rounded />
@@ -64,11 +64,7 @@
         >
       </q-item>
 
-      <q-item
-        tag="label"
-        v-ripple
-        class="border-all-15 q-mx-md bg-white q-mx-xs"
-      >
+      <q-item tag="label" v-ripple class="border-15 q-mx-md bg-white q-mx-xs">
         <q-item-section>
           <q-item-label>Only @mentions</q-item-label>
         </q-item-section>
@@ -82,7 +78,7 @@
       <q-item
         clickable
         @click="logout()"
-        class="border-all-15 bg-white q-mx-md q-mb-md"
+        class="border-15 bg-white q-mx-md q-mb-md"
       >
         <q-item-section avatar>
           <q-icon name="logout" />

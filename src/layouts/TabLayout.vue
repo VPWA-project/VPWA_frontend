@@ -3,10 +3,7 @@
     <div
       class="q-pa-md full-width row justify-center items-center content-center"
     >
-      <q-card
-        style="width: 480px"
-        class="rounded-borders border-all-15 bg-grey-2"
-      >
+      <q-card style="width: 480px" class="rounded-borders border-15 bg-grey-2">
         <q-tabs
           v-model="tab"
           dense
