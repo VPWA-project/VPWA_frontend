@@ -108,12 +108,6 @@ const actions: ActionTree<ChannelsStateInterface, StateInterface> = {
   processInvitation: (context, payload: InvitationInfo) => {
     context.commit('processInvitation', payload);
   },
-
-  amIChannelMember: (context) => {
-    return !!context.state.channels.find(
-      (channel) => channel.id === context.state.activeChannel?.id
-    );
-  },
 };
 
 export default actions;

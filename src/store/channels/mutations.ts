@@ -56,11 +56,11 @@ const mutation: MutationTree<ChannelsStateInterface> = {
       });
   },
 
-  setActiveChannel: (state: ChannelsStateInterface, payload: Channel) => {
+  setActiveChannel: (state: ChannelsStateInterface, payload: Channel | undefined) => {
     state.activeChannel = payload;
 
     state.amIChannelMember = !!state.channels.find(
-      (channel) => channel.id === payload.id
+      (channel) => channel.id === payload?.id
     );
   },
 
