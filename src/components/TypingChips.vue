@@ -54,6 +54,11 @@ const typingPeople = [
     nickname: 'adam',
     text: 'Bye',
   },
+  {
+    id: 3,
+    nickname: 'john',
+    text: 'Hello',
+  },
 ];
 
 type TypingPerson = {
@@ -93,7 +98,7 @@ export default defineComponent({
     return {
       state,
       typingPeople,
-      maxChipsToDisplay: 5,
+      maxChipsToDisplay: 2,
       closeShowMessage,
       openMessage,
     };
