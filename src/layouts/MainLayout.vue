@@ -1,106 +1,73 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
-      <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
-
-        <q-toolbar-title> Quasar App </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
-      </q-toolbar>
+  <q-layout view="lHr LpR lFr">
+    <q-header class="bg-cyan-9 q-px-sm q-mx-sm border-15">
+      <Header
+        :toggleLeftDrawer="toggleLeftDrawer"
+        :toggleRightDrawer="toggleRightDrawer"
+      />
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
-      <q-list>
-        <q-item-label header> Essential Links </q-item-label>
+    <q-drawer
+      v-model="state.isLeftDrawerOpen"
+      side="left"
+      show-if-above
+      :breakpoint="1440"
+      style="border-radius: 0px 15px 15px 0px"
+      class="bg-blue-grey-2"
+    >
+      <LeftDrawer />
+    </q-drawer>
 
-        <EssentialLink
-          v-for="link in essentialLinks"
-          :key="link.title"
-          v-bind="link"
-        />
-      </q-list>
+    <q-drawer
+      show-if-above
+      :breakpoint="1440"
+      v-model="state.isRightDrawerOpen"
+      side="right"
+      style="border-radius: 15px 0px 0px 15px"
+      class="bg-blue-grey-2"
+    >
+      <RightDrawer />
     </q-drawer>
 
     <q-page-container>
       <router-view />
     </q-page-container>
+
+    <q-footer class="bg-white">
+      <Footer />
+    </q-footer>
   </q-layout>
 </template>
 
 <script lang="ts">
-import EssentialLink from 'components/EssentialLink.vue';
-
-const linksList = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev',
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework',
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev',
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev',
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev',
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev',
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev',
-  },
-];
-
-import { defineComponent, ref } from 'vue';
+import { defineComponent, reactive } from 'vue';
+import Header from 'src/components/Header.vue';
+import LeftDrawer from '../components/LeftDrawer.vue';
+import RightDrawer from 'src/components/RightDrawer.vue';
+import Footer from 'src/components/Footer.vue';
 
 export default defineComponent({
   name: 'MainLayout',
 
   components: {
-    EssentialLink,
+    Header,
+    LeftDrawer,
+    RightDrawer,
+    Footer,
   },
 
   setup() {
-    const leftDrawerOpen = ref(false);
+    const state = reactive({
+      isLeftDrawerOpen: false,
+      isRightDrawerOpen: false,
+    });
 
     return {
-      essentialLinks: linksList,
-      leftDrawerOpen,
-      toggleLeftDrawer() {
-        leftDrawerOpen.value = !leftDrawerOpen.value;
-      },
+      state,
+      toggleLeftDrawer: () =>
+        (state.isLeftDrawerOpen = !state.isLeftDrawerOpen),
+      toggleRightDrawer: () =>
+        (state.isRightDrawerOpen = !state.isRightDrawerOpen),
     };
   },
 });

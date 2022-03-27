@@ -1,0 +1,141 @@
+<template>
+  <q-dialog
+    v-model="isDialogOpen"
+    :full-width="$q.screen.lt.sm"
+    :full-height="$q.screen.lt.sm"
+    :maximized="$q.screen.lt.sm"
+  >
+    <q-card class="full-height full-width bg-grey-3 border-15">
+      <div
+        class="column q-pa-md q-gutter-y-md"
+        style="max-width: 800px; margin-left: auto; margin-right: auto"
+      >
+        <q-btn
+          class="self-end bg-white q-px-sm border-15"
+          color="black"
+          clickable
+          flat
+          @click="handleCloseButton"
+          icon="close"
+        />
+        <h3 class="self-center" style="font-size: 1.5rem">Invite new users</h3>
+
+        <q-card-section class="col q-pa-none q-mx-sm q-mt-none">
+          <q-form @submit.prevent.stop="handleSubmit">
+            <q-select
+              v-model="invitations"
+              use-input
+              use-chips
+              multiple
+              stack-label
+              input-debounce="0"
+              label="Invitations"
+              class="q-mt-lg border-15 bg-white q-pb-none q-pl-md q-pr-md"
+              color="cyan-9"
+              borderless
+              :options="options"
+              @filter="fetchUsers"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    User not found
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+
+            <q-btn
+              type="submit"
+              :loading="state.submitting"
+              flat
+              :disable="!invitations"
+              label="Invite users"
+              class="q-mt-lg bg-white border-15"
+              color="black"
+              clickable
+            >
+              <template v-slot:loading>
+                <q-spinner-facebook />
+              </template>
+            </q-btn>
+          </q-form>
+        </q-card-section>
+      </div>
+    </q-card>
+  </q-dialog>
+</template>
+
+<script lang="ts">
+import { QSelect, useQuasar } from 'quasar';
+import { defineComponent, reactive, ref, toRef } from 'vue';
+
+export default defineComponent({
+  props: {
+    open: {
+      type: Boolean,
+      default: true,
+    },
+  },
+  watch: {
+    open(_, newValue) {
+      if (newValue === false) {
+        this.state.submitting = false;
+      }
+    },
+  },
+  emits: ['close'],
+  setup(props, { emit }) {
+    const isDialogOpen = toRef(props, 'open');
+    const $q = useQuasar();
+
+    const state = reactive({
+      submitting: false,
+    });
+
+    const handleCloseButton = () => {
+      emit('close');
+    };
+
+    const stringOptions = ['sangalaa', 'adam', '5cos', 'lucyklus', 'stuff'];
+
+    const invitations = ref<QSelect | null>(null);
+    const options = ref(stringOptions);
+
+    const fetchUsers = (val: string, update: (value: () => void) => void) => {
+      setTimeout(() => {
+        update(() => {
+          if (val === '') {
+            options.value = stringOptions;
+          } else {
+            const needle = val.toLowerCase();
+            options.value = stringOptions.filter(
+              (v) => v.toLowerCase().indexOf(needle) > -1
+            );
+          }
+        });
+      }, 1500);
+    };
+
+    const handleSubmit = () => {
+      state.submitting = true;
+      $q.notify({
+        message: 'Invitations send successfully',
+        color: 'grey-8',
+        type: 'positive',
+      });
+      handleCloseButton();
+    };
+
+    return {
+      isDialogOpen,
+      handleSubmit,
+      handleCloseButton,
+      state,
+      invitations,
+      options,
+      fetchUsers,
+    };
+  },
+});
+</script>
