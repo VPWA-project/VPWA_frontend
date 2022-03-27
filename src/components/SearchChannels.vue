@@ -67,7 +67,6 @@
           >
             <template v-slot:append>
               <div class="row justify-end">
-                <q-btn flat color="black" label="View" />
                 <q-btn
                   flat
                   color="green"

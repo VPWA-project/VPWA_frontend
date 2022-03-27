@@ -190,7 +190,8 @@ export default defineComponent({
               .then(() => {
                 $q.notify({
                   message: `Channel ${payload.name} was created successfully`,
-                  color: 'blue',
+                  color: 'grey-8',
+                  type: 'positive',
                 });
 
                 state.submitting = false;

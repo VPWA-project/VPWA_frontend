@@ -49,7 +49,8 @@
               type="submit"
               :loading="state.submitting"
               flat
-              label="Invite user"
+              :disable="!invitations"
+              label="Invite users"
               class="q-mt-lg bg-white border-15"
               color="black"
               clickable
@@ -66,7 +67,7 @@
 </template>
 
 <script lang="ts">
-import { QSelect } from 'quasar';
+import { QSelect, useQuasar } from 'quasar';
 import { defineComponent, reactive, ref, toRef } from 'vue';
 
 export default defineComponent({
@@ -86,6 +87,7 @@ export default defineComponent({
   emits: ['close'],
   setup(props, { emit }) {
     const isDialogOpen = toRef(props, 'open');
+    const $q = useQuasar();
 
     const state = reactive({
       submitting: false,
@@ -117,6 +119,12 @@ export default defineComponent({
 
     const handleSubmit = () => {
       state.submitting = true;
+      $q.notify({
+        message: 'Invitations send successfully',
+        color: 'grey-8',
+        type: 'positive',
+      });
+      handleCloseButton();
     };
 
     return {

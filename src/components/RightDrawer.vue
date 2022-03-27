@@ -11,7 +11,7 @@
         flat
         @click="showInviteUsers"
         icon-right="add_circle"
-        label="Invite user"
+        label="Invite users"
       />
     </q-item>
     <InviteUsers
