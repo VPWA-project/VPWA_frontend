@@ -21,8 +21,12 @@
             })
           "
         />
-      </div> </template
-  ></ChannelLink>
+      </div>
+    </template>
+    <template v-slot:invitedBy>
+      <div class="text-caption text-weight-light">by Adam Bublavy</div>
+    </template>
+  </ChannelLink>
 </template>
 
 <script lang="ts">

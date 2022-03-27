@@ -23,6 +23,26 @@
       <q-item>
         <q-item-section>
           <q-item-label class="text-weight-medium text-subtitle1"
+            >Administrator</q-item-label
+          >
+        </q-item-section>
+      </q-item>
+
+      <q-list>
+        <ChannelMember
+          background="bg-white"
+          v-for="member in offline"
+          :key="member.id"
+          v-bind="member"
+          :channelMembers="state.channelMembers"
+        />
+      </q-list>
+    </div>
+
+    <div class="q-ma-md q-py-md bg-grey-2 border-15">
+      <q-item>
+        <q-item-section>
+          <q-item-label class="text-weight-medium text-subtitle1"
             >Online</q-item-label
           >
         </q-item-section>
@@ -30,7 +50,7 @@
 
       <q-list>
         <ChannelMember
-          v-bind:class="background"
+          background="bg-white"
           v-for="member in online"
           :key="member.id"
           v-bind="member"
@@ -107,7 +127,6 @@ export default defineComponent({
 
     return {
       state,
-      background: 'bg-white',
       online: computed(() =>
         state.channelMembers.filter((x) => x.status !== 'OFFLINE')
       ),
