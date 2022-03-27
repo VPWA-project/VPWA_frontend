@@ -1,9 +1,9 @@
 import { MutationTree } from 'vuex';
 import { User, UserStateInterface, UserStatus } from './state';
-import { UserRegisterPayload, UserStatePayload } from './types';
+import { UserRegisterPayload, UserLoginPayload } from './types';
 
 const mutation: MutationTree<UserStateInterface> = {
-  loginUser(state: UserStateInterface, payload: UserStatePayload) {
+  loginUser(state: UserStateInterface, payload: UserLoginPayload) {
     // TODO
     if (!state.loggedInUser)
       state.loggedInUser = {

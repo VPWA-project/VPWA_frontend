@@ -60,7 +60,7 @@
 <script lang="ts">
 import { defineComponent, reactive } from 'vue';
 import { useStore } from '../store';
-import { UserStatePayload } from '../store/user/types';
+import { UserLoginPayload } from '../store/user/types';
 import { helpers, required, email, minLength } from '@vuelidate/validators';
 import useVuelidate from '@vuelidate/core';
 import { useRouter } from 'vue-router';
@@ -102,7 +102,7 @@ export default defineComponent({
         .$validate()
         .then((isValid) => {
           if (isValid) {
-            const payload: UserStatePayload = {
+            const payload: UserLoginPayload = {
               email: state.email,
               password: state.password,
             };

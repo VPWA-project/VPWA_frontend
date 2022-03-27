@@ -1,4 +1,4 @@
-export interface UserStatePayload {
+export interface UserLoginPayload {
   email: string;
   password: string;
 }
