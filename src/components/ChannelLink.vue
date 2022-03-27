@@ -1,12 +1,13 @@
 <template>
-  <div class="q-ma-sm bg-white border-15">
+  <div class="q-mt-sm q-mx-sm bg-white border-15">
     <q-item clickable :href="'#/chat/' + id" class="border-15">
       <q-item-section v-if="type" avatar>
         <q-icon :name="getIconByType(type)" />
       </q-item-section>
 
-      <q-item-section>
+      <q-item-section class="q-pt-xs">
         <q-item-label>{{ name }}</q-item-label>
+        <slot name="invitedBy"></slot>
       </q-item-section>
 
       <q-item-section>

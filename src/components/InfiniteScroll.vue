@@ -3,7 +3,7 @@
     <q-infinite-scroll @load="onLoad" reverse>
       <template v-slot:loading>
         <div class="row justify-center q-my-md">
-          <q-spinner color="primary" name="dots" size="40px" />
+          <q-spinner color="cyan-9" name="dots" size="40px" />
         </div>
       </template>
 

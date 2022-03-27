@@ -2,6 +2,7 @@
   <div class="bg-cyan-9 text-black q-px-sm q-mx-sm border-15">
     <div class="col">
       <TypingChips />
+
       <q-form
         class="row full-width no-wrap q-pb-sm"
         @submit.prevent.stop="handleSubmit"
@@ -15,7 +16,13 @@
           v-model="state.message"
           placeholder="Type a message"
         />
-        <q-btn round color="cyan-8" icon="send" type="submit" />
+        <q-btn
+          round
+          color="cyan-8"
+          icon="send"
+          type="submit"
+          @click="showNotif"
+        />
       </q-form>
     </div>
   </div>
@@ -26,6 +33,7 @@ import { defineComponent, reactive } from 'vue';
 import TypingChips from './TypingChips.vue';
 import { useStore } from 'src/store';
 import { useRoute } from 'vue-router';
+import { useQuasar } from 'quasar';
 
 export default defineComponent({
   name: 'MessageForm',
@@ -35,6 +43,7 @@ export default defineComponent({
     });
     const $store = useStore();
     const route = useRoute();
+    const $q = useQuasar();
 
     const handleSubmit = () => {
       const trimmedMessage = state.message.trim();
@@ -52,6 +61,15 @@ export default defineComponent({
     return {
       state,
       handleSubmit,
+      showNotif() {
+        $q.notify({
+          message: 'John Doe',
+          caption: 'Heeey Jozko, How are you ?',
+          color: 'grey-2',
+          textColor: 'black',
+          position: 'bottom-right',
+        });
+      },
     };
   },
   components: { TypingChips },
