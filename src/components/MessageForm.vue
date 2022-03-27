@@ -1,17 +1,17 @@
 <template>
   <div class="bg-cyan-9 text-black q-px-sm q-mx-sm border-15">
     <div class="col">
-      <TypingChips />
+      <TypingChips v-if="amIChannelMember && activeChannel" />
 
       <q-form
-        class="row full-width no-wrap q-pb-sm"
+        class="row full-width no-wrap q-py-sm"
         @submit.prevent.stop="handleSubmit"
       >
         <q-input
           rounded
           outlined
           dense
-          class="WAL__field col-grow q-mr-sm"
+          class="col-grow q-mr-sm"
           bg-color="white"
           v-model="state.message"
           placeholder="Type a message"
@@ -29,7 +29,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from 'vue';
+import { defineComponent, reactive, computed } from 'vue';
 import TypingChips from './TypingChips.vue';
 import { useStore } from 'src/store';
 import { useRoute } from 'vue-router';
@@ -70,6 +70,8 @@ export default defineComponent({
           position: 'bottom-right',
         });
       },
+      activeChannel: computed(() => $store.state.channels.activeChannel),
+      amIChannelMember: computed(() => $store.state.channels.amIChannelMember),
     };
   },
   components: { TypingChips },

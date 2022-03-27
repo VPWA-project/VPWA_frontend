@@ -24,7 +24,7 @@
       </div>
     </template>
     <template v-slot:invitedBy>
-      <div class="text-caption text-weight-light">by Adam Bublavy</div>
+      <div style="font-size: 10px">by Adam Bublavy</div>
     </template>
   </ChannelLink>
 </template>

@@ -86,6 +86,13 @@ export default defineComponent({
         persistent: false,
       }).onOk(() => {
         kickUser(id);
+        $q.notify({
+          message: `User ${
+            member.firstname + ' ' + member.lastname
+          } was revoked successfully`,
+          color: 'grey-8',
+          type: 'positive',
+        });
       });
     };
 
@@ -113,6 +120,13 @@ export default defineComponent({
         persistent: false,
       }).onOk(() => {
         banUser(id);
+        $q.notify({
+          message: `User ${
+            member.firstname + ' ' + member.lastname
+          } was kicked successfully`,
+          color: 'grey-8',
+          type: 'positive',
+        });
       });
     };
 
