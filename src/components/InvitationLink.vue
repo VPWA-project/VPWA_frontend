@@ -5,20 +5,14 @@
         <q-btn
           round
           size="sm"
-          color="red"
+          color="blue-grey-9"
           icon="highlight_off"
-          @click="
-            confirmInvitationRefuse(
-              id,
-              InvitationState.Refuse,
-              name
-            )
-          "
+          @click="confirmInvitationRefuse(id, InvitationState.Refuse, name)"
         />
         <q-btn
           round
           size="sm"
-          color="green"
+          color="cyan-7"
           icon="check_circle_outline"
           @click="
             processInvitation({
@@ -34,39 +28,43 @@
 <script lang="ts">
 import { useQuasar } from 'quasar';
 import { useStore } from 'src/store';
-import { ChannelType, InvitationInfo, InvitationState } from 'src/store/channels/state';
+import {
+  ChannelType,
+  InvitationInfo,
+  InvitationState,
+} from 'src/store/channels/state';
 import { defineComponent, PropType } from 'vue';
 import ChannelLink from './ChannelLink.vue';
 
 export default defineComponent({
   props: {
-     id: {
-         type: Number,
-         required: true
-     },
-     channelId: {
-         type: Number,
-         required: true
-     },
-     name: {
-         type: String,
-         required: true
-     },
-     type: {
-         type: String as PropType<ChannelType>,
-         required: true
-     }
+    id: {
+      type: Number,
+      required: true,
+    },
+    channelId: {
+      type: Number,
+      required: true,
+    },
+    name: {
+      type: String,
+      required: true,
+    },
+    type: {
+      type: String as PropType<ChannelType>,
+      required: true,
+    },
   },
   components: {
-      ChannelLink
+    ChannelLink,
   },
   setup() {
     const $store = useStore();
     const $q = useQuasar();
 
     const processInvitation = (inv: InvitationInfo) => {
-        $store.dispatch('channels/processInvitation', inv).catch(console.log)
-    }
+      $store.dispatch('channels/processInvitation', inv).catch(console.log);
+    };
 
     const confirmInvitationRefuse = (
       linkId: number,

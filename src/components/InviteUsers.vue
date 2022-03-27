@@ -6,21 +6,21 @@
     :maximized="$q.screen.lt.sm"
   >
     <q-card class="full-height full-width bg-grey-3 border-15">
-      <div style="max-width: 800px; margin-left: auto; margin-right: auto">
-        <q-card-section class="flex-center col">
-          <div class="row flex-center justify-between no-wrap">
-            <h3 style="font-size: 1.5rem">Invite new users</h3>
-            <q-btn
-              round
-              flat
-              color="black"
-              icon="close"
-              @click="handleCloseButton"
-            />
-          </div>
-        </q-card-section>
+      <div
+        class="column q-pa-md q-gutter-y-md"
+        style="max-width: 800px; margin-left: auto; margin-right: auto"
+      >
+        <q-btn
+          class="self-end bg-white q-px-sm border-15"
+          color="black"
+          clickable
+          flat
+          @click="handleCloseButton"
+          icon="close"
+        />
+        <h3 class="self-center" style="font-size: 1.5rem">Invite new users</h3>
 
-        <q-card-section class="col q-pt-none">
+        <q-card-section class="col q-pa-none q-mx-sm q-mt-none">
           <q-form @submit.prevent.stop="handleSubmit">
             <q-select
               v-model="invitations"

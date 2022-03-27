@@ -37,7 +37,8 @@
       color="white"
       v-if="typingPeople.length > maxChipsToDisplay"
     >
-      and {{ typingPeople.length - maxChipsToDisplay }} more...
+      and {{ typingPeople.length - maxChipsToDisplay }} more
+      <q-spinner-dots class="q-pl-xs q-mt-xs" size="24px" />
     </q-chip>
   </div>
 </template>
