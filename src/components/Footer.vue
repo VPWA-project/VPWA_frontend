@@ -1,6 +1,6 @@
 <template>
-  <MessageForm v-if="amIChannelMember" />
   <InvitationResolveForm v-if="!amIChannelMember && activeChannel" :name="activeChannel?.name" />
+  <MessageForm v-else />
 </template>
 
 <script lang="ts">
