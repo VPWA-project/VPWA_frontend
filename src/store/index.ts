@@ -3,11 +3,14 @@ import user from './user';
 import { UserStateInterface } from './user/state';
 import channels from './channels';
 import { ChannelsStateInterface } from './channels/state';
+import auth from 'src/boot/auth';
+import type { AuthStateInterface } from './auth/state'
 
 export interface StateInterface {
   asd: string;
   user: UserStateInterface;
   channels: ChannelsStateInterface;
+  auth: AuthStateInterface
 }
 
 const store = () => {
@@ -15,6 +18,7 @@ const store = () => {
     modules: {
       user,
       channels,
+      auth
     },
     strict: !process.env.NODE_ENV,
   });
