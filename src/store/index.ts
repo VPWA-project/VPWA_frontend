@@ -3,7 +3,7 @@ import user from './user';
 import { UserStateInterface } from './user/state';
 import channels from './channels';
 import { ChannelsStateInterface } from './channels/state';
-import auth from 'src/boot/auth';
+import auth from './auth';
 import type { AuthStateInterface } from './auth/state'
 
 export interface StateInterface {
