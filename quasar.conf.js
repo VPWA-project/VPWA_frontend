@@ -28,17 +28,17 @@ module.exports = configure(function (ctx) {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://quasar.dev/quasar-cli/boot-files
-    boot: [
-      'axios',
-      'auth'
-    ],
+    boot: ['axios', 'auth'],
 
     sourceFiles: { store: 'src/store/index.ts' },
     build: {
       vueRouterMode: 'history', // available values: 'hash', 'history'
       env: {
-        API_URL: process.env.API_URL || (ctx.dev ? 'http://localhost:3333' : 'https://prod.api.com')
+        API_URL:
+          process.env.API_URL ||
+          (ctx.dev ? 'http://localhost:3333' : 'https://prod.api.com'),
       },
+    },
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css
     css: ['app.scss'],
@@ -98,8 +98,8 @@ module.exports = configure(function (ctx) {
     framework: {
       config: {
         screen: {
-          bodyClasses: true
-        }
+          bodyClasses: true,
+        },
       },
 
       // iconSet: 'material-icons', // Quasar icon set
@@ -113,12 +113,8 @@ module.exports = configure(function (ctx) {
       // directives: [],
 
       // Quasar plugins
-      plugins: [
-        'Dialog',
-        'Notify',
-        'AppVisibility'
-      ],
-      useCss: true
+      plugins: ['Dialog', 'Notify', 'AppVisibility'],
+      useCss: true,
     },
 
     // animations: 'all', // --- includes all animations
