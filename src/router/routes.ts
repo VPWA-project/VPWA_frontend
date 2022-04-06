@@ -3,7 +3,7 @@ import { RouteRecordRaw } from 'vue-router';
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    name: 'dashboard',
+    name: 'home',
     component: () => import('layouts/MainLayout.vue'),
     meta: {
       requiresAuth: true

@@ -43,7 +43,7 @@
     <div class="row justify-center">
       <q-btn
         type="submit"
-        :loading="state.submitting"
+        :loading="submitting"
         label="Login"
         class="q-mt-lg q-pa-md border-15"
         style="width: 100%"
@@ -58,12 +58,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from 'vue';
+import { computed, defineComponent, reactive } from 'vue';
 import { useStore } from '../store';
-import { UserLoginPayload } from '../store/user/types';
 import { helpers, required, email, minLength } from '@vuelidate/validators';
 import useVuelidate from '@vuelidate/core';
-import { useRouter } from 'vue-router';
+import { RouteLocationRaw, useRoute, useRouter } from 'vue-router';
+import { LoginCredentials } from 'src/contracts/Auth';
 
 const rules = {
   email: {
@@ -85,43 +85,35 @@ export default defineComponent({
   setup() {
     const $store = useStore();
     const router = useRouter();
+    const route = useRoute();
 
     const state = reactive({
       email: '',
       password: '',
       isPwd: true,
-      submitting: false,
     });
 
     const v$ = useVuelidate(rules, state);
 
-    const handleSubmit = () => {
-      state.submitting = true;
+    const redirectTo = computed(
+      () => (route.query.redirect as string) || { name: 'home' }
+    ) as RouteLocationRaw;
+    const submitting = computed(() => $store.state.auth.status === 'pending');
 
+    const handleSubmit = () => {
       v$.value
         .$validate()
         .then((isValid) => {
           if (isValid) {
-            const payload: UserLoginPayload = {
+            const payload: LoginCredentials = {
               email: state.email,
               password: state.password,
             };
 
             $store
-              .dispatch('user/loginUser', payload)
-              .then(() => {
-                state.submitting = false;
-
-                $store
-                  .dispatch('channels/fetchUserChannels', 1)
-                  .then(() => {
-                    router.push('/').catch(console.log);
-                  })
-                  .catch(console.log);
-              })
+              .dispatch('auth/login', payload)
+              .then(() => router.push(redirectTo))
               .catch(console.log);
-          } else {
-            state.submitting = false;
           }
         })
         .catch(console.log);
@@ -130,6 +122,7 @@ export default defineComponent({
     return {
       state,
       v$,
+      submitting,
       handleSubmit,
     };
   },
