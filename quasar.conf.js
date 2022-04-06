@@ -31,14 +31,6 @@ module.exports = configure(function (ctx) {
     boot: ['axios', 'auth'],
 
     sourceFiles: { store: 'src/store/index.ts' },
-    build: {
-      vueRouterMode: 'history', // available values: 'hash', 'history'
-      env: {
-        API_URL:
-          process.env.API_URL ||
-          (ctx.dev ? 'http://localhost:3333' : 'https://prod.api.com'),
-      },
-    },
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css
     css: ['app.scss'],
@@ -60,6 +52,11 @@ module.exports = configure(function (ctx) {
     // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-build
     build: {
       vueRouterMode: 'hash', // available values: 'hash', 'history'
+      env: {
+        API_URL:
+          process.env.API_URL ||
+          (ctx.dev ? 'http://localhost:3333' : 'https://prod.api.com'),
+      },
 
       // transpile: false,
       // publicPath: '/',

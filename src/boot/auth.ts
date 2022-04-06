@@ -11,7 +11,7 @@ declare module 'vue-router' {
 
 const loginRoute = (from: RouteLocationNormalized): RouteLocationRaw => {
   return {
-    name: 'login',
+    name: 'account',
     query: { redirect: from.fullPath }
   }
 }
@@ -20,12 +20,12 @@ const loginRoute = (from: RouteLocationNormalized): RouteLocationRaw => {
 export default boot(({ router, store }) => {
   // if the token was removed from storage, redirect to login
   authManager.onLogout(() => {
-    router.push(loginRoute(router.currentRoute.value))
+    void router.push(loginRoute(router.currentRoute.value))
   })
 
   // add route guard to check auth user
   router.beforeEach(async (to) => {
-    const isAuthenticated = await store.dispatch('auth/check')
+    const isAuthenticated = await store.dispatch('auth/check') as boolean
 
     // route requires authentication
     if (to.meta.requiresAuth && !isAuthenticated) {

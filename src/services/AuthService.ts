@@ -11,7 +11,7 @@ class AuthService {
   async me(dontTriggerLogout = false): Promise<User | null> {
     return api
       .get('auth/me', { dontTriggerLogout } as AxiosRequestConfig)
-      .then((response) => response.data)
+      .then((response) => response.data as User | null)
       .catch((error: AxiosError) => {
         if (error.response?.status === 401) {
           return null;
