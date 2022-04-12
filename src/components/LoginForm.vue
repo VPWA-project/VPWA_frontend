@@ -9,6 +9,7 @@
       borderless
       :error="v$.email.$error"
       type="email"
+      name="email"
       label="Email"
     >
       <template v-slot:error>
@@ -24,6 +25,7 @@
       v-model="state.password"
       :error="v$.password.$error"
       :type="state.isPwd ? 'password' : 'text'"
+      name="password"
       label="Password"
     >
       <template v-slot:append>

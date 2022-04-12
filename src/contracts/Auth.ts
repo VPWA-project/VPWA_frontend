@@ -9,6 +9,9 @@ export interface ApiToken {
     email: string
     password: string
     passwordConfirmation: string
+    firstname: string
+    lastname: string
+    nickname: string
   }
   
   export interface LoginCredentials {
@@ -17,8 +20,21 @@ export interface ApiToken {
   }
   
   export interface User {
-    id: number
+    id: string
     email: string
-    createdAt: string,
-    updatedAt: string
+    firstname: string
+    lastname: string
+    nickname: string
+    created_at: string,
+    updated_at: string
+  }
+
+  export interface ValidationError {
+    rule: string
+    field: string
+    message: string
+  }
+
+  export interface ValidationErrorResponse {
+    errors: ValidationError[]
   }
