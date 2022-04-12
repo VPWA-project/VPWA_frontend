@@ -5,9 +5,10 @@
     <q-input
       class="q-mt-lg border-15 bg-white q-pb-none q-pl-md q-pr-md"
       color="cyan-9"
-      v-model="state.email"
+      v-model.trim="state.email"
       borderless
       :error="v$.email.$error"
+      type="email"
       label="Email"
     >
       <template v-slot:error>
