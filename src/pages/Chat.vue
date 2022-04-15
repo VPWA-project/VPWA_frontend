@@ -1,19 +1,29 @@
 <template>
   <q-page class="row items-center justify-evenly">
-    <InfiniteScroll />
+    <ChatMessagesComponent :messages="messages" />
   </q-page>
 </template>
 
 <script lang="ts">
-import InfiniteScroll from 'src/components/InfiniteScroll.vue';
-import { defineComponent } from 'vue';
+import { SerializedMessage } from 'src/contracts';
+import { useStore } from 'src/store';
+import { defineComponent, computed } from 'vue';
+import ChatMessagesComponent from '../components/ChatMessagesComponent.vue';
 
 export default defineComponent({
   name: 'PageIndex',
-  components: { InfiniteScroll },
+  components: { ChatMessagesComponent },
 
   setup() {
-    return {};
+    const $store = useStore()
+
+    const messages = computed(() => {
+      return $store.getters['channels/currentMessages'] as SerializedMessage[]
+    })
+
+    return {
+      messages
+    }
   },
 });
 </script>

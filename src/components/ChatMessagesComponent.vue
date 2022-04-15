@@ -42,96 +42,24 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from 'vue';
+import { computed, defineComponent, PropType } from 'vue';
 import moment from 'moment';
 import { useStore } from 'src/store';
+import { SerializedMessage } from 'src/contracts';
 
 export default defineComponent({
+  props: {
+    messages: {
+      type: Array as PropType<SerializedMessage[]>,
+      default: () => []
+    }
+  },
   setup() {
     const $store = useStore();
-    const messages = ref([
-      {
-        firstname: 'John',
-        lastname: 'Doe',
-        nickname: 'john',
-        tag: false,
-        message: 'Hello',
-        createdAt: moment(moment.now()).subtract(2, 'days').toDate(),
-      },
-      {
-        firstname: 'Frank',
-        lastname: 'Doe',
-        nickname: 'frank',
-        tag: true,
-        message: 'Good morning',
-        createdAt: moment(moment.now()).subtract(1, 'days').toDate(),
-      },
-      {
-        firstname: 'Martin',
-        lastname: 'Doe',
-        nickname: 'martin',
-        tag: false,
-        message: 'Hi',
-        createdAt: moment(moment.now()).subtract(1, 'hours').toDate(),
-      },
-      {
-        firstname: 'Jozko',
-        lastname: 'Mrkvicka',
-        nickname: 'jozino',
-        tag: false,
-        message: 'Hi, how are you ?',
-        createdAt: moment(moment.now()).subtract(1, 'minutes').toDate(),
-      },
-    ]);
 
     return {
-      messages,
       onLoad: (_: number, done: (stop: boolean | undefined) => void) => {
         setTimeout(() => {
-          messages.value.splice(
-            0,
-            0,
-            {
-              firstname: 'John',
-              lastname: 'Doe',
-              nickname: 'john',
-              tag: false,
-              message: 'a',
-              createdAt: moment(moment.now()).subtract(3, 'days').toDate(),
-            },
-            {
-              firstname: 'John',
-              lastname: 'Doe',
-              nickname: 'john',
-              tag: false,
-              message: 'b',
-              createdAt: moment(moment.now()).subtract(3, 'days').toDate(),
-            },
-            {
-              firstname: 'John',
-              lastname: 'Doe',
-              nickname: 'john',
-              tag: false,
-              message: 'c',
-              createdAt: moment(moment.now()).subtract(3, 'days').toDate(),
-            },
-            {
-              firstname: 'John',
-              lastname: 'Doe',
-              nickname: 'john',
-              tag: false,
-              message: 'd',
-              createdAt: moment(moment.now()).subtract(3, 'days').toDate(),
-            },
-            {
-              firstname: 'John',
-              lastname: 'Doe',
-              nickname: 'john',
-              tag: false,
-              message: 'e',
-              createdAt: moment(moment.now()).subtract(3, 'days').toDate(),
-            }
-          );
           done(false);
         }, 2000);
       },
