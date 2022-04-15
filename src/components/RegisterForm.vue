@@ -8,6 +8,7 @@
       borderless
       v-model="state.email"
       :error="v$.email.$error || !!state.serverErrors?.email"
+      @keyup="clearServerError(state, 'email')"
       name="email"
       label="Email"
       bottom-slots
@@ -29,7 +30,7 @@
       v-model="state.password"
       :error="v$.password.$error || !!state.serverErrors?.password"
       :type="state.isPwd ? 'password' : 'text'"
-      @keyup="clearServerError('password')"
+      @keyup="clearServerError(state, 'password')"
       name="password"
       label="Password"
       bottom-slots
@@ -61,7 +62,7 @@
         !!state.serverErrors?.password_confirmation
       "
       :type="state.isPwd ? 'password' : 'text'"
-      @keyup="clearServerError('password_configuration')"
+      @keyup="clearServerError(state, 'password_configuration')"
       name="password_confirmation"
       label="Confirm password"
       bottom-slots
@@ -95,7 +96,7 @@
       borderless
       v-model="state.firstname"
       :error="v$.firstname.$error || !!state.serverErrors?.firstname"
-      @keyup="clearServerError('firstname')"
+      @keyup="clearServerError(state, 'firstname')"
       name="firstname"
       label="Firstname"
       bottom-slots
@@ -119,7 +120,7 @@
       borderless
       v-model="state.lastname"
       :error="v$.lastname.$error || !!state.serverErrors?.lastname"
-      @keyup="clearServerError('lastname')"
+      @keyup="clearServerError(state, 'lastname')"
       name="lastname"
       label="Lastname"
       bottom-slots
@@ -140,7 +141,7 @@
       borderless
       v-model="state.nickname"
       :error="v$.nickname.$error || !!state.serverErrors?.nickname"
-      @keyup="clearServerError('nickname')"
+      @keyup="clearServerError(state, 'nickname')"
       name="nickname"
       label="Nickname"
       bottom-slots
@@ -177,8 +178,9 @@ import useVuelidate from '@vuelidate/core';
 import { defineComponent, reactive, computed } from 'vue';
 import { useStore } from '../store';
 import { helpers, required, email, minLength } from '@vuelidate/validators';
-import { RouteLocationRaw, useRouter } from 'vue-router';
-import { RegisterRequest, ValidationError } from 'src/contracts';
+import { RouteLocationRaw, useRoute, useRouter } from 'vue-router';
+import { RegisterRequest, ServerErrors } from 'src/contracts';
+import { groupValidationErrors, clearServerError } from 'src/utils/utils';
 
 const isFirstLetterUppercase = (value: string) => {
   return value.charAt(0).toUpperCase() === value.charAt(0);
@@ -222,10 +224,6 @@ const rules = {
   },
 };
 
-interface ServerErrors {
-  [field: string]: string[];
-}
-
 export default defineComponent({
   name: 'RegisterForm',
 
@@ -243,26 +241,14 @@ export default defineComponent({
 
     const $store = useStore();
     const router = useRouter();
+    const route = useRoute()
 
     const v$ = useVuelidate(rules, state);
 
     const submitting = computed(() => $store.state.auth.status === 'pending');
     const redirectTo = computed(
-      () => ({ name: 'account' } as RouteLocationRaw)
+      () => (route.query.redirect as string) || { name: 'home' } as RouteLocationRaw
     );
-
-    const clearServerError = (field: string) => {
-      delete state.serverErrors[field];
-    };
-
-    const groupValidationErrors = (errors: ValidationError[]) =>
-      errors.reduce((acc: ServerErrors, current) => {
-        if (!(current.field in acc)) acc[current.field] = [];
-
-        acc[current.field].push(current.message);
-
-        return acc;
-      }, {});
 
     const handleSubmit = () => {
       v$.value

@@ -5,41 +5,50 @@
     <q-input
       class="q-mt-lg border-15 bg-white q-pb-none q-pl-md q-pr-md"
       color="cyan-9"
-      v-model.trim="state.email"
       borderless
-      :error="v$.email.$error"
-      type="email"
+      v-model="state.email"
+      :error="v$.email.$error || !!state.serverErrors?.email"
+      @keyup="clearServerError(state, 'email')"
       name="email"
       label="Email"
+      bottom-slots
     >
       <template v-slot:error>
-        <span :key="error.$uid" v-for="error of v$.email.$errors">
+        <div :key="error.$uid" v-for="error of v$.email.$errors">
           {{ error.$message }}
-        </span>
-      </template></q-input
-    >
+        </div>
+        <div :key="index" v-for="(error, index) of state.serverErrors.email">
+          {{ error }}
+        </div>
+      </template>
+    </q-input>
+
     <q-input
-      color="cyan-9"
       class="q-mt-lg border-15 bg-white q-pb-none q-pl-md q-pr-md"
+      color="cyan-9"
       borderless
       v-model="state.password"
-      :error="v$.password.$error"
+      :error="v$.password.$error || !!state.serverErrors?.password"
       :type="state.isPwd ? 'password' : 'text'"
+      @keyup="clearServerError(state, 'password')"
       name="password"
       label="Password"
+      bottom-slots
     >
       <template v-slot:append>
         <q-icon
           :name="state.isPwd ? 'visibility_off' : 'visibility'"
-          class="cursor-pointer q-pr-md"
+          class="cursor-pointer"
           @click="state.isPwd = !state.isPwd"
         />
       </template>
-
       <template v-slot:error>
-        <span :key="error.$uid" v-for="error of v$.password.$errors">
+        <div :key="error.$uid" v-for="error of v$.password.$errors">
           {{ error.$message }}
-        </span>
+        </div>
+        <div :key="index" v-for="(error, index) of state.serverErrors.password">
+          {{ error }}
+        </div>
       </template>
     </q-input>
 
@@ -66,7 +75,8 @@ import { useStore } from '../store';
 import { helpers, required, email, minLength } from '@vuelidate/validators';
 import useVuelidate from '@vuelidate/core';
 import { RouteLocationRaw, useRoute, useRouter } from 'vue-router';
-import { LoginRequest } from 'src/contracts/Auth';
+import { LoginRequest, ServerErrors } from 'src/contracts';
+import { groupValidationErrors, clearServerError } from 'src/utils/utils';
 
 const rules = {
   email: {
@@ -94,13 +104,14 @@ export default defineComponent({
       email: '',
       password: '',
       isPwd: true,
+      serverErrors: {} as ServerErrors
     });
 
     const v$ = useVuelidate(rules, state);
 
     const redirectTo = computed(
-      () => (route.query.redirect as string) || { name: 'home' }
-    ) as RouteLocationRaw;
+      () => (route.query.redirect as string) || { name: 'home' } as RouteLocationRaw
+    );
     const submitting = computed(() => $store.state.auth.status === 'pending');
 
     const handleSubmit = () => {
@@ -115,8 +126,12 @@ export default defineComponent({
 
             $store
               .dispatch('auth/login', payload)
-              .then(() => router.push(redirectTo))
-              .catch(console.log);
+              .then(() => router.push(redirectTo.value))
+              .catch(() => {
+                state.serverErrors = groupValidationErrors(
+                  $store.state.auth.errors
+                )
+              });
           }
         })
         .catch(console.log);
@@ -126,6 +141,7 @@ export default defineComponent({
       state,
       v$,
       submitting,
+      clearServerError,
       handleSubmit,
     };
   },
