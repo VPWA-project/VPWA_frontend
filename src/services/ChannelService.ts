@@ -1,6 +1,13 @@
 import { BootFileParams } from '@quasar/app-webpack';
-import { RawMessage, SerializedMessage } from 'src/contracts';
+import { api } from 'src/boot/axios';
+import {
+  CreateChannelRequest,
+  CreateChannelResponse,
+  RawMessage,
+  SerializedMessage,
+} from 'src/contracts';
 import { StateInterface } from 'src/store';
+import { ChannelType } from 'src/store/channels/state';
 import { SocketManager } from './SocketManager';
 
 class ChannelSocketManager extends SocketManager {
@@ -23,36 +30,41 @@ class ChannelSocketManager extends SocketManager {
 }
 
 class ChannelService {
-    private channels: Map<string, ChannelSocketManager> = new Map()
+  private channels: Map<string, ChannelSocketManager> = new Map();
 
-    public join(name: string): ChannelSocketManager {
-        if(this.channels.has(name)) {
-            throw new Error(`User is already joined in channel "${name}"`)
-        }
-
-        const channel = new ChannelSocketManager(`/channels/${name}`)
-
-        this.channels.set(name, channel)
-
-        return channel
+  public join(name: string): ChannelSocketManager {
+    if (this.channels.has(name)) {
+      throw new Error(`User is already joined in channel "${name}"`);
     }
 
-    public leave(name: string): boolean {
-        const channel = this.channels.get(name)
+    const channel = new ChannelSocketManager(`/channels/${name}`);
 
-        if(!channel) {
-            return false
-        }
+    this.channels.set(name, channel);
 
-        // disconnect namespace and remove references to socket
-        channel.destroy()
+    return channel;
+  }
 
-        return this.channels.delete(name)
+  public leave(name: string): boolean {
+    const channel = this.channels.get(name);
+
+    if (!channel) {
+      return false;
     }
 
-    public in(name: string): ChannelSocketManager | undefined {
-        return this.channels.get(name)
-    }
+    // disconnect namespace and remove references to socket
+    channel.destroy();
+
+    return this.channels.delete(name);
+  }
+
+  public in(name: string): ChannelSocketManager | undefined {
+    return this.channels.get(name);
+  }
+
+  public async create(data: CreateChannelRequest) {
+    const channel = await api.post<CreateChannelResponse>('channels', data);
+    return channel.data;
+  }
 }
 
-export default new ChannelService()
+export default new ChannelService();
