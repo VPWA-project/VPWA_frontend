@@ -4,16 +4,19 @@ import { UserStateInterface } from './user/state';
 import channels from './channels';
 import { ChannelsStateInterface } from './channels/state';
 import auth from './auth';
-import type { AuthStateInterface } from './auth/state'
-import channels_v2 from './channels_v2'
+import type { AuthStateInterface } from './auth/state';
+import channels_v2 from './channels_v2';
 import { ChannelsV2StateInterface } from './channels_v2/state';
+import createChannel from './createChannel';
+import { CreateChannelStateInterface } from './createChannel/state';
 
 export interface StateInterface {
   asd: string;
   user: UserStateInterface;
   channels: ChannelsStateInterface;
   auth: AuthStateInterface;
-  channels_v2: ChannelsV2StateInterface
+  channels_v2: ChannelsV2StateInterface;
+  createChannel: CreateChannelStateInterface;
 }
 
 const store = () => {
@@ -23,6 +26,7 @@ const store = () => {
       channels,
       auth,
       channels_v2,
+      createChannel,
     },
     strict: !process.env.NODE_ENV,
   });

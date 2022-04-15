@@ -8,8 +8,8 @@
       <UserMenu />
       <UserBanner
         background="bg-grey-2"
-        v-if="user.loggedInUser"
-        v-bind="user.loggedInUser"
+        v-if="user"
+        v-bind="user"
       >
         <template v-slot:append>
           <q-item-section avatar>
@@ -140,7 +140,7 @@ export default defineComponent({
       invitations: computed(() => {
         return $store.state.channels.invitations;
       }),
-      user: computed(() => $store.state.user),
+      user: computed(() => $store.state.auth.user),
       toggleUserBannerIcon: () =>
         (state.userBannerIcon =
           state.userBannerIcon === 'expand_more'

@@ -39,12 +39,14 @@
           </p>
           <q-form @submit.prevent.stop="handleSubmit">
             <q-input
-              v-model="state.channelName"
-              :error="v$.channelName.$error"
+              v-model="state.name"
+              :error="v$.name.$error || !!state.serverErrors?.name"
               class="q-mt-lg border-15 bg-white q-pb-none q-pl-md q-pr-md"
               color="cyan-9"
               borderless
               type="text"
+              name="name"
+              @keyup="clearServerError(state, 'name')"
               bottom-slots
               label="Name"
             >
@@ -52,9 +54,15 @@
                 <q-icon :name="`${state.isChannelPublic ? 'tag' : 'lock'}`" />
               </template>
               <template v-slot:error>
-                <span :key="error.$uid" v-for="error of v$.channelName.$errors">
+                <div :key="error.$uid" v-for="error of v$.name.$errors">
                   {{ error.$message }}
-                </span>
+                </div>
+                <div
+                  :key="index"
+                  v-for="(error, index) of state.serverErrors.name"
+                >
+                  {{ error }}
+                </div>
               </template>
             </q-input>
 
@@ -83,7 +91,7 @@
 
             <q-btn
               type="submit"
-              :loading="state.submitting"
+              :loading="submitting"
               flat
               label="Create channel"
               class="q-mt-lg bg-white border-15"
@@ -104,14 +112,15 @@
 <script lang="ts">
 import { QSelect, useQuasar } from 'quasar';
 import { ChannelType } from 'src/store/channels/state';
-import { CreateChannelPayload } from 'src/store/channels/types';
-import { defineComponent, reactive, ref, toRef } from 'vue';
+import { computed, defineComponent, reactive, ref, toRef } from 'vue';
 import { useStore } from '../store';
 import useVuelidate from '@vuelidate/core';
 import { required, helpers } from '@vuelidate/validators';
+import { CreateChannelRequest, ServerErrors } from 'src/contracts';
+import { groupValidationErrors, clearServerError } from 'src/utils/utils';
 
 const rules = {
-  channelName: {
+  name: {
     required: helpers.withMessage("Channel name can't be empty", required),
   },
 };
@@ -126,9 +135,8 @@ export default defineComponent({
   watch: {
     open(_, newValue) {
       if (newValue === false) {
-        this.state.channelName = '';
+        this.state.name = '';
         this.state.isChannelPublic = true;
-        this.state.submitting = false;
       }
     },
   },
@@ -140,10 +148,12 @@ export default defineComponent({
     const $q = useQuasar();
 
     const state = reactive({
-      channelName: '',
+      name: '',
       isChannelPublic: true,
-      submitting: false,
+      serverErrors: {} as ServerErrors,
     });
+
+    const submitting = computed(() => $store.state.createChannel.isSubmitting);
 
     const v$ = useVuelidate(rules, state);
 
@@ -172,21 +182,20 @@ export default defineComponent({
     };
 
     const handleSubmit = () => {
-      state.submitting = true;
-
       v$.value
         .$validate()
         .then((result) => {
           if (result) {
-            const payload: CreateChannelPayload = {
-              name: state.channelName,
+            const payload: CreateChannelRequest = {
+              name: state.name,
               type: state.isChannelPublic
                 ? ChannelType.Public
                 : ChannelType.Private,
+              invitations: [],
             };
 
             $store
-              .dispatch('channels/createChannel', payload)
+              .dispatch('createChannel/create', payload)
               .then(() => {
                 $q.notify({
                   message: `Channel ${payload.name} was created successfully`,
@@ -194,13 +203,13 @@ export default defineComponent({
                   type: 'positive',
                 });
 
-                state.submitting = false;
-
                 handleCloseButton();
               })
-              .catch(console.log);
-          } else {
-            state.submitting = false;
+              .catch(() => {
+                state.serverErrors = groupValidationErrors(
+                  $store.state.createChannel.errors
+                );
+              });
           }
         })
         .catch(console.log);
@@ -208,6 +217,8 @@ export default defineComponent({
 
     return {
       isDialogOpen,
+      clearServerError,
+      submitting,
       handleSubmit,
       handleCloseButton,
       state,
