@@ -56,7 +56,10 @@
       color="cyan-9"
       borderless
       v-model="state.password_confirmation"
-      :error="v$.password_confirmation.$error || !!state.serverErrors?.password_confirmation"
+      :error="
+        v$.password_confirmation.$error ||
+        !!state.serverErrors?.password_confirmation
+      "
       :type="state.isPwd ? 'password' : 'text'"
       @keyup="clearServerError('password_configuration')"
       name="password_confirmation"
@@ -77,7 +80,10 @@
         >
           {{ error.$message }}
         </div>
-        <div :key="index" v-for="(error, index) of state.serverErrors.password_confirmation">
+        <div
+          :key="index"
+          v-for="(error, index) of state.serverErrors.password_confirmation"
+        >
           {{ error }}
         </div>
       </template>
@@ -98,7 +104,10 @@
         <div :key="error.$uid" v-for="error of v$.firstname.$errors">
           {{ error.$message }}
         </div>
-        <div :key="index" v-for="(error, index) of state.serverErrors.firstname">
+        <div
+          :key="index"
+          v-for="(error, index) of state.serverErrors.firstname"
+        >
           {{ error }}
         </div>
       </template>
@@ -167,20 +176,13 @@
 import useVuelidate from '@vuelidate/core';
 import { defineComponent, reactive, computed } from 'vue';
 import { useStore } from '../store';
-import {
-  helpers,
-  required,
-  email,
-  minLength,
-} from '@vuelidate/validators';
+import { helpers, required, email, minLength } from '@vuelidate/validators';
 import { RouteLocationRaw, useRouter } from 'vue-router';
-import { RegisterData, ValidationError } from 'src/contracts';
+import { RegisterRequest, ValidationError } from 'src/contracts';
 
 const isFirstLetterUppercase = (value: string) => {
   return value.charAt(0).toUpperCase() === value.charAt(0);
 };
-
-
 
 const rules = {
   email: {
@@ -221,7 +223,7 @@ const rules = {
 };
 
 interface ServerErrors {
-  [field: string] : string[]
+  [field: string]: string[];
 }
 
 export default defineComponent({
@@ -236,7 +238,7 @@ export default defineComponent({
       lastname: '',
       nickname: '',
       isPwd: true,
-      serverErrors: {} as ServerErrors
+      serverErrors: {} as ServerErrors,
     });
 
     const $store = useStore();
@@ -250,26 +252,27 @@ export default defineComponent({
     );
 
     const clearServerError = (field: string) => {
-      delete state.serverErrors[field]
-    }
+      delete state.serverErrors[field];
+    };
 
-    const groupValidationErrors = (errors: ValidationError[]) => errors.reduce((acc: ServerErrors, current) => {
-      if(!(current.field in acc)) acc[current.field] = []
+    const groupValidationErrors = (errors: ValidationError[]) =>
+      errors.reduce((acc: ServerErrors, current) => {
+        if (!(current.field in acc)) acc[current.field] = [];
 
-      acc[current.field].push(current.message)
+        acc[current.field].push(current.message);
 
-      return acc
-    }, {})
+        return acc;
+      }, {});
 
     const handleSubmit = () => {
       v$.value
         .$validate()
         .then((isValid) => {
           if (isValid) {
-            const payload: RegisterData = {
+            const payload: RegisterRequest = {
               email: state.email,
               password: state.password,
-              passwordConfirmation: state.password_confirmation,
+              password_confirmation: state.password_confirmation,
               firstname: state.firstname,
               lastname: state.lastname,
               nickname: state.nickname,
@@ -279,7 +282,9 @@ export default defineComponent({
               .dispatch('auth/register', payload)
               .then(() => router.push(redirectTo.value))
               .catch(() => {
-                state.serverErrors = groupValidationErrors($store.state.auth.errors)
+                state.serverErrors = groupValidationErrors(
+                  $store.state.auth.errors
+                );
               });
           }
         })

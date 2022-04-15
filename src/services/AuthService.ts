@@ -1,8 +1,9 @@
 import type { AxiosError, AxiosRequestConfig } from 'axios';
 import type {
   ApiToken,
-  LoginCredentials,
-  RegisterData,
+  LoginRequest,
+  RegisterRequest,
+  RegisterResponse,
   User,
 } from 'src/contracts';
 import { api } from 'src/boot/axios';
@@ -21,12 +22,12 @@ class AuthService {
       });
   }
 
-  async register(data: RegisterData): Promise<User> {
-    const response = await api.post<User>('auth/register', data);
+  async register(data: RegisterRequest): Promise<RegisterResponse> {
+    const response = await api.post<RegisterResponse>('auth/register', data);
     return response.data;
   }
 
-  async login(credentials: LoginCredentials): Promise<ApiToken> {
+  async login(credentials: LoginRequest): Promise<ApiToken> {
     const response = await api.post<ApiToken>('auth/login', credentials);
     return response.data;
   }

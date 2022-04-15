@@ -66,7 +66,7 @@ import { useStore } from '../store';
 import { helpers, required, email, minLength } from '@vuelidate/validators';
 import useVuelidate from '@vuelidate/core';
 import { RouteLocationRaw, useRoute, useRouter } from 'vue-router';
-import { LoginCredentials } from 'src/contracts/Auth';
+import { LoginRequest } from 'src/contracts/Auth';
 
 const rules = {
   email: {
@@ -108,7 +108,7 @@ export default defineComponent({
         .$validate()
         .then((isValid) => {
           if (isValid) {
-            const payload: LoginCredentials = {
+            const payload: LoginRequest = {
               email: state.email,
               password: state.password,
             };

@@ -3,8 +3,8 @@ import { StateInterface } from '../index';
 import { AuthStateInterface } from './state';
 import { authService, authManager } from 'src/services';
 import {
-  LoginCredentials,
-  RegisterData,
+  LoginRequest,
+  RegisterRequest,
   ValidationErrorResponse,
 } from 'src/contracts';
 import { AxiosError } from 'axios';
@@ -21,12 +21,14 @@ const actions: ActionTree<AuthStateInterface, StateInterface> = {
       throw err;
     }
   },
-  async register({ commit }, form: RegisterData) {
+  async register({ commit }, form: RegisterRequest) {
     try {
       commit('AUTH_START');
-      const user = await authService.register(form);
+      const response = await authService.register(form);
       commit('AUTH_SUCCESS', null);
-      return user;
+
+      authManager.setToken(response.token.token)
+      return response;
     } catch (err) {
       const error = err as AxiosError;
 
@@ -38,7 +40,7 @@ const actions: ActionTree<AuthStateInterface, StateInterface> = {
       throw err;
     }
   },
-  async login({ commit }, credentials: LoginCredentials) {
+  async login({ commit }, credentials: LoginRequest) {
     try {
       commit('AUTH_START');
       const apiToken = await authService.login(credentials);
