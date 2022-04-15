@@ -5,12 +5,15 @@ import channels from './channels';
 import { ChannelsStateInterface } from './channels/state';
 import auth from './auth';
 import type { AuthStateInterface } from './auth/state'
+import channels_v2 from './channels_v2'
+import { ChannelsV2StateInterface } from './channels_v2/state';
 
 export interface StateInterface {
   asd: string;
   user: UserStateInterface;
   channels: ChannelsStateInterface;
-  auth: AuthStateInterface
+  auth: AuthStateInterface;
+  channels_v2: ChannelsV2StateInterface
 }
 
 const store = () => {
@@ -18,7 +21,8 @@ const store = () => {
     modules: {
       user,
       channels,
-      auth
+      auth,
+      channels_v2,
     },
     strict: !process.env.NODE_ENV,
   });
