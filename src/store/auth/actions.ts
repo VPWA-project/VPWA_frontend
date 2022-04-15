@@ -59,22 +59,17 @@ const actions: ActionTree<AuthStateInterface, StateInterface> = {
       throw err;
     }
   },
-  async logout({ commit }) {
+  async logout({ commit, dispatch }) {
     try {
       commit('AUTH_START');
       await authService.logout();
+      await dispatch('channels/leave', null, { root: true })
       commit('AUTH_SUCCESS', null);
       // remove api token and notify listeners
       authManager.removeToken();
     } catch (err) {
-      const error = err as AxiosError;
-
-      if (error.response?.status == 422) {
-        const errors = error.response.data as ValidationErrorResponse;
-        commit('AUTH_ERROR', errors.errors);
-      }
-
-      throw err;
+      commit('AUTH_ERROR', err);
+      throw err
     }
   },
 };
