@@ -7,13 +7,19 @@
       color="cyan-9"
       borderless
       v-model="state.email"
-      :error="v$.email.$error"
+      :error="v$.email.$error || !!state.serverErrors?.email"
+      @keyup="clearServerError(state, 'email')"
+      name="email"
       label="Email"
+      bottom-slots
     >
       <template v-slot:error>
-        <span :key="error.$uid" v-for="error of v$.email.$errors">
+        <div :key="error.$uid" v-for="error of v$.email.$errors">
           {{ error.$message }}
-        </span>
+        </div>
+        <div :key="index" v-for="(error, index) of state.serverErrors.email">
+          {{ error }}
+        </div>
       </template>
     </q-input>
 
@@ -22,9 +28,12 @@
       color="cyan-9"
       borderless
       v-model="state.password"
-      :error="v$.password.$error"
+      :error="v$.password.$error || !!state.serverErrors?.password"
       :type="state.isPwd ? 'password' : 'text'"
+      @keyup="clearServerError(state, 'password')"
+      name="password"
       label="Password"
+      bottom-slots
     >
       <template v-slot:append>
         <q-icon
@@ -34,9 +43,50 @@
         />
       </template>
       <template v-slot:error>
-        <span :key="error.$uid" v-for="error of v$.password.$errors">
+        <div :key="error.$uid" v-for="error of v$.password.$errors">
           {{ error.$message }}
-        </span>
+        </div>
+        <div :key="index" v-for="(error, index) of state.serverErrors.password">
+          {{ error }}
+        </div>
+      </template>
+    </q-input>
+
+    <q-input
+      class="q-mt-lg border-15 bg-white q-pb-none q-pl-md q-pr-md"
+      color="cyan-9"
+      borderless
+      v-model="state.password_confirmation"
+      :error="
+        v$.password_confirmation.$error ||
+        !!state.serverErrors?.password_confirmation
+      "
+      :type="state.isPwd ? 'password' : 'text'"
+      @keyup="clearServerError(state, 'password_configuration')"
+      name="password_confirmation"
+      label="Confirm password"
+      bottom-slots
+    >
+      <template v-slot:append>
+        <q-icon
+          :name="state.isPwd ? 'visibility_off' : 'visibility'"
+          class="cursor-pointer"
+          @click="state.isPwd = !state.isPwd"
+        />
+      </template>
+      <template v-slot:error>
+        <div
+          :key="error.$uid"
+          v-for="error of v$.password_confirmation.$errors"
+        >
+          {{ error.$message }}
+        </div>
+        <div
+          :key="index"
+          v-for="(error, index) of state.serverErrors.password_confirmation"
+        >
+          {{ error }}
+        </div>
       </template>
     </q-input>
 
@@ -45,13 +95,22 @@
       color="cyan-9"
       borderless
       v-model="state.firstname"
-      :error="v$.firstname.$error"
+      :error="v$.firstname.$error || !!state.serverErrors?.firstname"
+      @keyup="clearServerError(state, 'firstname')"
+      name="firstname"
       label="Firstname"
+      bottom-slots
     >
       <template v-slot:error>
-        <span :key="error.$uid" v-for="error of v$.firstname.$errors">
+        <div :key="error.$uid" v-for="error of v$.firstname.$errors">
           {{ error.$message }}
-        </span>
+        </div>
+        <div
+          :key="index"
+          v-for="(error, index) of state.serverErrors.firstname"
+        >
+          {{ error }}
+        </div>
       </template>
     </q-input>
 
@@ -60,13 +119,19 @@
       color="cyan-9"
       borderless
       v-model="state.lastname"
-      :error="v$.lastname.$error"
+      :error="v$.lastname.$error || !!state.serverErrors?.lastname"
+      @keyup="clearServerError(state, 'lastname')"
+      name="lastname"
       label="Lastname"
+      bottom-slots
     >
       <template v-slot:error>
-        <span :key="error.$uid" v-for="error of v$.lastname.$errors">
+        <div :key="error.$uid" v-for="error of v$.lastname.$errors">
           {{ error.$message }}
-        </span>
+        </div>
+        <div :key="index" v-for="(error, index) of state.serverErrors.lastname">
+          {{ error }}
+        </div>
       </template>
     </q-input>
 
@@ -75,20 +140,26 @@
       color="cyan-9"
       borderless
       v-model="state.nickname"
-      :error="v$.nickname.$error"
+      :error="v$.nickname.$error || !!state.serverErrors?.nickname"
+      @keyup="clearServerError(state, 'nickname')"
+      name="nickname"
       label="Nickname"
+      bottom-slots
     >
       <template v-slot:error>
-        <span :key="error.$uid" v-for="error of v$.nickname.$errors">
+        <div :key="error.$uid" v-for="error of v$.nickname.$errors">
           {{ error.$message }}
-        </span>
+        </div>
+        <div :key="index" v-for="(error, index) of state.serverErrors.nickname">
+          {{ error }}
+        </div>
       </template>
     </q-input>
 
     <div class="row justify-center">
       <q-btn
         type="submit"
-        :loading="state.submitting"
+        :loading="submitting"
         label="Register"
         class="q-mt-lg q-pa-md border-15"
         style="width: 100%"
@@ -104,11 +175,12 @@
 
 <script lang="ts">
 import useVuelidate from '@vuelidate/core';
-import { defineComponent, reactive } from 'vue';
+import { defineComponent, reactive, computed } from 'vue';
 import { useStore } from '../store';
 import { helpers, required, email, minLength } from '@vuelidate/validators';
-import { UserRegisterPayload } from '../store/user/types';
-import { useRouter } from 'vue-router';
+import { RouteLocationRaw, useRoute, useRouter } from 'vue-router';
+import { RegisterRequest, ServerErrors } from 'src/contracts';
+import { groupValidationErrors, clearServerError } from 'src/utils/utils';
 
 const isFirstLetterUppercase = (value: string) => {
   return value.charAt(0).toUpperCase() === value.charAt(0);
@@ -125,6 +197,9 @@ const rules = {
       'Password must be at least 8 characters long',
       minLength(8)
     ),
+  },
+  password_confirmation: {
+    required: helpers.withMessage('Password must be confirmed', required),
   },
   firstname: {
     required: helpers.withMessage('Firstname is required', required),
@@ -156,42 +231,47 @@ export default defineComponent({
     const state = reactive({
       email: '',
       password: '',
+      password_confirmation: '',
       firstname: '',
       lastname: '',
       nickname: '',
       isPwd: true,
-      submitting: false,
+      serverErrors: {} as ServerErrors,
     });
 
     const $store = useStore();
     const router = useRouter();
+    const route = useRoute()
 
     const v$ = useVuelidate(rules, state);
 
-    const handleSubmit = () => {
-      state.submitting = true;
+    const submitting = computed(() => $store.state.auth.status === 'pending');
+    const redirectTo = computed(
+      () => (route.query.redirect as string) || { name: 'home' } as RouteLocationRaw
+    );
 
+    const handleSubmit = () => {
       v$.value
         .$validate()
         .then((isValid) => {
           if (isValid) {
-            const payload: UserRegisterPayload = {
+            const payload: RegisterRequest = {
               email: state.email,
               password: state.password,
+              password_confirmation: state.password_confirmation,
               firstname: state.firstname,
               lastname: state.lastname,
               nickname: state.nickname,
             };
 
-            state.submitting = false;
             $store
-              .dispatch('user/registerUser', payload)
-              .then(() => {
-                router.push('/').catch(console.log);
-              })
-              .catch(console.log);
-          } else {
-            state.submitting = false;
+              .dispatch('auth/register', payload)
+              .then(() => router.push(redirectTo.value))
+              .catch(() => {
+                state.serverErrors = groupValidationErrors(
+                  $store.state.auth.errors
+                );
+              });
           }
         })
         .catch(console.log);
@@ -199,7 +279,9 @@ export default defineComponent({
 
     return {
       state,
+      submitting,
       v$,
+      clearServerError,
       handleSubmit,
     };
   },

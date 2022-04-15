@@ -1,7 +1,7 @@
 <template>
   <q-layout view="lHr LpR lFr">
     <q-header class="bg-cyan-9 q-px-sm q-mx-sm border-15">
-      <Header
+      <HeaderWrapper
         :toggleLeftDrawer="toggleLeftDrawer"
         :toggleRightDrawer="toggleRightDrawer"
       />
@@ -34,26 +34,26 @@
     </q-page-container>
 
     <q-footer class="bg-white">
-      <Footer />
+      <FooterWrapper />
     </q-footer>
   </q-layout>
 </template>
 
 <script lang="ts">
 import { defineComponent, reactive } from 'vue';
-import Header from 'src/components/Header.vue';
+import HeaderWrapper from 'src/components/HeaderWrapper.vue';
 import LeftDrawer from '../components/LeftDrawer.vue';
 import RightDrawer from 'src/components/RightDrawer.vue';
-import Footer from 'src/components/Footer.vue';
+import FooterWrapper from 'src/components/FooterWrapper.vue';
 
 export default defineComponent({
   name: 'MainLayout',
 
   components: {
-    Header,
+    HeaderWrapper,
     LeftDrawer,
     RightDrawer,
-    Footer,
+    FooterWrapper,
   },
 
   setup() {

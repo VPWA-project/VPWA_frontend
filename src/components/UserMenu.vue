@@ -112,8 +112,7 @@ export default defineComponent({
       changeUserStatus: (status: UserStatus) =>
         $store.dispatch('user/changeUserStatus', status).catch(console.log),
       logout: () => {
-        // TODO: logout
-        router.push({ name: 'account' }).catch(console.log);
+        $store.dispatch('auth/logout').catch(console.log)
       },
     };
   },
