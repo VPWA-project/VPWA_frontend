@@ -1,10 +1,11 @@
-import { SerializedMessage } from 'src/contracts';
+import { Channel, SerializedMessage } from 'src/contracts';
 
 export interface ChannelsV2StateInterface {
   loading: boolean;
   error: Error | null;
   messages: { [channel: string]: SerializedMessage[] };
-  active: string | null;
+  channels: Channel[];
+  active: Channel | null;
 }
 
 function state(): ChannelsV2StateInterface {
@@ -12,6 +13,7 @@ function state(): ChannelsV2StateInterface {
     loading: false,
     error: null,
     messages: {},
+    channels: [],
     active: null,
   };
 }

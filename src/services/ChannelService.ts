@@ -3,11 +3,11 @@ import { api } from 'src/boot/axios';
 import {
   CreateChannelRequest,
   CreateChannelResponse,
+  GetUserChannelsResponse,
   RawMessage,
   SerializedMessage,
 } from 'src/contracts';
 import { StateInterface } from 'src/store';
-import { ChannelType } from 'src/store/channels/state';
 import { SocketManager } from './SocketManager';
 
 class ChannelSocketManager extends SocketManager {
@@ -64,6 +64,11 @@ class ChannelService {
   public async create(data: CreateChannelRequest) {
     const channel = await api.post<CreateChannelResponse>('channels', data);
     return channel.data;
+  }
+
+  public async getUserChannels() {
+    const channels = await api.get<GetUserChannelsResponse>('/auth/me/channels')
+    return channels.data
   }
 }
 

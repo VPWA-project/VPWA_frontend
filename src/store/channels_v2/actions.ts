@@ -37,6 +37,20 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
     const newMessage = await channelService.in(channel)?.addMessage(message);
     commit('NEW_MESSAGE', { channel, message: newMessage });
   },
+
+  async getUserChannels({ commit }) {
+    try {
+      commit('LOADING_START')
+
+      const channels = await channelService.getUserChannels()
+
+      commit('GET_USER_CHANNELS', channels)
+    }
+    catch(err) {
+      commit('LOADING_ERROR')
+      throw err
+    }
+  },
 };
 
 export default actions;

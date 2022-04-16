@@ -147,7 +147,7 @@ export default defineComponent({
             ? 'expand_less'
             : 'expand_more'),
       channels: computed(() => {
-        return $store.state.channels.channels;
+        return $store.state.channels_v2.channels;
       }),
       showBrowseChannels: () => (state.isBrowseChannelsOpen = true),
     };

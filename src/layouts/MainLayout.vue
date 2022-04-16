@@ -40,11 +40,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from 'vue';
+import { defineComponent, onMounted, reactive } from 'vue';
 import HeaderWrapper from 'src/components/HeaderWrapper.vue';
 import LeftDrawer from '../components/LeftDrawer.vue';
 import RightDrawer from 'src/components/RightDrawer.vue';
 import FooterWrapper from 'src/components/FooterWrapper.vue';
+import { useStore } from 'src/store';
 
 export default defineComponent({
   name: 'MainLayout',
@@ -61,6 +62,12 @@ export default defineComponent({
       isLeftDrawerOpen: false,
       isRightDrawerOpen: false,
     });
+
+    const $store = useStore()
+
+    onMounted(() => {
+      $store.dispatch('channels_v2/getUserChannels').catch(console.log)
+    })
 
     return {
       state,

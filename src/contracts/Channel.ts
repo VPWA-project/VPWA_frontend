@@ -6,11 +6,15 @@ export interface CreateChannelRequest {
   invitations: string[];
 }
 
-export interface CreateChannelResponse {
+export interface Channel {
+  id: string;
   name: string;
   type: ChannelType;
   administratorId: string;
-  id: string;
   createdAt: string;
   updatedAt: string;
 }
+
+export type CreateChannelResponse = Channel;
+
+export type GetUserChannelsResponse = Channel[];
