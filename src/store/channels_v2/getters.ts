@@ -15,6 +15,9 @@ const getters: GetterTree<ChannelsV2StateInterface, StateInterface> = {
       return messages.length > 0 ? messages[messages.length - 1] : null;
     };
   },
+  getUserChannels(context) {
+    return context.channels
+  }
 };
 
 export default getters;

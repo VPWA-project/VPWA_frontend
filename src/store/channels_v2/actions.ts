@@ -1,4 +1,4 @@
-import { RawMessage } from 'src/contracts';
+import { Channel, RawMessage } from 'src/contracts';
 import { channelService } from 'src/services';
 import { ActionTree } from 'vuex';
 import { StateInterface } from '../index';
@@ -40,16 +40,24 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
 
   async getUserChannels({ commit }) {
     try {
-      commit('LOADING_START')
+      commit('LOADING_START');
 
-      const channels = await channelService.getUserChannels()
+      const channels = await channelService.getUserChannels();
 
-      commit('GET_USER_CHANNELS', channels)
+      commit('GET_USER_CHANNELS', channels);
+    } catch (err) {
+      commit('LOADING_ERROR');
+      throw err;
     }
-    catch(err) {
-      commit('LOADING_ERROR')
-      throw err
-    }
+  },
+
+  setActiveChannel({ getters, commit }, name: string) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const channels = getters['getUserChannels'] as Channel[]
+
+    const channel = channels.find(channel => channel.name === name)
+
+    commit('SET_ACTIVE', channel)
   },
 };
 

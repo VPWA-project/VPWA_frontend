@@ -142,7 +142,7 @@ export default defineComponent({
         }
         return '';
       }),
-      activeChannel: computed(() => $store.state.channels.activeChannel),
+      activeChannel: computed(() => $store.state.channels_v2.active),
       amIChannelMember: computed(() => $store.state.channels.amIChannelMember),
     };
   },

@@ -1,6 +1,6 @@
 <template>
   <div class="q-mt-sm q-mx-sm bg-white border-15">
-    <q-item clickable :href="'#/chat/' + id" class="border-15">
+    <q-item clickable :href="'#/chat/' + name" class="border-15">
       <q-item-section v-if="type" avatar>
         <q-icon :name="getIconByType(type)" />
       </q-item-section>
