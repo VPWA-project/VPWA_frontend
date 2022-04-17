@@ -1,6 +1,6 @@
 <template>
-  <div v-if="amIChannelMember" class="q-pa-md full-width bg-white">
-    <q-infinite-scroll ref="area" @load="onLoad" reverse>
+  <div v-if="amIChannelMember && activeChannel" class="q-pa-md full-width bg-white">
+    <q-infinite-scroll :key="activeChannel.id" ref="area" @load="onLoad" reverse>
       <template v-slot:loading>
         <div class="row justify-center q-my-md">
           <q-spinner color="cyan-9" name="dots" size="40px" />
@@ -102,6 +102,7 @@ export default defineComponent({
       },
       area,
       messages,
+      activeChannel,
       timeStamp: computed(() => {
         return (time: string) => {
           return moment(time).fromNow();
