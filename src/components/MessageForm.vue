@@ -47,12 +47,14 @@ export default defineComponent({
 
     const handleSubmit = async () => {
       if(!state.message) return
+
       await $store
           .dispatch('channels_v2/addMessage', {
             channel: route.params.name as string,
             message: state.message,
           })
           .catch(console.log);
+
       state.message = '';
     };
     return {

@@ -16,7 +16,7 @@ class ChannelSocketManager extends SocketManager {
 
     this.socket.on('message', (message: SerializedMessage) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      store.commit('channels/NEW_MESSAGE', { channel, message });
+      store.commit('channels_v2/NEW_MESSAGE', { channel, message });
     });
   }
 

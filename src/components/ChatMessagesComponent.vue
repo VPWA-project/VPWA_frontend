@@ -19,7 +19,7 @@
           <q-chat-message
             push
             :class="{ 'q-mb-none': message.tag }"
-            :name="fullName(message.firstname, message.lastname)"
+            :name="fullName(message.user.firstname, message.user.lastname)"
             :text="[message.message]"
             :bg-color="message.tag ? 'cyan-5' : 'blue-grey-2'"
             :stamp="timeStamp(message.createdAt)"
@@ -31,7 +31,7 @@
                 color="cyan-7"
                 text-color="white"
               >
-                {{ nameInitials(message.firstname, message.lastname) }}
+                {{ nameInitials(message.user.firstname, message.user.lastname) }}
               </q-avatar>
             </template>
           </q-chat-message>
@@ -65,7 +65,7 @@ export default defineComponent({
       },
 
       timeStamp: computed(() => {
-        return (time: Date) => {
+        return (time: string) => {
           return moment(time).fromNow();
         };
       }),
@@ -86,14 +86,17 @@ export default defineComponent({
 
       nickname: computed(() => (nickname: string) => '@' + nickname),
 
-      areDatesSame: computed(() => (current: Date, previous: Date) => {
+      areDatesSame: computed(() => (current: string, previous: string) => {
+        const currentDate = new Date(current)
+        const previousDate = new Date(previous)
+
         return (
-          current.getDate() === previous.getDate() &&
-          current.getMonth() === previous.getMonth() &&
-          current.getFullYear() === previous.getFullYear()
+          currentDate.getDate() === previousDate.getDate() &&
+          currentDate.getMonth() === previousDate.getMonth() &&
+          currentDate.getFullYear() === previousDate.getFullYear()
         );
       }),
-      amIChannelMember: computed(() => $store.state.channels.amIChannelMember),
+      amIChannelMember: computed(() => true),
     };
   },
 });
