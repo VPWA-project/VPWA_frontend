@@ -1,5 +1,5 @@
 import { api } from 'src/boot/axios';
-import { GetUserInvitationsResponse } from 'src/contracts';
+import { GetUserInvitationsResponse, ResolveInvitationRequest, ResolveInvitationResponse } from 'src/contracts';
 
 class InvitationService {
   async getUserInvitations() {
@@ -7,6 +7,11 @@ class InvitationService {
       'auth/me/invitations'
     );
     return response.data;
+  }
+
+  async resolveInvitation(id: string, data: ResolveInvitationRequest) {
+      const response = await api.post<ResolveInvitationResponse>(`invitations/${id}`, data)
+      return response.data
   }
 }
 

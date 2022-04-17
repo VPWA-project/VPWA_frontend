@@ -5,6 +5,9 @@ import { InvitationsStateInterface } from './state';
 const getters: GetterTree<InvitationsStateInterface, StateInterface> = {
   getInvitations(context) {
     return context.invitations
+  },
+  isSubmitting(context) {
+    return context.isSubmitting
   }
 };
 

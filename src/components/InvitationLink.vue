@@ -7,47 +7,41 @@
           size="sm"
           color="blue-grey-9"
           icon="highlight_off"
-          @click="confirmInvitationRefuse(id, InvitationState.Refuse, name)"
+          @click="confirmInvitationRefuse(id, 'DECLINE', name)"
         />
         <q-btn
           round
           size="sm"
           color="cyan-7"
           icon="check_circle_outline"
-          @click="
-            processInvitation({
-              id,
-              state: InvitationState.Accept,
-            })
-          "
+          @click="processInvitation(id, 'ACCEPT')"
         />
       </div>
     </template>
     <template v-slot:invitedBy>
-      <div style="font-size: 10px">by {{invitedByFirstname + ' ' + invitedByLastname}}</div>
+      <div style="font-size: 10px">
+        by {{ invitedByFirstname + ' ' + invitedByLastname }}
+      </div>
     </template>
   </ChannelLink>
 </template>
 
 <script lang="ts">
 import { useQuasar } from 'quasar';
+import { InvitationStatus } from 'src/contracts';
 import { useStore } from 'src/store';
-import {
-  ChannelType,
-  InvitationInfo,
-  InvitationState,
-} from 'src/store/channels/state';
+import { ChannelType, InvitationState } from 'src/store/channels/state';
 import { defineComponent, PropType } from 'vue';
 import ChannelLink from './ChannelLink.vue';
 
 export default defineComponent({
   props: {
     id: {
-      type: Number,
+      type: String,
       required: true,
     },
     channelId: {
-      type: Number,
+      type: String,
       required: true,
     },
     name: {
@@ -60,12 +54,12 @@ export default defineComponent({
     },
     invitedByFirstname: {
       type: String,
-      required: true
+      required: true,
     },
     invitedByLastname: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   components: {
     ChannelLink,
@@ -74,13 +68,15 @@ export default defineComponent({
     const $store = useStore();
     const $q = useQuasar();
 
-    const processInvitation = (inv: InvitationInfo) => {
-      $store.dispatch('channels/processInvitation', inv).catch(console.log);
+    const processInvitation = (id: string, status: InvitationStatus) => {
+      $store
+        .dispatch('invitations/resolveInvitation', { id, status })
+        .catch(console.log);
     };
 
     const confirmInvitationRefuse = (
-      linkId: number,
-      state: InvitationState,
+      linkId: string,
+      status: InvitationStatus,
       channelName: string
     ) => {
       $q.dialog({
@@ -89,7 +85,7 @@ export default defineComponent({
         cancel: true,
         persistent: false,
       }).onOk(() => {
-        processInvitation({ id: linkId, state });
+        processInvitation(linkId, status);
       });
     };
 

@@ -13,3 +13,11 @@ export interface Invitation {
 }
 
 export type GetUserInvitationsResponse = Invitation[]
+
+export type InvitationStatus = 'ACCEPT' | 'DECLINE'
+
+export interface ResolveInvitationRequest {
+    status: InvitationStatus
+}
+
+export type ResolveInvitationResponse = unknown
