@@ -77,9 +77,19 @@
               class="q-mt-lg border-15 bg-white q-pb-none q-pl-md q-pr-md"
               color="cyan-9"
               borderless
-              :options="options"
+              :options="state.options"
               @filter="fetchUsers"
             >
+              <template v-slot:options>
+                <q-item :key="option.id" v-for="option in state.options">
+                  <q-item-section>
+                    {{ option.id }}
+                  </q-item-section>
+                </q-item>
+              </template>
+              <template v-slot:selected>
+                <div :key="invitation.id" v-for="invitation in invitations">{{ invitation.id }}</div>
+              </template>
               <template v-slot:no-option>
                 <q-item>
                   <q-item-section class="text-grey">
@@ -112,11 +122,11 @@
 <script lang="ts">
 import { QSelect, useQuasar } from 'quasar';
 import { ChannelType } from 'src/store/channels/state';
-import { computed, defineComponent, reactive, ref, toRef } from 'vue';
+import { computed, defineComponent, onMounted, reactive, ref, toRef } from 'vue';
 import { useStore } from '../store';
 import useVuelidate from '@vuelidate/core';
 import { required, helpers } from '@vuelidate/validators';
-import { CreateChannelRequest, ServerErrors } from 'src/contracts';
+import { CreateChannelRequest, ServerErrors, User } from 'src/contracts';
 import { groupValidationErrors, clearServerError } from 'src/utils/utils';
 
 const rules = {
@@ -151,7 +161,12 @@ export default defineComponent({
       name: '',
       isChannelPublic: true,
       serverErrors: {} as ServerErrors,
+      options: [] as User[]
     });
+
+    onMounted(() => {
+      $store.dispatch('invitations/getUserOptions').catch(console.log)
+    })
 
     const submitting = computed(() => $store.state.createChannel.isSubmitting);
 
@@ -161,21 +176,22 @@ export default defineComponent({
       emit('close');
     };
 
-    const stringOptions = ['sangalaa', 'adam', '5cos', 'lucyklus', 'stuff'];
+    const userOptions = computed(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      () => $store.getters['invitations/getUserOptions'] as User[]
+    );
 
     const invitations = ref<QSelect | null>(null);
-    const options = ref(stringOptions);
 
     const fetchUsers = (val: string, update: (value: () => void) => void) => {
       setTimeout(() => {
         update(() => {
           if (val === '') {
-            options.value = stringOptions;
+            state.options = userOptions.value;
+            console.log(userOptions.value)
           } else {
             const needle = val.toLowerCase();
-            options.value = stringOptions.filter(
-              (v) => v.toLowerCase().indexOf(needle) > -1
-            );
+            $store.dispatch('invitations/getUserOptions', needle).catch(console.log)
           }
         });
       }, 1500);
@@ -224,7 +240,6 @@ export default defineComponent({
       state,
       v$,
       invitations,
-      options,
       fetchUsers,
     };
   },

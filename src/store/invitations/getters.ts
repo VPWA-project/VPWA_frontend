@@ -8,6 +8,9 @@ const getters: GetterTree<InvitationsStateInterface, StateInterface> = {
   },
   isSubmitting(context) {
     return context.isSubmitting
+  },
+  getUserOptions(context) {
+    return context.userOptions
   }
 };
 

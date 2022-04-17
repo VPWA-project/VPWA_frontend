@@ -26,11 +26,25 @@ const actions: ActionTree<InvitationsStateInterface, StateInterface> = {
         status,
       } as ResolveInvitationRequest);
 
-      commit('REMOVE_INVITATION', id)
+      commit('REMOVE_INVITATION', id);
     } catch (err) {
       throw err;
     } finally {
       commit('SUBMIT_FINISH');
+    }
+  },
+
+  async getUserOptions({ commit }, search: string | undefined) {
+    try {
+      const response = await invitationService.getUserOptions({
+        page: 1,
+        limit: 10,
+        search,
+      });
+
+      commit('GET_USER_OPTIONS', response.data);
+    } catch (err) {
+      throw err;
     }
   },
 };

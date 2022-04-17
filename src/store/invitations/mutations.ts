@@ -1,4 +1,4 @@
-import { Invitation } from 'src/contracts';
+import { Invitation, User } from 'src/contracts';
 import { MutationTree } from 'vuex';
 import { InvitationsStateInterface } from './state';
 
@@ -20,6 +20,9 @@ const mutation: MutationTree<InvitationsStateInterface> = {
   },
   GET_USER_INVITATIONS(state, invitations: Invitation[]) {
     state.invitations = invitations
+  },
+  GET_USER_OPTIONS(state, users: User[]) {
+    state.userOptions = users
   }
 };
 

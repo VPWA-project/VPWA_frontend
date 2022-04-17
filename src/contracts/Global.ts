@@ -18,3 +18,8 @@ export interface PaginatedResponse<T> {
   meta: PageMetaData;
   data: T;
 }
+
+export interface PaginatedRequest {
+  page: number;
+  limit: number;
+}

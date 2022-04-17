@@ -11,8 +11,3 @@ export interface SerializedMessage {
   id: string;
   author: User;
 }
-
-export interface GetChannelMessagesRequest {
-  page: number;
-  limit: number;
-}

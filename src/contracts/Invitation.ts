@@ -1,5 +1,6 @@
 import { User } from './Auth';
 import { Channel } from './Channel';
+import { PaginatedRequest, PaginatedResponse } from './Global';
 
 export interface Invitation {
   id: string;
@@ -12,12 +13,18 @@ export interface Invitation {
   acceptedAt: string;
 }
 
-export type GetUserInvitationsResponse = Invitation[]
+export type GetUserInvitationsResponse = Invitation[];
 
-export type InvitationStatus = 'ACCEPT' | 'DECLINE'
+export type InvitationStatus = 'ACCEPT' | 'DECLINE';
 
 export interface ResolveInvitationRequest {
-    status: InvitationStatus
+  status: InvitationStatus;
 }
 
-export type ResolveInvitationResponse = unknown
+export type ResolveInvitationResponse = unknown;
+
+export interface GetAllUsersRequest extends PaginatedRequest {
+  search?: string;
+}
+
+export type GetAllUsersResponse = PaginatedResponse<User[]>;

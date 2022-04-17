@@ -1,16 +1,18 @@
-import { Invitation } from 'src/contracts';
+import { Invitation, User } from 'src/contracts';
 
 export interface InvitationsStateInterface {
   invitations: Invitation[];
   isSubmitting: boolean;
-  errors: Error | null
+  errors: Error | null;
+  userOptions: User[]
 }
 
 function state(): InvitationsStateInterface {
   return {
     invitations: [],
     isSubmitting: false,
-    errors: null
+    errors: null,
+    userOptions: []
   };
 }
 
