@@ -1,6 +1,6 @@
 <template>
   <div v-if="amIChannelMember" class="q-pa-md full-width bg-white">
-    <q-infinite-scroll @load="onLoad" reverse>
+    <q-infinite-scroll ref="area" @load="onLoad" reverse>
       <template v-slot:loading>
         <div class="row justify-center q-my-md">
           <q-spinner color="cyan-9" name="dots" size="40px" />
@@ -31,7 +31,9 @@
                 color="cyan-7"
                 text-color="white"
               >
-                {{ nameInitials(message.user.firstname, message.user.lastname) }}
+                {{
+                  nameInitials(message.user.firstname, message.user.lastname)
+                }}
               </q-avatar>
             </template>
           </q-chat-message>
@@ -42,28 +44,54 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, PropType } from 'vue';
+import { computed, defineComponent, nextTick, ref, watch } from 'vue';
 import moment from 'moment';
+// import { useStore } from 'src/store';
+import { PageMetaData, SerializedMessage } from 'src/contracts';
+import { QInfiniteScroll, scroll } from 'quasar';
 import { useStore } from 'src/store';
-import { SerializedMessage } from 'src/contracts';
 
 export default defineComponent({
-  props: {
-    messages: {
-      type: Array as PropType<SerializedMessage[]>,
-      default: () => []
-    }
-  },
   setup() {
     const $store = useStore();
+
+    const messages = computed(() => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      return $store.getters[
+        'channels_v2/currentMessages'
+      ] as SerializedMessage[];
+    });
+
+    const page = computed(
+      () =>
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        $store.getters[
+          'channels_v2/getCurrentPageMetaData'
+        ] as PageMetaData | null
+    );
+
+    // const { getVerticalScrollPosition, setVerticalScrollPosition } = scroll
+
+    const area = ref<QInfiniteScroll>();
+
+    const scrollMessages = () => {
+      // setVerticalScrollPosition(area.value?.scrollTarget as Element, 1.1)
+    };
+
+    watch(messages, () => {
+      void nextTick(() => scrollMessages());
+    });
 
     return {
       onLoad: (_: number, done: (stop: boolean | undefined) => void) => {
         setTimeout(() => {
-          done(false);
+          console.log(page.value)
+          if(page.value?.current_page === page.value?.last_page) done(true)
+          else done(false)
         }, 2000);
       },
-
+      area,
+      messages,
       timeStamp: computed(() => {
         return (time: string) => {
           return moment(time).fromNow();
@@ -87,8 +115,8 @@ export default defineComponent({
       nickname: computed(() => (nickname: string) => '@' + nickname),
 
       areDatesSame: computed(() => (current: string, previous: string) => {
-        const currentDate = new Date(current)
-        const previousDate = new Date(previous)
+        const currentDate = new Date(current);
+        const previousDate = new Date(previous);
 
         return (
           currentDate.getDate() === previousDate.getDate() &&

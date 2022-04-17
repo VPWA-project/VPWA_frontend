@@ -9,11 +9,29 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
     try {
       commit('LOADING_START');
 
-      const messages = await channelService.join(channel).loadMessages();
+      const response = await channelService.join(channel).loadMessages();
 
-      commit('LOADING_SUCCESS', { channel, messages });
+      commit('LOADING_SUCCESS', {
+        channel,
+        messages: response.data,
+        page: response.meta,
+      });
     } catch (err) {
       commit('LOADING_ERROR', err);
+      throw err;
+    }
+  },
+
+  async fetchMessages({ commit }, channel: string) {
+    try {
+      const response = await channelService.in(channel)?.loadMessages();
+
+      commit('FETCH_MESSAGES', {
+        channel,
+        messages: response?.data,
+        page: response?.meta,
+      });
+    } catch (err) {
       throw err;
     }
   },

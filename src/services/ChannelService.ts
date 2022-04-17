@@ -4,6 +4,7 @@ import {
   CreateChannelRequest,
   CreateChannelResponse,
   GetUserChannelsResponse,
+  PaginatedResponse,
   RawMessage,
   SerializedMessage,
 } from 'src/contracts';
@@ -24,7 +25,7 @@ class ChannelSocketManager extends SocketManager {
     return this.emitAsync('addMessage', message);
   }
 
-  public loadMessages(): Promise<SerializedMessage[]> {
+  public loadMessages(): Promise<PaginatedResponse<SerializedMessage[]>> {
     return this.emitAsync('loadMessages');
   }
 }

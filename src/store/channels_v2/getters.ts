@@ -16,11 +16,14 @@ const getters: GetterTree<ChannelsV2StateInterface, StateInterface> = {
     };
   },
   getUserChannels(context) {
-    return context.channels
+    return context.channels;
   },
   getActiveChannel(context) {
-    return context.active
-  }
+    return context.active;
+  },
+  getCurrentPageMetaData(context) {
+    return context.active ? context.pagination[context.active.name] : null;
+  },
 };
 
 export default getters;
