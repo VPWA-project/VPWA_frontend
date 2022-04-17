@@ -7,7 +7,7 @@ const getters: GetterTree<ChannelsV2StateInterface, StateInterface> = {
     return Object.keys(context.messages);
   },
   currentMessages(context) {
-    return context.active !== null ? context.messages[context.active.name] : [];
+    return context.active ? context.messages[context.active.name] : [];
   },
   lastMessageOf(context) {
     return (channel: string) => {

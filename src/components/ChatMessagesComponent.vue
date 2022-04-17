@@ -57,9 +57,9 @@ export default defineComponent({
 
     const messages = computed(() => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      return $store.getters[
+      return ($store.getters[
         'channels_v2/currentMessages'
-      ] as SerializedMessage[];
+      ] as SerializedMessage[]).reverse();
     });
 
     const page = computed(
@@ -75,20 +75,30 @@ export default defineComponent({
     const area = ref<QInfiniteScroll>();
 
     const scrollMessages = () => {
-      // setVerticalScrollPosition(area.value?.scrollTarget as Element, 1.1)
+      console.log(area.value?.scrollTarget)
     };
 
     watch(messages, () => {
       void nextTick(() => scrollMessages());
     });
 
+    const activeChannel = computed(() => $store.state.channels_v2.active);
+
     return {
       onLoad: (_: number, done: (stop: boolean | undefined) => void) => {
-        setTimeout(() => {
-          console.log(page.value)
-          if(page.value?.current_page === page.value?.last_page) done(true)
-          else done(false)
-        }, 2000);
+        if (!page.value) {
+          done(false);
+          return;
+        }
+        if (page.value.current_page === page.value.last_page) done(true);
+        else {
+          $store.dispatch('channels_v2/fetchMessages', {
+            channel: activeChannel.value?.name,
+            page: page.value.current_page + 1,
+            limit: page.value.per_page,
+          }).catch(console.log);
+          done(false)
+        }
       },
       area,
       messages,

@@ -22,9 +22,14 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
     }
   },
 
-  async fetchMessages({ commit }, channel: string) {
+  async fetchMessages(
+    { commit },
+    { channel, page, limit }: { channel: string; page: number; limit: number }
+  ) {
     try {
-      const response = await channelService.in(channel)?.loadMessages();
+      const response = await channelService.in(channel)?.loadMessages(page, limit);
+
+      console.log('Fetching new messages: ', response)
 
       commit('FETCH_MESSAGES', {
         channel,

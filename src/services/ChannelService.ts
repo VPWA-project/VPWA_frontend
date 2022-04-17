@@ -25,8 +25,8 @@ class ChannelSocketManager extends SocketManager {
     return this.emitAsync('addMessage', message);
   }
 
-  public loadMessages(): Promise<PaginatedResponse<SerializedMessage[]>> {
-    return this.emitAsync('loadMessages');
+  public loadMessages(page?: number, limit?: number): Promise<PaginatedResponse<SerializedMessage[]>> {
+    return this.emitAsync('loadMessages', page || 1, limit || 10);
   }
 }
 
