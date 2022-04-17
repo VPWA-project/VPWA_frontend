@@ -7,13 +7,22 @@ const getters: GetterTree<ChannelsV2StateInterface, StateInterface> = {
     return Object.keys(context.messages);
   },
   currentMessages(context) {
-    return context.active !== null ? context.messages[context.active] : [];
+    return context.active !== null ? context.messages[context.active.name] : [];
   },
   lastMessageOf(context) {
     return (channel: string) => {
       const messages = context.messages[channel];
       return messages.length > 0 ? messages[messages.length - 1] : null;
     };
+  },
+  getUserChannels(context) {
+    return context.channels;
+  },
+  getActiveChannel(context) {
+    return context.active;
+  },
+  getCurrentPageMetaData(context) {
+    return context.active ? context.pagination[context.active.name] : null;
   },
 };
 

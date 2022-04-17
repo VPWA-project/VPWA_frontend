@@ -3,11 +3,12 @@ import { api } from 'src/boot/axios';
 import {
   CreateChannelRequest,
   CreateChannelResponse,
+  GetUserChannelsResponse,
+  PaginatedResponse,
   RawMessage,
   SerializedMessage,
 } from 'src/contracts';
 import { StateInterface } from 'src/store';
-import { ChannelType } from 'src/store/channels/state';
 import { SocketManager } from './SocketManager';
 
 class ChannelSocketManager extends SocketManager {
@@ -16,7 +17,7 @@ class ChannelSocketManager extends SocketManager {
 
     this.socket.on('message', (message: SerializedMessage) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      store.commit('channels/NEW_MESSAGE', { channel, message });
+      store.commit('channels_v2/NEW_MESSAGE', { channel, message });
     });
   }
 
@@ -24,7 +25,7 @@ class ChannelSocketManager extends SocketManager {
     return this.emitAsync('addMessage', message);
   }
 
-  public loadMessages(): Promise<SerializedMessage[]> {
+  public loadMessages(): Promise<PaginatedResponse<SerializedMessage[]>> {
     return this.emitAsync('loadMessages');
   }
 }
@@ -64,6 +65,11 @@ class ChannelService {
   public async create(data: CreateChannelRequest) {
     const channel = await api.post<CreateChannelResponse>('channels', data);
     return channel.data;
+  }
+
+  public async getUserChannels() {
+    const channels = await api.get<GetUserChannelsResponse>('/auth/me/channels')
+    return channels.data
   }
 }
 

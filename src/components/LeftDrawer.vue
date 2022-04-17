@@ -75,7 +75,7 @@
 
 <script lang="ts">
 import { useStore } from 'src/store';
-import { Channel, InvitationState } from 'src/store/channels/state';
+import { InvitationState } from 'src/store/channels/state';
 import { defineComponent, computed, reactive, watch, onMounted } from 'vue';
 import UserMenu from './UserMenu.vue';
 import UserBanner from './UserBanner.vue';
@@ -96,33 +96,19 @@ export default defineComponent({
     const $store = useStore();
     const route = useRoute();
 
-    const setActiveChannel = (id: string) => {
-      let channel = $store.state.channels.channels.find(
-        (channel) => channel.id === parseInt(id)
-      );
-
-      if (!channel)
-        channel = $store.state.channels.availableChannels.find(
-          (channel) => channel.id === parseInt(id)
-        );
-
-      if (!channel)
-        channel = $store.state.channels.invitations.find(
-          (invitation) => invitation.channel.id === parseInt(id)
-        )?.channel;
-
-      $store.dispatch('channels/setActiveChannel', channel).catch(console.log);
+    const setActiveChannel = (name: string) => {
+      $store.dispatch('channels_v2/setActiveChannel', name).catch(console.log);
     };
 
     watch(
-      () => route.params.id,
-      (id) => {
-        setActiveChannel(id as string);
+      () => route.params.name,
+      (name) => {
+        setActiveChannel(name as string);
       }
     );
 
     onMounted(() => {
-      setActiveChannel(route.params.id as string);
+      setActiveChannel(route.params.name as string);
     });
 
     const state = reactive({
@@ -133,10 +119,6 @@ export default defineComponent({
     return {
       state,
       InvitationState,
-      switchChannel: (channel: Channel) =>
-        $store
-          .dispatch('channels/setActiveChannel', channel)
-          .catch(console.log),
       invitations: computed(() => {
         return $store.state.channels.invitations;
       }),
@@ -147,7 +129,7 @@ export default defineComponent({
             ? 'expand_less'
             : 'expand_more'),
       channels: computed(() => {
-        return $store.state.channels.channels;
+        return $store.state.channels_v2.channels;
       }),
       showBrowseChannels: () => (state.isBrowseChannelsOpen = true),
     };
