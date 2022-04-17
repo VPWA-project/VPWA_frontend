@@ -17,6 +17,9 @@ const getters: GetterTree<ChannelsV2StateInterface, StateInterface> = {
   },
   getUserChannels(context) {
     return context.channels
+  },
+  getActiveChannel(context) {
+    return context.active
   }
 };
 

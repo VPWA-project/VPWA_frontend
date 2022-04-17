@@ -51,13 +51,26 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
     }
   },
 
-  setActiveChannel({ getters, commit }, name: string) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    const channels = getters['getUserChannels'] as Channel[]
+  async setActiveChannel({ getters, commit, dispatch }, name: string | undefined) {
+    if (!name) return;
 
-    const channel = channels.find(channel => channel.name === name)
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const activeChannel = getters['getActiveChannel'] as Channel | null;
 
-    commit('SET_ACTIVE', channel)
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const channels = getters['getUserChannels'] as Channel[];
+
+      const channel = channels.find((channel) => channel.name === name);
+
+      await dispatch('leave', activeChannel?.name);
+      await dispatch('join', name);
+
+      commit('SET_ACTIVE', channel);
+    } catch (err) {
+      await dispatch('leave', name)
+      throw err;
+    }
   },
 };
 

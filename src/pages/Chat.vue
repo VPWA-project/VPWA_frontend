@@ -19,7 +19,7 @@ export default defineComponent({
 
     const messages = computed(() => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      return $store.getters['channels/currentMessages'] as SerializedMessage[]
+      return $store.getters['channels_v2/currentMessages'] as SerializedMessage[]
     })
 
     return {

@@ -33,7 +33,7 @@ export default defineComponent({
   name: 'ChannelLink',
   props: {
     id: {
-      type: Number,
+      type: String,
       required: true,
     },
     name: {
