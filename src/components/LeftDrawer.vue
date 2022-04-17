@@ -36,6 +36,8 @@
           :channelId="link.channel.id"
           :name="link.channel.name"
           :type="link.channel.type"
+          :invitedByFirstname="link.invitedBy.firstname"
+          :invitedByLastname="link.invitedBy.lastname"
         />
       </q-list>
     </div>

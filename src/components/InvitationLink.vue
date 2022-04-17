@@ -24,7 +24,7 @@
       </div>
     </template>
     <template v-slot:invitedBy>
-      <div style="font-size: 10px">by Adam Bublavy</div>
+      <div style="font-size: 10px">by {{invitedByFirstname + ' ' + invitedByLastname}}</div>
     </template>
   </ChannelLink>
 </template>
@@ -58,6 +58,14 @@ export default defineComponent({
       type: String as PropType<ChannelType>,
       required: true,
     },
+    invitedByFirstname: {
+      type: String,
+      required: true
+    },
+    invitedByLastname: {
+      type: String,
+      required: true
+    }
   },
   components: {
     ChannelLink,
