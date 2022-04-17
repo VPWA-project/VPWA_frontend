@@ -79,6 +79,7 @@
 </template>
 
 <script lang="ts">
+import { Channel } from 'src/contracts';
 import { useStore } from 'src/store';
 import { defineComponent, reactive, PropType, computed } from 'vue';
 import { useRouter } from 'vue-router';
@@ -142,7 +143,10 @@ export default defineComponent({
         }
         return '';
       }),
-      activeChannel: computed(() => $store.state.channels_v2.active),
+      activeChannel: computed(
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        () => $store.getters['channels_v2/getActiveChannel'] as Channel | null
+      ),
       amIChannelMember: computed(() => $store.state.channels.amIChannelMember),
     };
   },

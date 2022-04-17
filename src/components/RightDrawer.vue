@@ -100,8 +100,6 @@ export default defineComponent({
       () => $store.getters['channels_v2/getActiveChannel'] as Channel | null
     );
 
-    console.log(activeChannel.value)
-
     const state = reactive({
       channelMembers: [
         {

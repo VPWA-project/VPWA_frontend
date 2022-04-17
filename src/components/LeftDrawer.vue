@@ -97,6 +97,7 @@ export default defineComponent({
     const route = useRoute();
 
     const setActiveChannel = (name: string) => {
+      console.log('Setting active channel: ', name)
       $store.dispatch('channels_v2/setActiveChannel', name).catch(console.log);
     };
 

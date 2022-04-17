@@ -1,4 +1,4 @@
-import { Channel, RawMessage } from 'src/contracts';
+import { RawMessage } from 'src/contracts';
 import { channelService } from 'src/services';
 import { ActionTree } from 'vuex';
 import { StateInterface } from '../index';
@@ -84,17 +84,17 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
   ) {
     try {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      const activeChannel = getters['getActiveChannel'] as Channel | null;
+      const activeChannelName = getters['getActiveChannelName'] as string | null;
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      const channels = getters['getUserChannels'] as Channel[];
+      console.log('Currently active channel is: ', activeChannelName);
 
-      const channel = channels.find((channel) => channel.name === name);
+      await dispatch('leave', activeChannelName);
 
-      await dispatch('leave', activeChannel?.name);
+      commit('SET_ACTIVE', name);
+
       if (name) await dispatch('join', name);
 
-      commit('SET_ACTIVE', channel);
+      console.log('Newly active channel is: ', name);
     } catch (err) {
       await dispatch('leave', name);
       throw err;

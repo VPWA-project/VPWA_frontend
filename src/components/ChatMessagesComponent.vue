@@ -59,7 +59,7 @@ export default defineComponent({
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       return ($store.getters[
         'channels_v2/currentMessages'
-      ] as SerializedMessage[]).reverse();
+      ] as SerializedMessage[]);
     });
 
     const page = computed(
@@ -93,7 +93,7 @@ export default defineComponent({
         if (page.value.current_page === page.value.last_page) done(true);
         else {
           $store.dispatch('channels_v2/fetchMessages', {
-            channel: activeChannel.value?.name,
+            channel: activeChannel.value,
             page: page.value.current_page + 1,
             limit: page.value.per_page,
           }).catch(console.log);

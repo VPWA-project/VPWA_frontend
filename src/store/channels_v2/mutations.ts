@@ -21,7 +21,7 @@ const mutation: MutationTree<ChannelsV2StateInterface> = {
     delete state.messages[channel]
     delete state.pagination[channel]
   },
-  SET_ACTIVE(state, channel: Channel) {
+  SET_ACTIVE(state, channel: string) {
     state.active = channel
   },
   NEW_MESSAGE(state, { channel, message }: { channel: string, message: SerializedMessage }) {
