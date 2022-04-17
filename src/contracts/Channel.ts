@@ -1,4 +1,5 @@
 import { ChannelType } from 'src/store/channels/state';
+import { User } from './Auth';
 
 export interface CreateChannelRequest {
   name: string;
@@ -11,6 +12,7 @@ export interface Channel {
   name: string;
   type: ChannelType;
   administratorId: string;
+  administrator: User;
   createdAt: string;
   updatedAt: string;
 }

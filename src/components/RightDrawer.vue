@@ -1,5 +1,5 @@
 <template>
-  <q-list v-if="amIChannelMember">
+  <q-list v-if="activeChannel">
     <q-item class="q-mt-sm column">
       <q-item-label class="text-weight-medium text-subtitle1"
         >Channel members</q-item-label
@@ -31,10 +31,8 @@
       <q-list>
         <ChannelMember
           background="bg-white"
-          v-for="member in offline"
-          :key="member.id"
-          v-bind="member"
-          :channelMembers="state.channelMembers"
+          :key="activeChannel.administrator.id"
+          v-bind="activeChannel.administrator"
         />
       </q-list>
     </div>
@@ -82,6 +80,7 @@
 </template>
 
 <script lang="ts">
+import { Channel } from 'src/contracts';
 import { useStore } from 'src/store';
 import { User } from 'src/store/user/state';
 import { defineComponent, computed, reactive } from 'vue';
@@ -95,6 +94,14 @@ export default defineComponent({
   },
   setup() {
     const $store = useStore();
+
+    const activeChannel = computed(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      () => $store.getters['channels_v2/getActiveChannel'] as Channel | null
+    );
+
+    console.log(activeChannel.value)
+
     const state = reactive({
       channelMembers: [
         {
@@ -127,6 +134,7 @@ export default defineComponent({
 
     return {
       state,
+      activeChannel,
       online: computed(() =>
         state.channelMembers.filter((x) => x.status !== 'OFFLINE')
       ),
@@ -134,7 +142,7 @@ export default defineComponent({
         state.channelMembers.filter((x) => x.status === 'OFFLINE')
       ),
       showInviteUsers: () => (state.isInviteUsersOpen = true),
-      amIChannelMember: computed(() => $store.state.channels.amIChannelMember),
+      amIChannelMember: computed(() => true),
     };
   },
 });
