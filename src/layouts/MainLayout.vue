@@ -67,6 +67,7 @@ export default defineComponent({
 
     onMounted(() => {
       $store.dispatch('channels_v2/getUserChannels').catch(console.log)
+      $store.dispatch('invitations/getUserInvitations').catch(console.log)
     })
 
     return {

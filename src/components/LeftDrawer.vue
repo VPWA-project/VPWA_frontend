@@ -83,6 +83,7 @@ import ChannelLink from './ChannelLink.vue';
 import SearchChannels from './SearchChannels.vue';
 import { useRoute } from 'vue-router';
 import InvitationLink from './InvitationLink.vue';
+import { Invitation } from 'src/contracts';
 
 export default defineComponent({
   components: {
@@ -121,7 +122,8 @@ export default defineComponent({
       state,
       InvitationState,
       invitations: computed(() => {
-        return $store.state.channels.invitations;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        return $store.getters['invitations/getInvitations'] as Invitation[]
       }),
       user: computed(() => $store.state.auth.user),
       toggleUserBannerIcon: () =>
