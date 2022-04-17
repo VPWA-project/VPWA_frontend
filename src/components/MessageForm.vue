@@ -13,7 +13,7 @@
           dense
           class="col-grow q-mr-sm"
           bg-color="white"
-          v-model="state.message"
+          v-model.trim="state.message"
           placeholder="Type a message"
         />
         <q-btn
@@ -45,17 +45,14 @@ export default defineComponent({
     const route = useRoute();
     const $q = useQuasar();
 
-    const handleSubmit = () => {
-      const trimmedMessage = state.message.trim();
-      if (!!trimmedMessage) {
-        $store
-          .dispatch('channels/appendChannelMessage', {
-            channelId: route.params.id as unknown as number,
-            message: trimmedMessage,
+    const handleSubmit = async () => {
+      if(!state.message) return
+      await $store
+          .dispatch('channels_v2/addMessage', {
+            channel: route.params.name as string,
+            message: state.message,
           })
           .catch(console.log);
-      }
-      console.log($store.state.channels.channels);
       state.message = '';
     };
     return {
@@ -70,7 +67,7 @@ export default defineComponent({
           position: 'bottom-right',
         });
       },
-      activeChannel: computed(() => $store.state.channels.activeChannel),
+      activeChannel: computed(() => $store.state.channels_v2.active),
       amIChannelMember: computed(() => $store.state.channels.amIChannelMember),
     };
   },

@@ -34,8 +34,12 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
     { commit },
     { channel, message }: { channel: string; message: RawMessage }
   ) {
-    const newMessage = await channelService.in(channel)?.addMessage(message);
-    commit('NEW_MESSAGE', { channel, message: newMessage });
+    try {
+      const newMessage = await channelService.in(channel)?.addMessage(message);
+      commit('NEW_MESSAGE', { channel, message: newMessage });
+    } catch (err) {
+      throw err;
+    }
   },
 
   async getUserChannels({ commit }) {
@@ -51,9 +55,10 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
     }
   },
 
-  async setActiveChannel({ getters, commit, dispatch }, name: string | undefined) {
-    if (!name) return;
-
+  async setActiveChannel(
+    { getters, commit, dispatch },
+    name: string | undefined
+  ) {
     try {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       const activeChannel = getters['getActiveChannel'] as Channel | null;
@@ -64,11 +69,11 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
       const channel = channels.find((channel) => channel.name === name);
 
       await dispatch('leave', activeChannel?.name);
-      await dispatch('join', name);
+      if (name) await dispatch('join', name);
 
       commit('SET_ACTIVE', channel);
     } catch (err) {
-      await dispatch('leave', name)
+      await dispatch('leave', name);
       throw err;
     }
   },
