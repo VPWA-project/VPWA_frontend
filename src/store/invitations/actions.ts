@@ -52,13 +52,44 @@ const actions: ActionTree<InvitationsStateInterface, StateInterface> = {
     }
   },
 
-  async invite(_, { channelId, userId }: { channelId: string; userId: string }
+  async getChannelUserOptions(
+    { commit },
+    { channelId, search }: { channelId: string; search: string | undefined }
   ) {
-    const response = await invitationService.invite(
-      { channelId, userId } as CreateInvitationRequest
-    );
+    try {
+      const response = await invitationService.getChannelUserOptions(
+        channelId,
+        { page: 1, limit: 10, search }
+      );
 
-    console.log(response)
+      console.log(response)
+
+      commit('GET_USER_OPTIONS', response.data);
+    } catch (err) {
+      throw err;
+    }
+  },
+
+  async invite(
+    { commit },
+    { channelId, userIds }: { channelId: string; userIds: string[] }
+  ) {
+    try {
+      commit('SUBMIT_START');
+
+      await Promise.all(
+        userIds.map((userId) =>
+          invitationService.invite({
+            channelId,
+            userId,
+          } as CreateInvitationRequest)
+        )
+      );
+    } catch (err) {
+      throw err;
+    } finally {
+      commit('SUBMIT_FINISH');
+    }
   },
 };
 

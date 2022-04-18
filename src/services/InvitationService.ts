@@ -1,10 +1,11 @@
-import { AxiosRequestConfig } from 'axios';
 import { api } from 'src/boot/axios';
 import {
   CreateInvitationRequest,
   CreateInvitationResponse,
   GetAllUsersRequest,
   GetAllUsersResponse,
+  GetChannelUserOptionsRequest,
+  GetChannelUserOptionsResponse,
   GetUserInvitationsResponse,
   ResolveInvitationRequest,
   ResolveInvitationResponse,
@@ -33,9 +34,21 @@ class InvitationService {
     return response.data;
   }
 
+  async getChannelUserOptions(id: string, data: GetChannelUserOptionsRequest) {
+    const response = await api.get<GetChannelUserOptionsResponse>(
+      `channels/${id}/invitableUsers`,
+      { params: { ...data } }
+    );
+
+    return response.data;
+  }
+
   async invite(data: CreateInvitationRequest) {
-    const response = await api.post<CreateInvitationResponse>('invitations', data)
-    return response.data
+    const response = await api.post<CreateInvitationResponse>(
+      'invitations',
+      data
+    );
+    return response.data;
   }
 }
 

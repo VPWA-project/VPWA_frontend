@@ -34,4 +34,8 @@ export interface CreateInvitationRequest {
   userId: string;
 }
 
-export type CreateInvitationResponse = unknown
+export type CreateInvitationResponse = unknown;
+
+export type GetChannelUserOptionsRequest = GetAllUsersRequest;
+
+export type GetChannelUserOptionsResponse = PaginatedResponse<User[]>;

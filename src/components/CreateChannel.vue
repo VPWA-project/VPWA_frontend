@@ -171,10 +171,6 @@ export default defineComponent({
       serverErrors: {} as ServerErrors,
     });
 
-    onMounted(() => {
-      $store.dispatch('invitations/getUserOptions').catch(console.log);
-    });
-
     const submitting = computed(() => $store.state.createChannel.isSubmitting);
 
     const v$ = useVuelidate(rules, state);
