@@ -1,9 +1,10 @@
 import { ChannelType } from 'src/store/channels/state';
+import { User } from './Auth';
 
 export interface CreateChannelRequest {
   name: string;
   type: ChannelType;
-  invitations: string[];
+  invitations?: string[];
 }
 
 export interface Channel {
@@ -11,6 +12,7 @@ export interface Channel {
   name: string;
   type: ChannelType;
   administratorId: string;
+  administrator: User;
   createdAt: string;
   updatedAt: string;
 }
@@ -18,3 +20,5 @@ export interface Channel {
 export type CreateChannelResponse = Channel;
 
 export type GetUserChannelsResponse = Channel[];
+
+export type DeleteChannelResponse = unknown

@@ -3,6 +3,7 @@ import { api } from 'src/boot/axios';
 import {
   CreateChannelRequest,
   CreateChannelResponse,
+  DeleteChannelResponse,
   GetUserChannelsResponse,
   PaginatedResponse,
   RawMessage,
@@ -25,8 +26,11 @@ class ChannelSocketManager extends SocketManager {
     return this.emitAsync('addMessage', message);
   }
 
-  public loadMessages(): Promise<PaginatedResponse<SerializedMessage[]>> {
-    return this.emitAsync('loadMessages');
+  public loadMessages(
+    page?: number,
+    limit?: number
+  ): Promise<PaginatedResponse<SerializedMessage[]>> {
+    return this.emitAsync('loadMessages', page || 1, limit || 10);
   }
 }
 
@@ -68,8 +72,16 @@ class ChannelService {
   }
 
   public async getUserChannels() {
-    const channels = await api.get<GetUserChannelsResponse>('/auth/me/channels')
-    return channels.data
+    const channels = await api.get<GetUserChannelsResponse>(
+      '/auth/me/channels'
+    );
+    return channels.data;
+  }
+
+  public async delete(id: string) {
+    const response = await api.delete<DeleteChannelResponse>(`channels/${id}`);
+
+    return response.data;
   }
 }
 

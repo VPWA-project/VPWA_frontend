@@ -30,6 +30,7 @@
             clickable
             @click="toggleDialog(ConfirmDialogType.Leave)"
             v-close-popup
+            v-if="!amIChannelAdmin"
           >
             <q-item-section>
               <q-item-label>Leave channel</q-item-label>
@@ -39,6 +40,7 @@
             clickable
             @click="toggleDialog(ConfirmDialogType.Delete)"
             v-close-popup
+            v-else
           >
             <q-item-section>
               <q-item-label>Delete channel</q-item-label>
@@ -79,6 +81,7 @@
 </template>
 
 <script lang="ts">
+import { Channel } from 'src/contracts';
 import { useStore } from 'src/store';
 import { defineComponent, reactive, PropType, computed } from 'vue';
 import { useRouter } from 'vue-router';
@@ -102,10 +105,22 @@ export default defineComponent({
       confirmDialogType: ConfirmDialogType.Leave,
     });
 
+    const amIChannelAdmin = computed(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      () => $store.getters['channels_v2/amIChannelAdmin'] as boolean
+    );
+
+    const activeChannel = computed(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      () => $store.getters['channels_v2/getActiveChannel'] as Channel | null
+    );
+
     return {
       state,
       ConfirmDialogType,
-      confirmDialog: () => {
+      confirmDialog: async () => {
+        if (!activeChannel.value) return;
+
         if (state.confirmDialogType === ConfirmDialogType.Leave) {
           $store
             .dispatch(
@@ -117,7 +132,9 @@ export default defineComponent({
             })
             .catch(console.log);
         } else if (state.confirmDialogType === ConfirmDialogType.Delete) {
-          // TODO: Delete channel
+          await $store
+            .dispatch('channels_v2/delete', activeChannel.value.name)
+            .then(() => router.push({ name: 'home' }));
         }
       },
       toggleDialog: (type: ConfirmDialogType) => {
@@ -142,8 +159,12 @@ export default defineComponent({
         }
         return '';
       }),
-      activeChannel: computed(() => $store.state.channels_v2.active),
-      amIChannelMember: computed(() => $store.state.channels.amIChannelMember),
+      activeChannel: computed(
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        () => $store.getters['channels_v2/getActiveChannel'] as Channel | null
+      ),
+      amIChannelMember: computed(() => true),
+      amIChannelAdmin,
     };
   },
 });

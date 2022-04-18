@@ -6,7 +6,7 @@ export interface ChannelsV2StateInterface {
   messages: { [channel: string]: SerializedMessage[] };
   pagination: { [channel: string]: PageMetaData }
   channels: Channel[];
-  active: Channel | null;
+  active: string | null;
 }
 
 function state(): ChannelsV2StateInterface {

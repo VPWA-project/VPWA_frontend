@@ -36,6 +36,8 @@
           :channelId="link.channel.id"
           :name="link.channel.name"
           :type="link.channel.type"
+          :invitedByFirstname="link.invitedBy.firstname"
+          :invitedByLastname="link.invitedBy.lastname"
         />
       </q-list>
     </div>
@@ -83,6 +85,7 @@ import ChannelLink from './ChannelLink.vue';
 import SearchChannels from './SearchChannels.vue';
 import { useRoute } from 'vue-router';
 import InvitationLink from './InvitationLink.vue';
+import { Invitation } from 'src/contracts';
 
 export default defineComponent({
   components: {
@@ -97,6 +100,7 @@ export default defineComponent({
     const route = useRoute();
 
     const setActiveChannel = (name: string) => {
+      console.log('Setting active channel: ', name)
       $store.dispatch('channels_v2/setActiveChannel', name).catch(console.log);
     };
 
@@ -120,7 +124,8 @@ export default defineComponent({
       state,
       InvitationState,
       invitations: computed(() => {
-        return $store.state.channels.invitations;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        return $store.getters['invitations/getInvitations'] as Invitation[]
       }),
       user: computed(() => $store.state.auth.user),
       toggleUserBannerIcon: () =>

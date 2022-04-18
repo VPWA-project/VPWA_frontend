@@ -1,6 +1,6 @@
 <template>
-  <div v-if="amIChannelMember" class="q-pa-md full-width bg-white">
-    <q-infinite-scroll ref="area" @load="onLoad" reverse>
+  <div v-if="amIChannelMember && activeChannel" class="q-pa-md full-width bg-white">
+    <q-infinite-scroll :key="activeChannel.id" ref="area" @load="onLoad" reverse>
       <template v-slot:loading>
         <div class="row justify-center q-my-md">
           <q-spinner color="cyan-9" name="dots" size="40px" />
@@ -57,9 +57,9 @@ export default defineComponent({
 
     const messages = computed(() => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      return $store.getters[
+      return ($store.getters[
         'channels_v2/currentMessages'
-      ] as SerializedMessage[];
+      ] as SerializedMessage[]);
     });
 
     const page = computed(
@@ -75,23 +75,34 @@ export default defineComponent({
     const area = ref<QInfiniteScroll>();
 
     const scrollMessages = () => {
-      // setVerticalScrollPosition(area.value?.scrollTarget as Element, 1.1)
+      console.log(area.value?.scrollTarget)
     };
 
     watch(messages, () => {
       void nextTick(() => scrollMessages());
     });
 
+    const activeChannel = computed(() => $store.state.channels_v2.active);
+
     return {
       onLoad: (_: number, done: (stop: boolean | undefined) => void) => {
-        setTimeout(() => {
-          console.log(page.value)
-          if(page.value?.current_page === page.value?.last_page) done(true)
-          else done(false)
-        }, 2000);
+        if (!page.value) {
+          done(false);
+          return;
+        }
+        if (page.value.current_page === page.value.last_page) done(true);
+        else {
+          $store.dispatch('channels_v2/fetchMessages', {
+            channel: activeChannel.value,
+            page: page.value.current_page + 1,
+            limit: page.value.per_page,
+          }).catch(console.log);
+          done(false)
+        }
       },
       area,
       messages,
+      activeChannel,
       timeStamp: computed(() => {
         return (time: string) => {
           return moment(time).fromNow();

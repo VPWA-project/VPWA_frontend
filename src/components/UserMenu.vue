@@ -95,12 +95,10 @@
 import { useStore } from 'src/store';
 import { UserStatus } from 'src/store/user/state';
 import { defineComponent, reactive } from 'vue';
-import { useRouter } from 'vue-router';
 
 export default defineComponent({
   setup() {
     const $store = useStore();
-    const router = useRouter();
 
     const state = reactive({
       allowOnlyMentions: false,
@@ -111,8 +109,9 @@ export default defineComponent({
       UserStatus,
       changeUserStatus: (status: UserStatus) =>
         $store.dispatch('user/changeUserStatus', status).catch(console.log),
-      logout: () => {
-        $store.dispatch('auth/logout').catch(console.log)
+      logout: async () => {
+        await $store.dispatch('auth/logout')
+        await $store.dispatch('channels_v2/leave')
       },
     };
   },

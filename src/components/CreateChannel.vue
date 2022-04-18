@@ -67,7 +67,7 @@
             </q-input>
 
             <q-select
-              v-model="invitations"
+              v-model="state.invitations"
               use-input
               use-chips
               multiple
@@ -77,9 +77,26 @@
               class="q-mt-lg border-15 bg-white q-pb-none q-pl-md q-pr-md"
               color="cyan-9"
               borderless
-              :options="options"
+              :options="userOptions"
               @filter="fetchUsers"
             >
+              <template v-slot:option="scope">
+                <q-item v-bind="scope.itemProps">
+                  <q-item-section>
+                    {{ scope.opt.nickname }}
+                  </q-item-section>
+                </q-item>
+              </template>
+              <template v-slot:selected-item="scope">
+                <q-chip
+                  @remove="scope.removeAtIndex(scope.index)"
+                  dense
+                  class="text-cyan-9"
+                  color="text-cyan-9"
+                  removable
+                  >{{ scope.opt.nickname }}</q-chip
+                >
+              </template>
               <template v-slot:no-option>
                 <q-item>
                   <q-item-section class="text-grey">
@@ -110,13 +127,13 @@
 </template>
 
 <script lang="ts">
-import { QSelect, useQuasar } from 'quasar';
+import { useQuasar } from 'quasar';
 import { ChannelType } from 'src/store/channels/state';
-import { computed, defineComponent, reactive, ref, toRef } from 'vue';
+import { computed, defineComponent, reactive, toRef } from 'vue';
 import { useStore } from '../store';
 import useVuelidate from '@vuelidate/core';
 import { required, helpers } from '@vuelidate/validators';
-import { CreateChannelRequest, ServerErrors } from 'src/contracts';
+import { CreateChannelRequest, ServerErrors, User } from 'src/contracts';
 import { groupValidationErrors, clearServerError } from 'src/utils/utils';
 
 const rules = {
@@ -148,6 +165,7 @@ export default defineComponent({
     const $q = useQuasar();
 
     const state = reactive({
+      invitations: [] as User[],
       name: '',
       isChannelPublic: true,
       serverErrors: {} as ServerErrors,
@@ -161,24 +179,20 @@ export default defineComponent({
       emit('close');
     };
 
-    const stringOptions = ['sangalaa', 'adam', '5cos', 'lucyklus', 'stuff'];
-
-    const invitations = ref<QSelect | null>(null);
-    const options = ref(stringOptions);
+    const userOptions = computed(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      () => $store.getters['invitations/getUserOptions'] as User[]
+    );
 
     const fetchUsers = (val: string, update: (value: () => void) => void) => {
       setTimeout(() => {
         update(() => {
-          if (val === '') {
-            options.value = stringOptions;
-          } else {
-            const needle = val.toLowerCase();
-            options.value = stringOptions.filter(
-              (v) => v.toLowerCase().indexOf(needle) > -1
-            );
-          }
+          const needle = val.toLowerCase();
+          $store
+            .dispatch('invitations/getUserOptions', needle)
+            .catch(console.log);
         });
-      }, 1500);
+      }, 500);
     };
 
     const handleSubmit = () => {
@@ -191,7 +205,9 @@ export default defineComponent({
               type: state.isChannelPublic
                 ? ChannelType.Public
                 : ChannelType.Private,
-              invitations: [],
+              invitations: !!state.invitations.length
+                ? state.invitations.map((user) => user.id)
+                : undefined,
             };
 
             $store
@@ -223,9 +239,8 @@ export default defineComponent({
       handleCloseButton,
       state,
       v$,
-      invitations,
-      options,
       fetchUsers,
+      userOptions,
     };
   },
 });
