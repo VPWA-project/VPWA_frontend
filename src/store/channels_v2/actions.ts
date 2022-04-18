@@ -1,5 +1,4 @@
-import { COMPLETIONSTATEMENT_TYPES } from '@babel/types';
-import { Channel, RawMessage, User } from 'src/contracts';
+import { Channel, RawMessage } from 'src/contracts';
 import { channelService } from 'src/services';
 import { ActionTree } from 'vuex';
 import { StateInterface } from '../index';

@@ -129,7 +129,7 @@
 <script lang="ts">
 import { useQuasar } from 'quasar';
 import { ChannelType } from 'src/store/channels/state';
-import { computed, defineComponent, onMounted, reactive, toRef } from 'vue';
+import { computed, defineComponent, reactive, toRef } from 'vue';
 import { useStore } from '../store';
 import useVuelidate from '@vuelidate/core';
 import { required, helpers } from '@vuelidate/validators';
