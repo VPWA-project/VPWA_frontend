@@ -1,4 +1,5 @@
-import { RawMessage } from 'src/contracts';
+import { COMPLETIONSTATEMENT_TYPES } from '@babel/types';
+import { Channel, RawMessage, User } from 'src/contracts';
 import { channelService } from 'src/services';
 import { ActionTree } from 'vuex';
 import { StateInterface } from '../index';
@@ -27,9 +28,11 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
     { channel, page, limit }: { channel: string; page: number; limit: number }
   ) {
     try {
-      const response = await channelService.in(channel)?.loadMessages(page, limit);
+      const response = await channelService
+        .in(channel)
+        ?.loadMessages(page, limit);
 
-      console.log('Fetching new messages: ', response)
+      console.log('Fetching new messages: ', response);
 
       commit('FETCH_MESSAGES', {
         channel,
@@ -84,7 +87,9 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
   ) {
     try {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      const activeChannelName = getters['getActiveChannelName'] as string | null;
+      const activeChannelName = getters['getActiveChannelName'] as
+        | string
+        | null;
 
       console.log('Currently active channel is: ', activeChannelName);
 
@@ -97,6 +102,27 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
       console.log('Newly active channel is: ', name);
     } catch (err) {
       await dispatch('leave', name);
+      throw err;
+    }
+  },
+
+  async delete({ commit, dispatch, getters }, name: string) {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const channels = getters['getUserChannels'] as Channel[];
+
+      const channelToDelete = channels.find((channel) => channel.name === name);
+
+      if (!channelToDelete) return;
+
+      const response = await channelService.delete(channelToDelete.id);
+
+      await dispatch('leave', name);
+
+      commit('REMOVE_CHANNEL', name);
+
+      return response;
+    } catch (err) {
       throw err;
     }
   },
