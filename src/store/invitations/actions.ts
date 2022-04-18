@@ -1,4 +1,8 @@
-import { InvitationStatus, ResolveInvitationRequest } from 'src/contracts';
+import {
+  CreateInvitationRequest,
+  InvitationStatus,
+  ResolveInvitationRequest,
+} from 'src/contracts';
 import { invitationService } from 'src/services';
 import { ActionTree } from 'vuex';
 import { StateInterface } from '../index';
@@ -46,6 +50,15 @@ const actions: ActionTree<InvitationsStateInterface, StateInterface> = {
     } catch (err) {
       throw err;
     }
+  },
+
+  async invite(_, { channelId, userId }: { channelId: string; userId: string }
+  ) {
+    const response = await invitationService.invite(
+      { channelId, userId } as CreateInvitationRequest
+    );
+
+    console.log(response)
   },
 };
 

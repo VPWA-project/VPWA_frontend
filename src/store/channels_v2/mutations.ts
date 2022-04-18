@@ -27,6 +27,9 @@ const mutation: MutationTree<ChannelsV2StateInterface> = {
   NEW_MESSAGE(state, { channel, message }: { channel: string, message: SerializedMessage }) {
     state.messages[channel].push(message)
   },
+  ADD_CHANNEL(state, channel: Channel) {
+    state.channels.push(channel)
+  },
   FETCH_MESSAGES(state, { channel, messages, page }: { channel: string, messages: SerializedMessage[], page: PageMetaData }) {
     state.messages[channel].push(...messages)
     state.pagination[channel] = page

@@ -4,7 +4,7 @@ import { User } from './Auth';
 export interface CreateChannelRequest {
   name: string;
   type: ChannelType;
-  invitations: string[];
+  invitations?: string[];
 }
 
 export interface Channel {

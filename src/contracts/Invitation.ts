@@ -28,3 +28,10 @@ export interface GetAllUsersRequest extends PaginatedRequest {
 }
 
 export type GetAllUsersResponse = PaginatedResponse<User[]>;
+
+export interface CreateInvitationRequest {
+  channelId: string;
+  userId: string;
+}
+
+export type CreateInvitationResponse = unknown

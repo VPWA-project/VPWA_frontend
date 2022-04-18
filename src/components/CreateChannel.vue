@@ -67,7 +67,7 @@
             </q-input>
 
             <q-select
-              v-model="invitations"
+              v-model="state.invitations"
               use-input
               use-chips
               multiple
@@ -77,18 +77,25 @@
               class="q-mt-lg border-15 bg-white q-pb-none q-pl-md q-pr-md"
               color="cyan-9"
               borderless
-              :options="state.options"
+              :options="userOptions"
               @filter="fetchUsers"
             >
-              <template v-slot:options>
-                <q-item :key="option.id" v-for="option in state.options">
+              <template v-slot:option="scope">
+                <q-item v-bind="scope.itemProps">
                   <q-item-section>
-                    {{ option.id }}
+                    {{ scope.opt.nickname }}
                   </q-item-section>
                 </q-item>
               </template>
-              <template v-slot:selected>
-                <div :key="invitation.id" v-for="invitation in invitations">{{ invitation.id }}</div>
+              <template v-slot:selected-item="scope">
+                <q-chip
+                  @remove="scope.removeAtIndex(scope.index)"
+                  dense
+                  class="text-cyan-9"
+                  color="text-cyan-9"
+                  removable
+                  >{{ scope.opt.nickname }}</q-chip
+                >
               </template>
               <template v-slot:no-option>
                 <q-item>
@@ -120,9 +127,9 @@
 </template>
 
 <script lang="ts">
-import { QSelect, useQuasar } from 'quasar';
+import { useQuasar } from 'quasar';
 import { ChannelType } from 'src/store/channels/state';
-import { computed, defineComponent, onMounted, reactive, ref, toRef } from 'vue';
+import { computed, defineComponent, onMounted, reactive, toRef } from 'vue';
 import { useStore } from '../store';
 import useVuelidate from '@vuelidate/core';
 import { required, helpers } from '@vuelidate/validators';
@@ -158,15 +165,15 @@ export default defineComponent({
     const $q = useQuasar();
 
     const state = reactive({
+      invitations: [] as User[],
       name: '',
       isChannelPublic: true,
       serverErrors: {} as ServerErrors,
-      options: [] as User[]
     });
 
     onMounted(() => {
-      $store.dispatch('invitations/getUserOptions').catch(console.log)
-    })
+      $store.dispatch('invitations/getUserOptions').catch(console.log);
+    });
 
     const submitting = computed(() => $store.state.createChannel.isSubmitting);
 
@@ -181,20 +188,15 @@ export default defineComponent({
       () => $store.getters['invitations/getUserOptions'] as User[]
     );
 
-    const invitations = ref<QSelect | null>(null);
-
     const fetchUsers = (val: string, update: (value: () => void) => void) => {
       setTimeout(() => {
         update(() => {
-          if (val === '') {
-            state.options = userOptions.value;
-            console.log(userOptions.value)
-          } else {
-            const needle = val.toLowerCase();
-            $store.dispatch('invitations/getUserOptions', needle).catch(console.log)
-          }
+          const needle = val.toLowerCase();
+          $store
+            .dispatch('invitations/getUserOptions', needle)
+            .catch(console.log);
         });
-      }, 1500);
+      }, 500);
     };
 
     const handleSubmit = () => {
@@ -207,7 +209,9 @@ export default defineComponent({
               type: state.isChannelPublic
                 ? ChannelType.Public
                 : ChannelType.Private,
-              invitations: [],
+              invitations: !!state.invitations.length
+                ? state.invitations.map((user) => user.id)
+                : undefined,
             };
 
             $store
@@ -239,8 +243,8 @@ export default defineComponent({
       handleCloseButton,
       state,
       v$,
-      invitations,
       fetchUsers,
+      userOptions,
     };
   },
 });

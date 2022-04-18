@@ -11,7 +11,6 @@ const mutation: MutationTree<CreateChannelStateInterface> = {
   SUBMIT_SUCCESS(state) {
     state.submitStatus = 'success';
     state.isSubmitting = false
-    // TODO: add channel to my channels
   },
   SUBMIT_ERROR(state, errors: ValidationError[]) {
     state.submitStatus = 'error';

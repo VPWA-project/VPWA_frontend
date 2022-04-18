@@ -1,6 +1,8 @@
 import { AxiosRequestConfig } from 'axios';
 import { api } from 'src/boot/axios';
 import {
+  CreateInvitationRequest,
+  CreateInvitationResponse,
   GetAllUsersRequest,
   GetAllUsersResponse,
   GetUserInvitationsResponse,
@@ -25,11 +27,15 @@ class InvitationService {
   }
 
   async getUserOptions(data: GetAllUsersRequest) {
-    const response = await api.get<GetAllUsersResponse>(
-      'users',
-      data as AxiosRequestConfig
-    );
+    const response = await api.get<GetAllUsersResponse>('users', {
+      params: { ...data },
+    });
     return response.data;
+  }
+
+  async invite(data: CreateInvitationRequest) {
+    const response = await api.post<CreateInvitationResponse>('invitations', data)
+    return response.data
   }
 }
 
