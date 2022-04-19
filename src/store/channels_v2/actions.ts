@@ -1,6 +1,7 @@
 import { Channel, RawMessage } from 'src/contracts';
 import { channelService } from 'src/services';
 import { ActionTree } from 'vuex';
+import { SearchPublicChannelsPayload } from '../channels/types';
 import { StateInterface } from '../index';
 import { ChannelsV2StateInterface } from './state';
 
@@ -74,6 +75,19 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
       const channels = await channelService.getUserChannels();
 
       commit('GET_USER_CHANNELS', channels);
+    } catch (err) {
+      commit('LOADING_ERROR');
+      throw err;
+    }
+  },
+
+  async searchPublicChannels({ commit }, payload: SearchPublicChannelsPayload) {
+    try {
+      commit('LOADING_START');
+
+      const channels = await channelService.getSearchedChannels(payload);
+
+      commit('GET_SEARCHED_CHANNELS', channels);
     } catch (err) {
       commit('LOADING_ERROR');
       throw err;

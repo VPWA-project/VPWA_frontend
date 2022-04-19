@@ -60,6 +60,9 @@ const mutation: MutationTree<ChannelsV2StateInterface> = {
   GET_USER_CHANNELS(state, channels: Channel[]) {
     state.channels = channels;
   },
+  GET_SEARCHED_CHANNELS(state, channels: Channel[]) {
+    state.searchedChannels = channels;
+  },
 };
 
 export default mutation;

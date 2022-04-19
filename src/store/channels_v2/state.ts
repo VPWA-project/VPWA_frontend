@@ -4,9 +4,10 @@ export interface ChannelsV2StateInterface {
   loading: boolean;
   error: Error | null;
   messages: { [channel: string]: SerializedMessage[] };
-  pagination: { [channel: string]: PageMetaData }
+  pagination: { [channel: string]: PageMetaData };
   channels: Channel[];
   active: string | null;
+  searchedChannels: Channel[];
 }
 
 function state(): ChannelsV2StateInterface {
@@ -16,6 +17,7 @@ function state(): ChannelsV2StateInterface {
     messages: {},
     pagination: {},
     channels: [],
+    searchedChannels: [],
     active: null,
   };
 }
