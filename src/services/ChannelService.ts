@@ -4,12 +4,14 @@ import {
   CreateChannelRequest,
   CreateChannelResponse,
   GetUserChannelsResponse,
+  GetSearchChannelsResponse,
   PaginatedResponse,
   RawMessage,
   SerializedMessage,
 } from 'src/contracts';
 import { StateInterface } from 'src/store';
 import { SocketManager } from './SocketManager';
+import { SearchPublicChannelsPayload } from 'src/store/channels/types';
 
 class ChannelSocketManager extends SocketManager {
   public subscribe({ store }: BootFileParams<StateInterface>): void {
@@ -68,8 +70,31 @@ class ChannelService {
   }
 
   public async getUserChannels() {
-    const channels = await api.get<GetUserChannelsResponse>('/auth/me/channels')
-    return channels.data
+    const channels = await api.get<GetUserChannelsResponse>(
+      '/auth/me/channels'
+    );
+    return channels.data;
+  }
+
+  // get user's channels, in which he already is
+  public async getSearchedChannel() {
+    const channels = await api.get<GetUserChannelsResponse>(
+      '/auth/me/channels'
+    );
+    return channels.data;
+  }
+
+  // get searched channels
+  public async getSearchedChannels(payload: SearchPublicChannelsPayload) {
+    const data = {
+      params: payload,
+    };
+
+    const channels = await api.get<GetSearchChannelsResponse>(
+      '/channels',
+      data
+    );
+    return channels.data['data'];
   }
 }
 
