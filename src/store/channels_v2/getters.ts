@@ -14,7 +14,7 @@ const getters: GetterTree<ChannelsV2StateInterface, StateInterface> = {
     const messages = context.messages[context.active];
 
     return messages
-      ? messages.sort((a, b) => moment(a.createdAt).diff(moment(b.createdAt)))
+      ? messages.sort((a, b) => moment(b.createdAt).diff(moment(a.createdAt)))
       : [];
   },
   lastMessageOf(context) {
