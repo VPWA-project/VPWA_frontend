@@ -85,8 +85,7 @@
 </template>
 
 <script lang="ts">
-import { Channel } from 'src/contracts/Channel';
-import { SearchPublicChannelsPayload } from 'src/store/channels/types';
+import { Channel, SearchPublicChannelsPayload } from 'src/contracts/Channel';
 import { defineComponent, ref, toRef, computed } from 'vue';
 import { useStore } from '../store';
 import ChannelLink from './ChannelLink.vue';
