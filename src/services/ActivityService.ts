@@ -1,11 +1,9 @@
-import { BootFileParams } from '@quasar/app-webpack';
-import { CreateInvitationRequest, Invitation, User } from 'src/contracts';
-import { StateInterface } from 'src/store';
+import { User } from 'src/contracts';
 import { authManager } from '.';
 import { SocketManager } from './SocketManager';
 
 class ActivitySocketManager extends SocketManager {
-  public subscribe({ store }: BootFileParams<StateInterface>): void {
+  public subscribe(): void {
     this.socket.on('user:list', (onlineUsers: User[]) => {
       console.log('Online users list', onlineUsers);
     });
@@ -18,10 +16,6 @@ class ActivitySocketManager extends SocketManager {
       console.log('User is offline', user);
     });
 
-    this.socket.on('invitation:receive', (invitation: Invitation) => {
-      store.commit('invitations/ADD_INVITATION', invitation, { root: true });
-    });
-
     authManager.onChange((token) => {
       if (token) {
         this.socket.connect();
@@ -29,10 +23,6 @@ class ActivitySocketManager extends SocketManager {
         this.socket.disconnect();
       }
     });
-  }
-
-  public async sendInvitation(data: CreateInvitationRequest) {
-    return this.emitAsync('invitation:send', data)
   }
 }
 

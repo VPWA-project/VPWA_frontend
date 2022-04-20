@@ -3,7 +3,11 @@ import {
   InvitationStatus,
   ResolveInvitationRequest,
 } from 'src/contracts';
-import { activityService, invitationService } from 'src/services';
+import {
+  activityService,
+  invitationManager,
+  invitationService,
+} from 'src/services';
 import { ActionTree } from 'vuex';
 import { StateInterface } from '../index';
 import { InvitationsStateInterface } from './state';
@@ -80,14 +84,10 @@ const actions: ActionTree<InvitationsStateInterface, StateInterface> = {
       await Promise.all(
         userIds.map(
           (userId) =>
-            activityService.sendInvitation({
+            invitationManager.sendInvitation({
               channelId,
               userId,
             } as CreateInvitationRequest)
-          // invitationService.invite({
-          //   channelId,
-          //   userId,
-          // } as CreateInvitationRequest)
         )
       );
     } catch (err) {
