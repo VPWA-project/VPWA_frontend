@@ -9,10 +9,10 @@ import {
   PaginatedResponse,
   RawMessage,
   SerializedMessage,
+  SearchPublicChannelsPayload,
 } from 'src/contracts';
 import { StateInterface } from 'src/store';
 import { SocketManager } from './SocketManager';
-import { SearchPublicChannelsPayload } from 'src/store/channels/types';
 
 class ChannelSocketManager extends SocketManager {
   public subscribe({ store }: BootFileParams<StateInterface>): void {

@@ -32,8 +32,13 @@ export interface GetSearchChannelsResponse {
   data: GetUserChannelsResponse;
 }
 
+export type SearchPublicChannelsPayload = {
+  searchText: string;
+  userId: string | undefined;
+};
+
 export type CreateChannelResponse = Channel;
 
 export type GetUserChannelsResponse = Channel[];
 
-export type DeleteChannelResponse = unknown
+export type DeleteChannelResponse = unknown;
