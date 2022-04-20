@@ -1,7 +1,6 @@
 import { GetterTree } from 'vuex';
 import { StateInterface } from '../index';
 import { ChannelsV2StateInterface } from './state';
-import moment from 'moment';
 import { Channel, User } from 'src/contracts';
 
 const getters: GetterTree<ChannelsV2StateInterface, StateInterface> = {
@@ -14,7 +13,9 @@ const getters: GetterTree<ChannelsV2StateInterface, StateInterface> = {
     const messages = context.messages[context.active];
 
     return messages
-      ? messages.sort((a, b) => moment(b.createdAt).diff(moment(a.createdAt)))
+      ? messages.sort(
+          (a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt)
+        )
       : [];
   },
   lastMessageOf(context) {

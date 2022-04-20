@@ -67,7 +67,7 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
     }
   },
 
-  async getUserChannels({ commit }) {
+  async getUserChannels({ commit, dispatch }) {
     try {
       commit('LOADING_START');
 
@@ -76,7 +76,7 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
       commit('GET_USER_CHANNELS', channels);
 
       channels.forEach((channel) => {
-        channelService.join(channel.name);
+        dispatch('join', channel.name).catch(console.log);
       });
     } catch (err) {
       commit('LOADING_ERROR');
