@@ -1,5 +1,5 @@
 <template>
-  <ChannelLink :id="channelId" :name="name" :type="type">
+  <ChannelLink :id="channel.id" :name="channel.name" :type="channel.type">
     <template v-slot:append>
       <div class="flex justify-end q-gutter-sm">
         <q-btn
@@ -7,14 +7,14 @@
           size="sm"
           color="blue-grey-9"
           icon="highlight_off"
-          @click="confirmInvitationRefuse(id, 'DECLINE', name)"
+          @click="confirmInvitationRefuse(id, 'DECLINE', channel)"
         />
         <q-btn
           round
           size="sm"
           color="cyan-7"
           icon="check_circle_outline"
-          @click="processInvitation(id, 'ACCEPT')"
+          @click="processInvitation(id, 'ACCEPT', channel)"
         />
       </div>
     </template>
@@ -28,7 +28,7 @@
 
 <script lang="ts">
 import { useQuasar } from 'quasar';
-import { InvitationStatus } from 'src/contracts';
+import { Channel, InvitationStatus } from 'src/contracts';
 import { useStore } from 'src/store';
 import { ChannelType, InvitationState } from 'src/store/channels/state';
 import { defineComponent, PropType } from 'vue';
@@ -40,16 +40,8 @@ export default defineComponent({
       type: String,
       required: true,
     },
-    channelId: {
-      type: String,
-      required: true,
-    },
-    name: {
-      type: String,
-      required: true,
-    },
-    type: {
-      type: String as PropType<ChannelType>,
+    channel: {
+      type: Object as PropType<Channel>,
       required: true,
     },
     invitedByFirstname: {
@@ -68,24 +60,24 @@ export default defineComponent({
     const $store = useStore();
     const $q = useQuasar();
 
-    const processInvitation = (id: string, status: InvitationStatus) => {
+    const processInvitation = (id: string, status: InvitationStatus, channel: Channel) => {
       $store
-        .dispatch('invitations/resolveInvitation', { id, status })
+        .dispatch('invitations/resolveInvitation', { id, status, channel })
         .catch(console.log);
     };
 
     const confirmInvitationRefuse = (
       linkId: string,
       status: InvitationStatus,
-      channelName: string
+      channel: Channel
     ) => {
       $q.dialog({
         title: 'Confirm',
-        message: `Would you like to really refuse invitation to ${channelName}`,
+        message: `Would you like to really refuse invitation to ${channel.name}`,
         cancel: true,
         persistent: false,
       }).onOk(() => {
-        processInvitation(linkId, status);
+        processInvitation(linkId, status, channel);
       });
     };
 

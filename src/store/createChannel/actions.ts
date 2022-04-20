@@ -12,7 +12,7 @@ import { CreateChannelStateInterface } from './state';
 
 const actions: ActionTree<CreateChannelStateInterface, StateInterface> = {
   async create(
-    { commit },
+    { commit, dispatch },
     {
       name,
       type,
@@ -35,7 +35,8 @@ const actions: ActionTree<CreateChannelStateInterface, StateInterface> = {
       });
 
       commit('SUBMIT_SUCCESS', channel);
-      commit('channels_v2/ADD_CHANNEL', channel, { root: true });
+
+      await dispatch('channels_v2/addChannel', channel, { root: true });
     } catch (err) {
       const error = err as AxiosError;
 

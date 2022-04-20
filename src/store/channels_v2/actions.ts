@@ -56,6 +56,12 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
     });
   },
 
+  async addChannel({commit, dispatch}, channel: Channel) {
+    commit('ADD_CHANNEL', channel)
+
+    await dispatch('join', channel.name)
+  },
+
   async addMessage(
     { commit },
     { channel, message }: { channel: string; message: RawMessage }

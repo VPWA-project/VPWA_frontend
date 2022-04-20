@@ -33,9 +33,7 @@
           v-for="link in invitations"
           :key="link.id"
           :id="link.id"
-          :channelId="link.channel.id"
-          :name="link.channel.name"
-          :type="link.channel.type"
+          :channel="link.channel"
           :invitedByFirstname="link.invitedBy.firstname"
           :invitedByLastname="link.invitedBy.lastname"
         />
