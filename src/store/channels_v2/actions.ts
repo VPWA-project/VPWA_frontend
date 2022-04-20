@@ -1,9 +1,10 @@
-import { Channel, RawMessage } from 'src/contracts';
-import { channelService } from 'src/services';
+import { Channel, RawMessage, UserStatus } from 'src/contracts';
+import { activityService, channelService } from 'src/services';
 import { ActionTree } from 'vuex';
-import { SearchPublicChannelsPayload } from '../channels/types';
+import { SearchPublicChannelsPayload } from 'src/contracts/Channel';
 import { StateInterface } from '../index';
 import { ChannelsV2StateInterface } from './state';
+import ActivityService from 'src/services/ActivityService';
 
 const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
   async join({ commit }, channel: string) {
@@ -146,6 +147,10 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
     } catch (err) {
       throw err;
     }
+  },
+
+  async changeUserStatus({}, status: UserStatus) {
+    await activityService.changeStatus(status);
   },
 };
 

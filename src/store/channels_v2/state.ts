@@ -1,4 +1,5 @@
 import { Channel, PageMetaData, SerializedMessage } from 'src/contracts';
+import { User } from 'src/contracts';
 
 export interface ChannelsV2StateInterface {
   loading: boolean;
@@ -6,8 +7,9 @@ export interface ChannelsV2StateInterface {
   messages: { [channel: string]: SerializedMessage[] };
   pagination: { [channel: string]: PageMetaData };
   channels: Channel[];
-  active: string | null;
   searchedChannels: Channel[];
+  onlineDndUsers: User[];
+  active: string | null;
 }
 
 function state(): ChannelsV2StateInterface {
@@ -18,6 +20,7 @@ function state(): ChannelsV2StateInterface {
     pagination: {},
     channels: [],
     searchedChannels: [],
+    onlineDndUsers: [],
     active: null,
   };
 }

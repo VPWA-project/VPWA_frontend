@@ -6,7 +6,8 @@ import {
   ChannelType,
   InvitationInfo,
 } from './state';
-import { CreateChannelPayload, SearchPublicChannelsPayload } from './types';
+import { CreateChannelPayload } from './types';
+import { SearchPublicChannelsPayload } from 'src/contracts/Channel';
 
 const actions: ActionTree<ChannelsStateInterface, StateInterface> = {
   createChannel: (context, payload: CreateChannelPayload) => {

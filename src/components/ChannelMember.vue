@@ -29,10 +29,10 @@
 
 <script lang="ts">
 import UserBanner from './UserBanner.vue';
-import { User } from 'src/store/user/state';
 
 import { defineComponent, PropType, toRef } from 'vue';
 import { useQuasar } from 'quasar';
+import { User } from 'src/contracts';
 
 export default defineComponent({
   props: {
