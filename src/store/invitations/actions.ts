@@ -3,7 +3,7 @@ import {
   InvitationStatus,
   ResolveInvitationRequest,
 } from 'src/contracts';
-import { invitationService } from 'src/services';
+import { activityService, invitationService } from 'src/services';
 import { ActionTree } from 'vuex';
 import { StateInterface } from '../index';
 import { InvitationsStateInterface } from './state';
@@ -62,7 +62,7 @@ const actions: ActionTree<InvitationsStateInterface, StateInterface> = {
         { page: 1, limit: 10, search }
       );
 
-      console.log(response)
+      console.log(response);
 
       commit('GET_USER_OPTIONS', response.data);
     } catch (err) {
@@ -78,11 +78,16 @@ const actions: ActionTree<InvitationsStateInterface, StateInterface> = {
       commit('SUBMIT_START');
 
       await Promise.all(
-        userIds.map((userId) =>
-          invitationService.invite({
-            channelId,
-            userId,
-          } as CreateInvitationRequest)
+        userIds.map(
+          (userId) =>
+            activityService.sendInvitation({
+              channelId,
+              userId,
+            } as CreateInvitationRequest)
+          // invitationService.invite({
+          //   channelId,
+          //   userId,
+          // } as CreateInvitationRequest)
         )
       );
     } catch (err) {
