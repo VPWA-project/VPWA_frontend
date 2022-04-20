@@ -68,13 +68,17 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
     }
   },
 
-  async getUserChannels({ commit }) {
+  async getUserChannels({ commit, dispatch }) {
     try {
       commit('LOADING_START');
 
       const channels = await channelService.getUserChannels();
 
       commit('GET_USER_CHANNELS', channels);
+
+      channels.forEach((channel) => {
+        dispatch('join', channel.name).catch(console.log);
+      });
     } catch (err) {
       commit('LOADING_ERROR');
       throw err;
@@ -106,11 +110,9 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
 
       console.log('Currently active channel is: ', activeChannelName);
 
-      await dispatch('leave', activeChannelName);
-
       commit('SET_ACTIVE', name);
 
-      if (name) await dispatch('join', name);
+      if (name && !channelService.in(name)) await dispatch('join', name);
 
       console.log('Newly active channel is: ', name);
     } catch (err) {

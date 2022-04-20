@@ -63,12 +63,12 @@ export default defineComponent({
       isRightDrawerOpen: false,
     });
 
-    const $store = useStore()
+    const $store = useStore();
 
     onMounted(() => {
-      $store.dispatch('channels_v2/getUserChannels').catch(console.log)
-      $store.dispatch('invitations/getUserInvitations').catch(console.log)
-    })
+      $store.dispatch('channels_v2/getUserChannels').catch(console.log);
+      $store.dispatch('invitations/getUserInvitations').catch(console.log);
+    });
 
     return {
       state,
