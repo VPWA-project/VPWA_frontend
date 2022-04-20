@@ -1,7 +1,7 @@
 import { GetterTree } from 'vuex';
 import { StateInterface } from '../index';
 import { ChannelsV2StateInterface } from './state';
-import { Channel, User } from 'src/contracts';
+import { Channel, User, UserStatus } from 'src/contracts';
 
 const getters: GetterTree<ChannelsV2StateInterface, StateInterface> = {
   joinedChannels(context) {
@@ -45,6 +45,21 @@ const getters: GetterTree<ChannelsV2StateInterface, StateInterface> = {
     const authUser = rootGetters['auth/getAuthenticatedUser'] as User | null;
 
     return activeChannel?.administratorId === authUser?.id;
+  },
+  getOnlineUsers(context) {
+    return context.onlineDndUsers.filter(
+      (user) => user.status === UserStatus.Online
+    );
+  },
+  getDndUsers(context) {
+    return context.onlineDndUsers.filter(
+      (user) => user.status === UserStatus.DND
+    );
+  },
+  getOfflineUsers(context) {
+    return context.onlineDndUsers.filter(
+      (user) => user.status === UserStatus.OFFLINE
+    );
   },
 };
 

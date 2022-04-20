@@ -1,4 +1,10 @@
-import { Channel, PageMetaData, SerializedMessage } from 'src/contracts';
+import {
+  Channel,
+  PageMetaData,
+  SerializedMessage,
+  User,
+  UserStatus,
+} from 'src/contracts';
 import { MutationTree } from 'vuex';
 import { ChannelsV2StateInterface } from './state';
 
@@ -62,6 +68,28 @@ const mutation: MutationTree<ChannelsV2StateInterface> = {
   },
   GET_SEARCHED_CHANNELS(state, channels: Channel[]) {
     state.searchedChannels = channels;
+  },
+  SET_USER_LIST(state, users: User[]) {
+    state.onlineDndUsers = users.map((user) => ({
+      ...user,
+      status: UserStatus.Online,
+    }));
+    console.log(state.onlineDndUsers);
+  },
+  ADD_TO_USER_LIST(state, user: User) {
+    state.onlineDndUsers.push({ ...user, status: UserStatus.Online });
+  },
+  REMOVE_FROM_USER_LIST(state, offlineUser: User) {
+    state.onlineDndUsers = state.onlineDndUsers.filter(
+      (user) => user.id !== offlineUser.id
+    );
+  },
+  CHANGE_USER_STATUS(state, user: User) {
+    console.log(user);
+    const savedUser = state.onlineDndUsers.findIndex((u) => u.id === user.id);
+    if (savedUser) {
+      state.onlineDndUsers[savedUser] = user;
+    }
   },
 };
 

@@ -49,7 +49,7 @@
       <q-list>
         <ChannelMember
           background="bg-white"
-          v-for="member in online"
+          v-for="member in users"
           :key="member.id"
           v-bind="member"
           :channelMembers="state.channelMembers"
@@ -69,7 +69,7 @@
       <q-list>
         <ChannelMember
           background="bg-white"
-          v-for="member in offline"
+          v-for="member in offlineUser"
           :key="member.id"
           v-bind="member"
           :channelMembers="state.channelMembers"
@@ -80,9 +80,8 @@
 </template>
 
 <script lang="ts">
-import { Channel } from 'src/contracts';
+import { Channel, User } from 'src/contracts';
 import { useStore } from 'src/store';
-import { User } from 'src/store/user/state';
 import { defineComponent, computed, reactive } from 'vue';
 import ChannelMember from './ChannelMember.vue';
 import InviteUsers from './InviteUsers.vue';
@@ -100,45 +99,33 @@ export default defineComponent({
       () => $store.getters['channels_v2/getActiveChannel'] as Channel | null
     );
 
+    const onlineUsers = computed(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      () => $store.getters['channels_v2/getOnlineUsers'] as User[]
+    );
+
+    const dndUsers = computed(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      () => $store.getters['channels_v2/getDndUsers'] as User[]
+    );
+
+    const offlineUsers = computed(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      () => $store.getters['channels_v2/getOfflineUsers'] as User[]
+    );
+
+    const users = computed(() => [...onlineUsers.value, ...dndUsers.value]);
+
     const state = reactive({
-      channelMembers: [
-        {
-          id: 1,
-          email: '',
-          firstname: 'John',
-          lastname: 'Doe',
-          nickname: 'john',
-          status: 'ONLINE',
-        },
-        {
-          id: 2,
-          email: '',
-          firstname: 'Frank',
-          lastname: 'Doe',
-          nickname: 'frank',
-          status: 'DND',
-        },
-        {
-          id: 3,
-          email: '',
-          firstname: 'Martin',
-          lastname: 'Doe',
-          nickname: 'martin',
-          status: 'OFFLINE',
-        },
-      ] as User[],
       isInviteUsersOpen: false,
     });
 
     return {
       state,
       activeChannel,
-      online: computed(() =>
-        state.channelMembers.filter((x) => x.status !== 'OFFLINE')
-      ),
-      offline: computed(() =>
-        state.channelMembers.filter((x) => x.status === 'OFFLINE')
-      ),
+      users,
+      offlineUsers,
+
       showInviteUsers: () => (state.isInviteUsersOpen = true),
       amIChannelMember: computed(() => true),
     };

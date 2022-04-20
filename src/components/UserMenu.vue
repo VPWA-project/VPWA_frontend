@@ -108,10 +108,12 @@ export default defineComponent({
       state,
       UserStatus,
       changeUserStatus: (status: UserStatus) =>
-        $store.dispatch('user/changeUserStatus', status).catch(console.log),
+        $store
+          .dispatch('channels_v2/changeUserStatus', status)
+          .catch(console.log),
       logout: async () => {
-        await $store.dispatch('auth/logout')
-        await $store.dispatch('channels_v2/leave')
+        await $store.dispatch('auth/logout');
+        await $store.dispatch('channels_v2/leave');
       },
     };
   },

@@ -24,12 +24,19 @@ export interface LoginRequest {
   password: string;
 }
 
+export enum UserStatus {
+  Online = 'ONLINE',
+  DND = 'DND',
+  OFFLINE = 'OFFLINE',
+}
+
 export interface User {
   id: string;
   email: string;
   firstname: string;
   lastname: string;
   nickname: string;
+  status?: UserStatus;
   created_at: string;
   updated_at: string;
 }
