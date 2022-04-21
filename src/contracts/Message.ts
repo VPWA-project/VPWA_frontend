@@ -8,6 +8,6 @@ export interface SerializedMessage {
   channelId: string;
   createdAt: string;
   updatedAt: string;
-  id: string;
+  id: number;
   author: User;
 }

@@ -1,4 +1,9 @@
-import { Channel, RawMessage, UserStatus, SearchPublicChannelsRequest } from 'src/contracts';
+import {
+  Channel,
+  RawMessage,
+  UserStatus,
+  SearchPublicChannelsRequest,
+} from 'src/contracts';
 import { activityService, channelService } from 'src/services';
 import { ActionTree } from 'vuex';
 import { StateInterface } from '../index';
@@ -55,10 +60,10 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
     });
   },
 
-  async addChannel({commit, dispatch}, channel: Channel) {
-    commit('ADD_CHANNEL', channel)
+  async addChannel({ commit, dispatch }, channel: Channel) {
+    commit('ADD_CHANNEL', channel);
 
-    await dispatch('join', channel.name)
+    await dispatch('join', channel.name);
   },
 
   async addMessage(
@@ -82,7 +87,8 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
       commit('GET_USER_CHANNELS', channels);
 
       channels.forEach((channel) => {
-        dispatch('join', channel.name).catch(console.log);
+        if (!channelService.in(channel.name))
+          dispatch('join', channel.name).catch(console.log);
       });
     } catch (err) {
       commit('LOADING_ERROR');
@@ -148,19 +154,22 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
   },
 
   async changeUserStatus({}, status: UserStatus) {
-    console.log('Sending status: ', status)
-    void await activityService.changeStatus(status);
+    console.log('Sending status: ', status);
+    void (await activityService.changeStatus(status));
   },
 
-  async kickUser({}, {channelName, userId}: { channelName: string, userId: string }) {
-    const manager = channelService.in(channelName)
+  async kickUser(
+    {},
+    { channelName, userId }: { channelName: string; userId: string }
+  ) {
+    const manager = channelService.in(channelName);
 
-    console.log(manager)
+    console.log(manager);
 
-    if(!manager) return
+    if (!manager) return;
 
-    await manager.kickUser(userId)
-  }
+    await manager.kickUser(userId);
+  },
 };
 
 export default actions;
