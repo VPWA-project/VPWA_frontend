@@ -73,7 +73,9 @@ export default defineComponent({
     const page = computed(
       () =>
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        $store.getters['channels_v2/getCurrentPageMetaData'] as PageMetaData | null
+        $store.getters[
+          'channels_v2/getCurrentPageMetaData'
+        ] as PageMetaData | null
     );
 
     // const { getVerticalScrollPosition, setVerticalScrollPosition } = scroll
@@ -143,7 +145,10 @@ export default defineComponent({
           currentDate.getFullYear() === previousDate.getFullYear()
         );
       }),
-      amIChannelMember: computed(() => true),
+      amIChannelMember: computed(
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        () => $store.getters['channels_v2/amIChannelMember'] as boolean
+      ),
     };
   },
 });

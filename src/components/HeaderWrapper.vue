@@ -123,7 +123,6 @@ export default defineComponent({
 
         if (state.confirmDialogType === ConfirmDialogType.Leave) {
           // TODO: leave channel
-
           // $store
           //   .dispatch(
           //     'channels/leaveChannel',
@@ -165,7 +164,10 @@ export default defineComponent({
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         () => $store.getters['channels_v2/getActiveChannel'] as Channel | null
       ),
-      amIChannelMember: computed(() => true),
+      amIChannelMember: computed(
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        () => $store.getters['channels_v2/amIChannelMember'] as boolean
+      ),
       amIChannelAdmin,
     };
   },

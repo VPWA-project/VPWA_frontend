@@ -126,7 +126,10 @@ export default defineComponent({
       offlineUsers,
 
       showInviteUsers: () => (state.isInviteUsersOpen = true),
-      amIChannelMember: computed(() => true),
+      amIChannelMember: computed(
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        () => $store.getters['channels_v2/amIChannelMember'] as boolean
+      ),
     };
   },
 });

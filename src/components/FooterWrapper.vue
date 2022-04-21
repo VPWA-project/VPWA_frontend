@@ -18,7 +18,10 @@ export default defineComponent({
 
     return {
       activeChannel: computed(() => $store.state.channels_v2.active),
-      amIChannelMember: computed(() => true)
+      amIChannelMember: computed(
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        () => $store.getters['channels_v2/amIChannelMember'] as boolean
+      ),
     };
   },
 });

@@ -14,7 +14,11 @@ const getters: GetterTree<ChannelsV2StateInterface, StateInterface> = {
       | SerializedMessage[]
       | undefined;
 
-    return messages?.length ? messages.sort((a, b) => Date.parse(a.createdAt) - Date.parse(b.createdAt)) : [];
+    return messages?.length
+      ? messages.sort(
+          (a, b) => Date.parse(a.createdAt) - Date.parse(b.createdAt)
+        )
+      : [];
   },
   lastMessageOf(context) {
     return (channel: string) => {
@@ -43,6 +47,11 @@ const getters: GetterTree<ChannelsV2StateInterface, StateInterface> = {
     const authUser = rootGetters['auth/getAuthenticatedUser'] as User | null;
 
     return activeChannel?.administratorId === authUser?.id;
+  },
+  amIChannelMember(context) {
+    const activeChannel = context.active;
+
+    return !!context.channels.find((channel) => channel.name === activeChannel)
   },
   getOnlineUsers(context) {
     return context.onlineDndUsers.filter(
