@@ -75,7 +75,6 @@
 
 <script lang="ts">
 import { useStore } from 'src/store';
-import { InvitationState } from 'src/store/channels/state';
 import { defineComponent, computed, reactive, watch, onMounted } from 'vue';
 import UserMenu from './UserMenu.vue';
 import UserBanner from './UserBanner.vue';
@@ -120,7 +119,6 @@ export default defineComponent({
 
     return {
       state,
-      InvitationState,
       invitations: computed(() => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         return $store.getters['invitations/getInvitations'] as Invitation[]

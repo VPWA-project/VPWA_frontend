@@ -30,7 +30,7 @@
 <script lang="ts">
 import UserBanner from './UserBanner.vue';
 
-import { computed, defineComponent, PropType, toRef } from 'vue';
+import { computed, defineComponent } from 'vue';
 import { useQuasar } from 'quasar';
 import { User } from 'src/contracts';
 import { useStore } from 'src/store';
@@ -91,7 +91,7 @@ export default defineComponent({
         cancel: true,
         persistent: false,
       }).onOk(() => {
-      kickUser(id).catch(console.log);
+        kickUser(id).catch(console.log);
         $q.notify({
           message: `User ${
             member.firstname + ' ' + member.lastname
@@ -103,7 +103,7 @@ export default defineComponent({
     };
 
     const kickUser = async (id: string) => {
-      console.log('KICKING user')
+      console.log('KICKING user');
       await $store.dispatch('channels_v2/kickUser', {
         channelName: activeChannelName.value,
         userId: id,
@@ -137,9 +137,9 @@ export default defineComponent({
     };
 
     const banUser = (id: string) => {
-      const index = channelMembers.value.map((member) => member.id).indexOf(id);
+      //const index = channelMembers.value.map((member) => member.id).indexOf(id);
 
-      kickUser(id).catch(console.log)
+      kickUser(id).catch(console.log);
     };
 
     return {

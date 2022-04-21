@@ -122,15 +122,17 @@ export default defineComponent({
         if (!activeChannel.value) return;
 
         if (state.confirmDialogType === ConfirmDialogType.Leave) {
-          $store
-            .dispatch(
-              'channels/leaveChannel',
-              $store.state.channels.activeChannel
-            )
-            .then(() => {
-              router.push({ name: 'dashboard' }).catch(console.log);
-            })
-            .catch(console.log);
+          // TODO: leave channel
+
+          // $store
+          //   .dispatch(
+          //     'channels/leaveChannel',
+          //     $store.state.channels.activeChannel
+          //   )
+          //   .then(() => {
+          //     router.push({ name: 'dashboard' }).catch(console.log);
+          //   })
+          //   .catch(console.log);
         } else if (state.confirmDialogType === ConfirmDialogType.Delete) {
           await $store
             .dispatch('channels_v2/delete', activeChannel.value.name)

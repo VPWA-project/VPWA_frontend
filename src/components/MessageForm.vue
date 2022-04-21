@@ -70,7 +70,7 @@ export default defineComponent({
         });
       },
       activeChannel: computed(() => $store.state.channels_v2.active),
-      amIChannelMember: computed(() => $store.state.channels.amIChannelMember),
+      amIChannelMember: computed(() => true),
     };
   },
   components: { TypingChips },

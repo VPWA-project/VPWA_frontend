@@ -128,12 +128,11 @@
 
 <script lang="ts">
 import { useQuasar } from 'quasar';
-import { ChannelType } from 'src/store/channels/state';
 import { computed, defineComponent, reactive, toRef } from 'vue';
 import { useStore } from '../store';
 import useVuelidate from '@vuelidate/core';
 import { required, helpers } from '@vuelidate/validators';
-import { CreateChannelRequest, ServerErrors, User } from 'src/contracts';
+import { ChannelType, CreateChannelRequest, ServerErrors, User } from 'src/contracts';
 import { groupValidationErrors, clearServerError } from 'src/utils/utils';
 
 const rules = {

@@ -4,13 +4,8 @@ import {
   InvitationStatus,
   ResolveInvitationRequest,
 } from 'src/contracts';
-import {
-  activityService,
-  invitationManager,
-  invitationService,
-} from 'src/services';
+import { invitationManager, invitationService } from 'src/services';
 import { ActionTree } from 'vuex';
-import { InvitationState } from '../channels/state';
 import { StateInterface } from '../index';
 import { InvitationsStateInterface } from './state';
 
@@ -42,7 +37,7 @@ const actions: ActionTree<InvitationsStateInterface, StateInterface> = {
 
       commit('REMOVE_INVITATION', id);
 
-      if (status === InvitationState.Accept)
+      if (status === 'ACCEPT')
         await dispatch('channels_v2/addChannel', channel, { root: true });
     } catch (err) {
       throw err;
@@ -91,12 +86,14 @@ const actions: ActionTree<InvitationsStateInterface, StateInterface> = {
       commit('SUBMIT_START');
 
       await Promise.all(
-        userIds.map((userId) =>
-          invitationManager.sendInvitation({
-            channelId,
-            userId,
-          } as CreateInvitationRequest)
-        )
+        userIds.map((userId) => {
+          async () => {
+            await invitationManager.sendInvitation({
+              channelId,
+              userId,
+            } as CreateInvitationRequest);
+          };
+        })
       );
     } catch (err) {
       throw err;

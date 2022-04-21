@@ -35,7 +35,7 @@ class ActivitySocketManager extends SocketManager {
     });
   }
 
-  public async changeStatus(status: UserStatus) {
+  public async changeStatus(status: UserStatus): Promise<unknown> {
     return this.emitAsync('user:sendStatus', status);
   }
 }

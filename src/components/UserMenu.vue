@@ -92,8 +92,8 @@
 </template>
 
 <script lang="ts">
+import { UserStatus } from 'src/contracts';
 import { useStore } from 'src/store';
-import { UserStatus } from 'src/store/user/state';
 import { defineComponent, reactive } from 'vue';
 
 export default defineComponent({

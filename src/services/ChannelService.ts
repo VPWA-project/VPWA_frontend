@@ -5,12 +5,12 @@ import {
   CreateChannelResponse,
   DeleteChannelResponse,
   GetUserChannelsResponse,
-  GetSearchChannelsResponse,
   PaginatedResponse,
   RawMessage,
   SerializedMessage,
-  SearchPublicChannelsPayload,
   User,
+  SearchPublicChannelsRequest,
+  SearchPublicChannelsResponse,
 } from 'src/contracts';
 import { StateInterface } from 'src/store';
 import { SocketManager } from './SocketManager';
@@ -41,10 +41,9 @@ class ChannelSocketManager extends SocketManager {
 
         if (authUser?.id === userId) {
           await store.dispatch('channels_v2/leave', channelName);
-        }
-        else {
+        } else {
           // if not, delete user from the list of users
-          store.commit('REMOVE_FROM_USER_LIST', userId)
+          store.commit('REMOVE_FROM_USER_LIST', userId);
         }
       }
     );
@@ -62,7 +61,7 @@ class ChannelSocketManager extends SocketManager {
   }
 
   public kickUser(id: string) {
-    console.log('Kicking user with id: ', id)
+    console.log('Kicking user with id: ', id);
     return this.emitAsync('user:sendKick', id);
   }
 }
@@ -126,16 +125,11 @@ class ChannelService {
   }
 
   // get searched channels
-  public async getSearchedChannels(payload: SearchPublicChannelsPayload) {
-    const data = {
-      params: payload,
-    };
-
-    const channels = await api.get<GetSearchChannelsResponse>(
-      '/channels',
-      data
-    );
-    return channels.data['data'];
+  public async getSearchedChannels(payload: SearchPublicChannelsRequest) {
+    const channels = await api.get<SearchPublicChannelsResponse>('/channels', {
+      params: { ...payload },
+    });
+    return channels.data;
   }
 }
 

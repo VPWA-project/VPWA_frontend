@@ -30,7 +30,6 @@
 import { useQuasar } from 'quasar';
 import { Channel, InvitationStatus } from 'src/contracts';
 import { useStore } from 'src/store';
-import { ChannelType, InvitationState } from 'src/store/channels/state';
 import { defineComponent, PropType } from 'vue';
 import ChannelLink from './ChannelLink.vue';
 
@@ -82,7 +81,6 @@ export default defineComponent({
     };
 
     return {
-      InvitationState,
       processInvitation,
       confirmInvitationRefuse,
     };

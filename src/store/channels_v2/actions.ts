@@ -1,10 +1,8 @@
-import { Channel, RawMessage, UserStatus } from 'src/contracts';
+import { Channel, RawMessage, UserStatus, SearchPublicChannelsRequest } from 'src/contracts';
 import { activityService, channelService } from 'src/services';
 import { ActionTree } from 'vuex';
-import { SearchPublicChannelsPayload } from 'src/contracts/Channel';
 import { StateInterface } from '../index';
 import { ChannelsV2StateInterface } from './state';
-import channels from '../channels';
 
 const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
   async join({ commit }, channel: string) {
@@ -92,13 +90,13 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
     }
   },
 
-  async searchPublicChannels({ commit }, payload: SearchPublicChannelsPayload) {
+  async searchPublicChannels({ commit }, payload: SearchPublicChannelsRequest) {
     try {
       commit('LOADING_START');
 
       const channels = await channelService.getSearchedChannels(payload);
 
-      commit('GET_SEARCHED_CHANNELS', channels);
+      commit('GET_SEARCHED_CHANNELS', channels.data);
     } catch (err) {
       commit('LOADING_ERROR');
       throw err;
@@ -151,7 +149,7 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
 
   async changeUserStatus({}, status: UserStatus) {
     console.log('Sending status: ', status)
-    await activityService.changeStatus(status);
+    void await activityService.changeStatus(status);
   },
 
   async kickUser({}, {channelName, userId}: { channelName: string, userId: string }) {

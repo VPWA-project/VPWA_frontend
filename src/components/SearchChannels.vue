@@ -85,7 +85,7 @@
 </template>
 
 <script lang="ts">
-import { Channel, SearchPublicChannelsPayload } from 'src/contracts/Channel';
+import { Channel, SearchPublicChannelsRequest } from 'src/contracts/Channel';
 import { defineComponent, ref, toRef, computed } from 'vue';
 import { useStore } from '../store';
 import ChannelLink from './ChannelLink.vue';
@@ -128,7 +128,7 @@ export default defineComponent({
     const search = () => {
       showSpinner.value = true;
 
-      const payload: SearchPublicChannelsPayload = {
+      const payload: SearchPublicChannelsRequest = {
         searchText: searchText.value,
         userId: $store.state.auth.user?.id,
       };
@@ -165,9 +165,10 @@ export default defineComponent({
       clearTimer,
       handleClearSearchText,
       joinChannel,
-      availableChannels: computed(() => {
-        return $store.state.channels_v2.searchedChannels;
-      }),
+      availableChannels: computed(
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        () => $store.getters['channels_v2/getSearchedChannels'] as Channel[]
+      ),
       handleCloseButton: () => emit('close'),
     };
   },

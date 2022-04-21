@@ -1,12 +1,12 @@
 import { AxiosError } from 'axios';
 import {
+  ChannelType,
   CreateChannelRequest,
   CreateInvitationRequest,
   ValidationErrorResponse,
 } from 'src/contracts';
 import { channelService, invitationManager } from 'src/services';
 import { ActionTree } from 'vuex';
-import { ChannelType } from '../channels/state';
 import { StateInterface } from '../index';
 import { CreateChannelStateInterface } from './state';
 
@@ -28,10 +28,12 @@ const actions: ActionTree<CreateChannelStateInterface, StateInterface> = {
       } as CreateChannelRequest);
 
       invitations?.forEach((userId) => {
-        void invitationManager.sendInvitation({
-          channelId: channel.id,
-          userId,
-        } as CreateInvitationRequest);
+        (async () => {
+          await invitationManager.sendInvitation({
+            channelId: channel.id,
+            userId,
+          } as CreateInvitationRequest);
+        })
       });
 
       commit('SUBMIT_SUCCESS', channel);
