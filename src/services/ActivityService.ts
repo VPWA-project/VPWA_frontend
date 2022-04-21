@@ -18,7 +18,7 @@ class ActivitySocketManager extends SocketManager {
 
     this.socket.on('user:offline', (offlineUser: User) => {
       console.log('User is offline', offlineUser);
-      store.commit('channels_v2/REMOVE_FROM_USER_LIST', offlineUser);
+      store.commit('channels_v2/REMOVE_FROM_USER_LIST', offlineUser.id);
     });
 
     this.socket.on('user:receiveStatus', (changeUser: User) => {
@@ -34,6 +34,7 @@ class ActivitySocketManager extends SocketManager {
       }
     });
   }
+
   public async changeStatus(status: UserStatus) {
     return this.emitAsync('user:sendStatus', status);
   }

@@ -4,7 +4,7 @@ import { ActionTree } from 'vuex';
 import { SearchPublicChannelsPayload } from 'src/contracts/Channel';
 import { StateInterface } from '../index';
 import { ChannelsV2StateInterface } from './state';
-import ActivityService from 'src/services/ActivityService';
+import channels from '../channels';
 
 const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
   async join({ commit }, channel: string) {
@@ -150,8 +150,19 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
   },
 
   async changeUserStatus({}, status: UserStatus) {
+    console.log('Sending status: ', status)
     await activityService.changeStatus(status);
   },
+
+  async kickUser({}, {channelName, userId}: { channelName: string, userId: string }) {
+    const manager = channelService.in(channelName)
+
+    console.log(manager)
+
+    if(!manager) return
+
+    await manager.kickUser(userId)
+  }
 };
 
 export default actions;

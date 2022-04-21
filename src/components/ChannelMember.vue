@@ -30,14 +30,15 @@
 <script lang="ts">
 import UserBanner from './UserBanner.vue';
 
-import { defineComponent, PropType, toRef } from 'vue';
+import { computed, defineComponent, PropType, toRef } from 'vue';
 import { useQuasar } from 'quasar';
 import { User } from 'src/contracts';
+import { useStore } from 'src/store';
 
 export default defineComponent({
   props: {
     id: {
-      type: Number,
+      type: String,
       required: true,
     },
     firstname: {
@@ -56,21 +57,26 @@ export default defineComponent({
       type: String,
       required: true,
     },
-    channelMembers: {
-      type: Array as PropType<Array<User>>,
-      required: true,
-    },
     background: String,
   },
   components: {
     UserBanner,
   },
-  setup(props) {
+  setup() {
     const $q = useQuasar();
+    const $store = useStore();
 
-    const channelMembers = toRef(props, 'channelMembers');
+    const channelMembers = computed(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      () => $store.getters['channels_v2/getOnlineUsers'] as User[]
+    );
 
-    const confirmRevokeUser = (id: number) => {
+    const activeChannelName = computed(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      () => $store.getters['channels_v2/getActiveChannelName'] as string | null
+    );
+
+    const confirmRevokeUser = (id: string) => {
       const member = channelMembers.value.find((member) => member.id === id);
 
       if (!member) {
@@ -85,7 +91,7 @@ export default defineComponent({
         cancel: true,
         persistent: false,
       }).onOk(() => {
-        kickUser(id);
+      kickUser(id).catch(console.log);
         $q.notify({
           message: `User ${
             member.firstname + ' ' + member.lastname
@@ -96,15 +102,15 @@ export default defineComponent({
       });
     };
 
-    const kickUser = (id: number) => {
-      const index = channelMembers.value.map((member) => member.id).indexOf(id);
-
-      if (index > -1) {
-        channelMembers.value.splice(index, 1);
-      }
+    const kickUser = async (id: string) => {
+      console.log('KICKING user')
+      await $store.dispatch('channels_v2/kickUser', {
+        channelName: activeChannelName.value,
+        userId: id,
+      });
     };
 
-    const confirmKickUser = (id: number) => {
+    const confirmKickUser = (id: string) => {
       const member = channelMembers.value.find((member) => member.id === id);
 
       if (!member) {
@@ -130,12 +136,10 @@ export default defineComponent({
       });
     };
 
-    const banUser = (id: number) => {
+    const banUser = (id: string) => {
       const index = channelMembers.value.map((member) => member.id).indexOf(id);
 
-      if (index > -1) {
-        channelMembers.value.splice(index, 1);
-      }
+      kickUser(id).catch(console.log)
     };
 
     return {

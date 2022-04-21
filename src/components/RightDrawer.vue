@@ -52,7 +52,7 @@
           v-for="member in users"
           :key="member.id"
           v-bind="member"
-          :channelMembers="state.channelMembers"
+          :status="member.status"
         />
       </q-list>
     </div>
@@ -72,7 +72,6 @@
           v-for="member in offlineUser"
           :key="member.id"
           v-bind="member"
-          :channelMembers="state.channelMembers"
         />
       </q-list>
     </div>

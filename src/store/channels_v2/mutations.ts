@@ -79,16 +79,16 @@ const mutation: MutationTree<ChannelsV2StateInterface> = {
   ADD_TO_USER_LIST(state, user: User) {
     state.onlineDndUsers.push({ ...user, status: UserStatus.Online });
   },
-  REMOVE_FROM_USER_LIST(state, offlineUser: User) {
+  REMOVE_FROM_USER_LIST(state, userId: string) {
     state.onlineDndUsers = state.onlineDndUsers.filter(
-      (user) => user.id !== offlineUser.id
+      (user) => user.id !== userId
     );
   },
   CHANGE_USER_STATUS(state, user: User) {
     console.log(user);
-    const savedUser = state.onlineDndUsers.findIndex((u) => u.id === user.id);
-    if (savedUser) {
-      state.onlineDndUsers[savedUser] = user;
+    const index = state.onlineDndUsers.findIndex((u) => u.id === user.id);
+    if (index > -1) {
+      state.onlineDndUsers[index] = user;
     }
   },
 };

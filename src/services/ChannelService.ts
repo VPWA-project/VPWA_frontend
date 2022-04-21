@@ -10,6 +10,7 @@ import {
   RawMessage,
   SerializedMessage,
   SearchPublicChannelsPayload,
+  User,
 } from 'src/contracts';
 import { StateInterface } from 'src/store';
 import { SocketManager } from './SocketManager';
@@ -22,6 +23,31 @@ class ChannelSocketManager extends SocketManager {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       store.commit('channels_v2/NEW_MESSAGE', { channel, message });
     });
+
+    this.socket.on(
+      'user:receiveKick',
+      async ({
+        userId,
+        channelName,
+      }: {
+        userId: string;
+        channelName: string;
+      }) => {
+        // check if ID is mine, if so, disconnect socket from the server and delete server from the list of servers
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        const authUser = store.getters[
+          'auth/getAuthenticatedUser'
+        ] as User | null;
+
+        if (authUser?.id === userId) {
+          await store.dispatch('channels_v2/leave', channelName);
+        }
+        else {
+          // if not, delete user from the list of users
+          store.commit('REMOVE_FROM_USER_LIST', userId)
+        }
+      }
+    );
   }
 
   public addMessage(message: RawMessage): Promise<SerializedMessage> {
@@ -33,6 +59,11 @@ class ChannelSocketManager extends SocketManager {
     limit?: number
   ): Promise<PaginatedResponse<SerializedMessage[]>> {
     return this.emitAsync('loadMessages', page || 1, limit || 10);
+  }
+
+  public kickUser(id: string) {
+    console.log('Kicking user with id: ', id)
+    return this.emitAsync('user:sendKick', id);
   }
 }
 
