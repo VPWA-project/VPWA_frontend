@@ -40,12 +40,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, reactive } from 'vue';
+import { computed, defineComponent, onMounted, reactive, watch } from 'vue';
 import HeaderWrapper from 'src/components/HeaderWrapper.vue';
 import LeftDrawer from '../components/LeftDrawer.vue';
 import RightDrawer from 'src/components/RightDrawer.vue';
 import FooterWrapper from 'src/components/FooterWrapper.vue';
 import { useStore } from 'src/store';
+import { Channel, Invitation, ChannelType } from 'src/contracts';
+import { useRoute, useRouter } from 'vue-router';
 
 export default defineComponent({
   name: 'MainLayout',
@@ -64,10 +66,52 @@ export default defineComponent({
     });
 
     const $store = useStore();
+    const route = useRoute()
+    const $router = useRouter()
 
-    onMounted(() => {
-      $store.dispatch('channels_v2/getUserChannels').catch(console.log);
-      $store.dispatch('invitations/getUserInvitations').catch(console.log);
+    const amIChannelMember = computed(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      () => $store.getters['channels_v2/amIChannelMember'] as boolean
+    );
+    const activeChannel = computed(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      () => $store.getters['channels_v2/getActiveChannel'] as Channel | null
+    );
+
+    const invitations = computed(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      () => $store.getters['invitations/getInvitations'] as Invitation[]
+    )
+
+    const setActiveChannel = (name: string) => {
+      $store
+        .dispatch('channels_v2/setActiveChannel', name)
+        .then(async (channel: Channel) => {
+          if(amIChannelMember.value) {
+            await $store.dispatch('channels_v2/tryJoin', name)
+          }
+          else if(activeChannel.value?.type === ChannelType.Private) {
+            const hasInvitation = !!invitations.value.find(invitation => invitation.channelId === channel.id)
+
+            if(!hasInvitation) {
+              await $router.push({name: '404'})
+            }
+          }
+        })
+        .catch(async () => await $router.push({ name: '404' }));
+    };
+
+    watch(
+      () => route.params.name,
+      (name) => {
+        setActiveChannel(name as string);
+      }
+    );
+
+    onMounted(async () => {
+      await $store.dispatch('channels_v2/getUserChannels').catch(console.log);
+      await $store.dispatch('invitations/getUserInvitations').catch(console.log);
+      setActiveChannel(route.params.name as string);
     });
 
     return {
