@@ -11,6 +11,7 @@ import {
   User,
   SearchPublicChannelsRequest,
   SearchPublicChannelsResponse,
+  GetChannelResponse,
 } from 'src/contracts';
 import { StateInterface } from 'src/store';
 import { SocketManager } from './SocketManager';
@@ -130,6 +131,14 @@ class ChannelService {
       params: { ...payload },
     });
     return channels.data;
+  }
+
+  public async getChannel(name: string) {
+    const channel = await api.get<GetChannelResponse>(`channels/${name}`, {
+      params: { name },
+    });
+
+    return channel.data;
   }
 }
 

@@ -34,8 +34,11 @@ const mutation: MutationTree<ChannelsV2StateInterface> = {
     delete state.messages[channel];
     delete state.pagination[channel];
   },
-  SET_ACTIVE(state, channel: string) {
+  SET_ACTIVE(state, channel: string | null) {
     state.active = channel;
+  },
+  SET_ACTIVE_CHANNEL(state, channel: Channel | null) {
+    state.activeChannel = channel
   },
   NEW_MESSAGE(
     state,

@@ -1,5 +1,5 @@
 <template>
-  <q-list v-if="activeChannel">
+  <q-list v-if="activeChannel && amIChannelMember">
     <q-item class="q-mt-sm column">
       <q-item-label class="text-weight-medium text-subtitle1"
         >Channel members</q-item-label

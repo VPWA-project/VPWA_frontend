@@ -121,9 +121,23 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
 
       console.log('Currently active channel is: ', activeChannelName);
 
+      let channel = undefined
+
+      if(name) {
+        channel = await channelService.getChannel(name);
+      }
+
       commit('SET_ACTIVE', name);
+      commit('SET_ACTIVE_CHANNEL', channel)
 
       if (name && !channelService.in(name)) await dispatch('join', name);
+
+      // TODO: fetch info about channel
+      // TODO: check if I am member of the channel -> channels list
+      // TODO: if not, check if channel is public:
+        // if so, display join button
+        // if not, redirect
+        // if does not exist, redirect
 
       console.log('Newly active channel is: ', name);
     } catch (err) {
@@ -163,8 +177,6 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
     { channelName, userId }: { channelName: string; userId: string }
   ) {
     const manager = channelService.in(channelName);
-
-    console.log(manager);
 
     if (!manager) return;
 

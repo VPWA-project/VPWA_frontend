@@ -30,9 +30,7 @@ const getters: GetterTree<ChannelsV2StateInterface, StateInterface> = {
     return context.channels;
   },
   getActiveChannel(context) {
-    if (!context.active) return null;
-
-    return context.channels.find((channel) => channel.name === context.active);
+    return context.activeChannel
   },
   getActiveChannelName(context) {
     return context.active;

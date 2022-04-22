@@ -1,17 +1,18 @@
 <template>
-  <!-- <InvitationResolveForm v-if="activeChannel" :name="activeChannel?.name" /> -->
-  <MessageForm />
+  <InvitationResolveForm v-if="activeChannel && !amIChannelMember" :name="activeChannel" />
+  <MessageForm v-else />
 </template>
 
 <script lang="ts">
 import MessageForm from './MessageForm.vue';
-// import InvitationResolveForm from './InvitationResolveForm.vue';
+ import InvitationResolveForm from './InvitationResolveForm.vue';
 import { computed, defineComponent } from 'vue';
 import { useStore } from 'src/store';
 
 export default defineComponent({
   components: {
     MessageForm,
+    InvitationResolveForm
   },
   setup() {
     const $store = useStore();

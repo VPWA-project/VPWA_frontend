@@ -115,6 +115,13 @@ export default defineComponent({
       () => $store.getters['channels_v2/getActiveChannel'] as Channel | null
     );
 
+    const amIChannelMember = computed(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      () => $store.getters['channels_v2/amIChannelMember'] as boolean
+    );
+
+    console.log('Am I channel member: ', amIChannelMember.value);
+
     return {
       state,
       ConfirmDialogType,
