@@ -7,12 +7,15 @@ import createChannel from './createChannel';
 import { CreateChannelStateInterface } from './createChannel/state';
 import invitations from './invitations';
 import { InvitationsStateInterface } from './invitations/state';
+import searchChannels from './searchChannels';
+import { SearchChannelsStateInterface } from './searchChannels/state';
 
 export interface StateInterface {
   auth: AuthStateInterface;
   channels_v2: ChannelsV2StateInterface;
   createChannel: CreateChannelStateInterface;
   invitations: InvitationsStateInterface;
+  searchChannels: SearchChannelsStateInterface
 }
 
 const store = () => {
@@ -22,6 +25,7 @@ const store = () => {
       channels_v2,
       createChannel,
       invitations,
+      searchChannels,
     },
     strict: !process.env.NODE_ENV,
   });

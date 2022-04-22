@@ -66,9 +66,6 @@ const getters: GetterTree<ChannelsV2StateInterface, StateInterface> = {
       (user) => user.status === UserStatus.OFFLINE
     );
   },
-  getSearchedChannels(context) {
-    return context.searchedChannels;
-  },
 };
 
 export default getters;

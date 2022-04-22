@@ -108,19 +108,6 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
     }
   },
 
-  async searchPublicChannels({ commit }, payload: SearchPublicChannelsRequest) {
-    try {
-      commit('LOADING_START');
-
-      const channels = await channelService.getSearchedChannels(payload);
-
-      commit('GET_SEARCHED_CHANNELS', channels.data);
-    } catch (err) {
-      commit('LOADING_ERROR');
-      throw err;
-    }
-  },
-
   async setActiveChannel(
     { getters, commit, dispatch },
     name: string | undefined
@@ -143,8 +130,6 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
 
       commit('SET_ACTIVE', name);
       commit('SET_ACTIVE_CHANNEL', channel);
-
-      //if (name && !channelService.in(name)) await dispatch('join', name);
 
       console.log('Newly active channel is: ', name);
 

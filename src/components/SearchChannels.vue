@@ -134,7 +134,7 @@ export default defineComponent({
       };
 
       $store
-        .dispatch('channels_v2/searchPublicChannels', payload)
+        .dispatch('searchChannels/searchPublicChannels', payload)
         .then(() => {
           showSpinner.value = false;
         })
@@ -145,7 +145,15 @@ export default defineComponent({
     };
 
     const joinChannel = async (channel: Channel) => {
-      await $store.dispatch('channels_v2/joinChannel', channel.id);
+      await $store
+        .dispatch('channels_v2/joinChannel', channel.id)
+        .then(
+          async () =>
+            void await $store.dispatch(
+              'searchChannels/removePublicChannel',
+              channel.id
+            )
+        );
     };
 
     return {
@@ -160,7 +168,7 @@ export default defineComponent({
       joinChannel,
       availableChannels: computed(
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        () => $store.getters['channels_v2/getSearchedChannels'] as Channel[]
+        () => $store.getters['searchChannels/getPublicChannels'] as Channel[]
       ),
       handleCloseButton: () => emit('close'),
     };
