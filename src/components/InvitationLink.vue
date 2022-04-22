@@ -7,14 +7,14 @@
           size="sm"
           color="blue-grey-9"
           icon="highlight_off"
-          @click="confirmInvitationRefuse(id, 'DECLINE', channel)"
+          @click.prevent.stop="confirmInvitationRefuse(id, 'DECLINE', channel)"
         />
         <q-btn
           round
           size="sm"
           color="cyan-7"
           icon="check_circle_outline"
-          @click="processInvitation(id, 'ACCEPT', channel)"
+          @click.prevent.stop="processInvitation(id, 'ACCEPT', channel)"
         />
       </div>
     </template>

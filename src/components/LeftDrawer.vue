@@ -71,14 +71,13 @@
 
 <script lang="ts">
 import { useStore } from 'src/store';
-import { defineComponent, computed, reactive, watch, onMounted } from 'vue';
+import { defineComponent, computed, reactive } from 'vue';
 import UserMenu from './UserMenu.vue';
 import UserBanner from './UserBanner.vue';
 import ChannelLink from './ChannelLink.vue';
 import SearchChannels from './SearchChannels.vue';
-import { useRoute, useRouter } from 'vue-router';
 import InvitationLink from './InvitationLink.vue';
-import { Channel, ChannelType, Invitation } from 'src/contracts';
+import { Invitation } from 'src/contracts';
 
 export default defineComponent({
   components: {
@@ -90,52 +89,6 @@ export default defineComponent({
   },
   setup() {
     const $store = useStore();
-    const $router = useRouter();
-    const route = useRoute();
-
-    const amIChannelMember = computed(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      () => $store.getters['channels_v2/amIChannelMember'] as boolean
-    );
-    const activeChannel = computed(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      () => $store.getters['channels_v2/getActiveChannel'] as Channel | null
-    );
-
-    const invitations = computed(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      () => $store.getters['invitations/getInvitations'] as Invitation[]
-    )
-
-    const setActiveChannel = (name: string) => {
-      console.log('Setting active channel: ', name);
-      $store
-        .dispatch('channels_v2/setActiveChannel', name)
-        .then(async (channel: Channel) => {
-          if(amIChannelMember.value) {
-            await $store.dispatch('channels_v2/tryJoin', name)
-          }
-          else if(activeChannel.value?.type === ChannelType.Private) {
-            const hasInvitation = !!invitations.value.find(invitation => invitation.channelId === channel.id)
-
-            if(!hasInvitation) {
-              await $router.push({name: '404'})
-            }
-          }
-        })
-        .catch(async () => await $router.push({ name: '404' }));
-    };
-
-    watch(
-      () => route.params.name,
-      (name) => {
-        setActiveChannel(name as string);
-      }
-    );
-
-    onMounted(() => {
-      setActiveChannel(route.params.name as string);
-    });
 
     const state = reactive({
       userBannerIcon: 'expand_more',

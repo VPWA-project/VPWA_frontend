@@ -86,14 +86,12 @@ const actions: ActionTree<InvitationsStateInterface, StateInterface> = {
       commit('SUBMIT_START');
 
       await Promise.all(
-        userIds.map((userId) => {
-          async () => {
-            await invitationManager.sendInvitation({
-              channelId,
-              userId,
-            } as CreateInvitationRequest);
-          };
-        })
+        userIds.map((userId) =>
+          invitationManager.sendInvitation({
+            channelId,
+            userId,
+          } as CreateInvitationRequest)
+        )
       );
     } catch (err) {
       throw err;

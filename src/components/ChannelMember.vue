@@ -32,7 +32,7 @@ import UserBanner from './UserBanner.vue';
 
 import { computed, defineComponent } from 'vue';
 import { useQuasar } from 'quasar';
-import { User } from 'src/contracts';
+import { KickType, User } from 'src/contracts';
 import { useStore } from 'src/store';
 
 export default defineComponent({
@@ -77,6 +77,8 @@ export default defineComponent({
     );
 
     const confirmRevokeUser = (id: string) => {
+      if (!activeChannelName.value) return;
+
       const member = channelMembers.value.find((member) => member.id === id);
 
       if (!member) {
@@ -91,7 +93,7 @@ export default defineComponent({
         cancel: true,
         persistent: false,
       }).onOk(() => {
-        kickUser(id).catch(console.log);
+        kickUser(id, KickType.Revoke).catch(console.log);
         $q.notify({
           message: `User ${
             member.firstname + ' ' + member.lastname
@@ -102,11 +104,11 @@ export default defineComponent({
       });
     };
 
-    const kickUser = async (id: string) => {
-      console.log('KICKING user');
+    const kickUser = async (id: string, method: KickType) => {
       await $store.dispatch('channels_v2/kickUser', {
         channelName: activeChannelName.value,
         userId: id,
+        method,
       });
     };
 
@@ -125,21 +127,18 @@ export default defineComponent({
         cancel: true,
         persistent: false,
       }).onOk(() => {
-        banUser(id);
-        $q.notify({
-          message: `User ${
-            member.firstname + ' ' + member.lastname
-          } was kicked successfully`,
-          color: 'grey-8',
-          type: 'positive',
-        });
+        kickUser(id, KickType.Kick)
+          .then(() => {
+            $q.notify({
+              message: `User ${
+                member.firstname + ' ' + member.lastname
+              } was kicked successfully`,
+              color: 'grey-8',
+              type: 'positive',
+            });
+          })
+          .catch(console.log);
       });
-    };
-
-    const banUser = (id: string) => {
-      //const index = channelMembers.value.map((member) => member.id).indexOf(id);
-
-      kickUser(id).catch(console.log);
     };
 
     return {

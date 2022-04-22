@@ -71,7 +71,7 @@
                   flat
                   color="green"
                   label="Join"
-                  @click="joinChannel(link)"
+                  @click.prevent.stop="joinChannel(link)"
                 />
               </div>
             </template>
@@ -134,7 +134,7 @@ export default defineComponent({
       };
 
       $store
-        .dispatch('channels_v2/searchPublicChannels', payload)
+        .dispatch('searchChannels/searchPublicChannels', payload)
         .then(() => {
           showSpinner.value = false;
         })
@@ -144,15 +144,16 @@ export default defineComponent({
         });
     };
 
-    const joinChannel = (channel: Channel) => {
-      $store
-        .dispatch('channels/joinChannel', channel)
-        .then(() => {
-          $store
-            .dispatch('channels/removeFromPublicChannels', channel.id)
-            .catch(console.log);
-        })
-        .catch(console.log);
+    const joinChannel = async (channel: Channel) => {
+      await $store
+        .dispatch('channels_v2/joinChannel', channel.id)
+        .then(
+          async () =>
+            void await $store.dispatch(
+              'searchChannels/removePublicChannel',
+              channel.id
+            )
+        );
     };
 
     return {
@@ -167,7 +168,7 @@ export default defineComponent({
       joinChannel,
       availableChannels: computed(
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        () => $store.getters['channels_v2/getSearchedChannels'] as Channel[]
+        () => $store.getters['searchChannels/getPublicChannels'] as Channel[]
       ),
       handleCloseButton: () => emit('close'),
     };
