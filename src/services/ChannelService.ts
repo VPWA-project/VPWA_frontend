@@ -12,6 +12,7 @@ import {
   SearchPublicChannelsRequest,
   SearchPublicChannelsResponse,
   GetChannelResponse,
+  JoinChannelResponse,
 } from 'src/contracts';
 import { StateInterface } from 'src/store';
 import { SocketManager } from './SocketManager';
@@ -139,6 +140,11 @@ class ChannelService {
     });
 
     return channel.data;
+  }
+
+  public async joinChannel(id: string) {
+    const response = await api.post<JoinChannelResponse>(`channels/${id}/join`);
+    return response.data;
   }
 }
 

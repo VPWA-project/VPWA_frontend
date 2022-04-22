@@ -36,3 +36,5 @@ export type GetUserChannelsResponse = Channel[];
 export type DeleteChannelResponse = unknown;
 
 export type GetChannelResponse = Channel;
+
+export type JoinChannelResponse = Channel;

@@ -71,7 +71,7 @@
                   flat
                   color="green"
                   label="Join"
-                  @click="joinChannel(link)"
+                  @click.prevent.stop="joinChannel(link)"
                 />
               </div>
             </template>
@@ -144,15 +144,8 @@ export default defineComponent({
         });
     };
 
-    const joinChannel = (channel: Channel) => {
-      $store
-        .dispatch('channels/joinChannel', channel)
-        .then(() => {
-          $store
-            .dispatch('channels/removeFromPublicChannels', channel.id)
-            .catch(console.log);
-        })
-        .catch(console.log);
+    const joinChannel = async (channel: Channel) => {
+      await $store.dispatch('channels_v2/joinChannel', channel.id);
     };
 
     return {
