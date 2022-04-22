@@ -16,7 +16,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { Channel, ChannelType, Invitation } from 'src/contracts';
+import { useStore } from 'src/store';
+import { computed, defineComponent } from 'vue';
 
 export default defineComponent({
   props: {
@@ -24,8 +26,38 @@ export default defineComponent({
     name: String,
   },
   setup() {
-    const joinChannel = () => {
-      // TODO: join channel
+    const $store = useStore();
+
+    const activeChannel = computed(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      () => $store.getters['channels_v2/getActiveChannel'] as Channel | null
+    );
+
+    const invitations = computed(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      () => $store.getters['invitations/getInvitations'] as Invitation[]
+    );
+
+    const joinChannel = async () => {
+      if (!activeChannel.value) return;
+
+      if (activeChannel.value.type === ChannelType.Public)
+        await $store.dispatch(
+          'channels_v2/joinChannel',
+          activeChannel.value.id
+        );
+      else {
+        const invitation = invitations.value.find(
+          (invitation) => invitation.channelId === activeChannel.value?.id
+        );
+
+        if (invitation)
+          await $store.dispatch('invitations/resolveInvitation', {
+            id: invitation.id,
+            status: 'ACCEPT',
+            channel: activeChannel.value,
+          });
+      }
     };
 
     return {

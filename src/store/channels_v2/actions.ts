@@ -2,7 +2,6 @@ import {
   Channel,
   RawMessage,
   UserStatus,
-  SearchPublicChannelsRequest,
 } from 'src/contracts';
 import { activityService, channelService } from 'src/services';
 import { ActionTree } from 'vuex';
