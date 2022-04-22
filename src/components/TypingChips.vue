@@ -1,5 +1,5 @@
 <template>
-  <div :class="{ 'q-py-sm': typingPeople.length > 0 }">
+  <div :class="{ 'q-py-sm': typedMessages.length > 0 }">
     <q-card v-show="state.showMessage" class="q-my-sm border-15">
       <q-card-section class="bg-grey-2 text-black">
         <div class="text-subtitle2">{{ state.nickname }} is typing</div>
@@ -23,11 +23,11 @@
       clickable
       outline
       color="white"
-      @click="openMessage(person)"
-      v-for="person in typingPeople.slice(0, maxChipsToDisplay)"
-      :key="person.id"
+      @click="openMessage(message)"
+      v-for="(message, index) in typedMessages.slice(0, maxChipsToDisplay)"
+      :key="index"
     >
-      {{ person.nickname }}
+      {{ message.author.nickname }}
       <q-spinner-dots class="q-pl-xs q-mt-xs" size="24px" />
     </q-chip>
 
@@ -35,72 +35,57 @@
       :ripple="false"
       outline
       color="white"
-      v-if="typingPeople.length > maxChipsToDisplay"
+      v-if="typedMessages.length > maxChipsToDisplay"
     >
-      and {{ typingPeople.length - maxChipsToDisplay }} more
+      and {{ typedMessages.length - maxChipsToDisplay }} more
       <q-spinner-dots class="q-pl-xs q-mt-xs" size="24px" />
     </q-chip>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from 'vue';
-
-const typingPeople = [
-  {
-    id: 1,
-    nickname: 'sangalaa',
-    text: 'Hi all',
-  },
-  {
-    id: 2,
-    nickname: 'adam',
-    text: 'Bye',
-  },
-  {
-    id: 3,
-    nickname: 'john',
-    text: 'Hello',
-  },
-];
-
-type TypingPerson = {
-  id: number;
-  nickname: string;
-  text: string;
-};
+import { TypedMessage } from 'src/contracts';
+import { useStore } from 'src/store';
+import { computed, defineComponent, reactive } from 'vue';
 
 export default defineComponent({
   setup() {
+    const $store = useStore();
+
     const state = reactive({
       showMessage: false,
       nickname: '',
       text: '',
-      lastOpenedPersonId: -1,
+      lastOpenedUserId: '',
     });
+
+    const typedMessages = computed(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      () => $store.getters['channels_v2/currentTypedMessages'] as TypedMessage[]
+    );
 
     const openShowMessage = () => (state.showMessage = true);
     const closeShowMessage = () => {
       state.showMessage = false;
-      state.lastOpenedPersonId = -1;
+      state.lastOpenedUserId = '';
     };
 
-    const openMessage = (person: TypingPerson) => {
-      if (state.lastOpenedPersonId === person.id) {
+    const openMessage = (message: TypedMessage) => {
+      if (state.lastOpenedUserId === message.author.id) {
         closeShowMessage();
         return;
       }
 
-      state.nickname = person.nickname;
-      state.text = person.text;
-      state.lastOpenedPersonId = person.id;
+      state.nickname = message.author.nickname;
+      state.text = message.content;
+      state.lastOpenedUserId = message.author.id;
 
       openShowMessage();
     };
 
     return {
       state,
-      typingPeople,
+      typedMessages,
       maxChipsToDisplay: 2,
       closeShowMessage,
       openMessage,

@@ -13,6 +13,7 @@
           dense
           class="col-grow q-mr-sm"
           bg-color="white"
+          @keydown="sendTypedMessage"
           v-model.trim="state.message"
           placeholder="Type a message"
         />
@@ -34,6 +35,7 @@ import TypingChips from './TypingChips.vue';
 import { useStore } from 'src/store';
 import { useRoute } from 'vue-router';
 import { useQuasar } from 'quasar';
+import { Channel } from 'src/contracts';
 
 export default defineComponent({
   name: 'MessageForm',
@@ -44,6 +46,11 @@ export default defineComponent({
     const $store = useStore();
     const route = useRoute();
     const $q = useQuasar();
+
+    const activeChannel = computed(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      () => $store.getters['channels_v2/getActiveChannel'] as Channel | null
+    );
 
     const handleSubmit = async () => {
       if (!state.message) return;
@@ -57,6 +64,7 @@ export default defineComponent({
 
       state.message = '';
     };
+
     return {
       state,
       handleSubmit,
@@ -74,6 +82,11 @@ export default defineComponent({
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         () => $store.getters['channels_v2/amIChannelMember'] as boolean
       ),
+      sendTypedMessage: () =>
+        $store.dispatch('channels_v2/sendTypedMessage', {
+          channelName: activeChannel.value?.name,
+          message: state.message,
+        }),
     };
   },
   components: { TypingChips },

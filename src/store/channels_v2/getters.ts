@@ -20,6 +20,14 @@ const getters: GetterTree<ChannelsV2StateInterface, StateInterface> = {
         )
       : [];
   },
+  currentTypedMessages(context) {
+    if (!context.active) return [];
+
+    const userMessages = context.typedMessages[context.active];
+    const isEmpty = !userMessages || Object.keys(userMessages).length === 0;
+
+    return isEmpty ? [] : Object.values(userMessages);
+  },
   lastMessageOf(context) {
     return (channel: string) => {
       const messages = context.messages[channel];
@@ -30,7 +38,7 @@ const getters: GetterTree<ChannelsV2StateInterface, StateInterface> = {
     return context.channels;
   },
   getActiveChannel(context) {
-    return context.activeChannel
+    return context.activeChannel;
   },
   getActiveChannelName(context) {
     return context.active;
@@ -49,7 +57,7 @@ const getters: GetterTree<ChannelsV2StateInterface, StateInterface> = {
   amIChannelMember(context) {
     const activeChannel = context.active;
 
-    return !!context.channels.find((channel) => channel.name === activeChannel)
+    return !!context.channels.find((channel) => channel.name === activeChannel);
   },
   getOnlineUsers(context) {
     return context.onlineDndUsers.filter(

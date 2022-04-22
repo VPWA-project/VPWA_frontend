@@ -11,3 +11,9 @@ export interface SerializedMessage {
   id: number;
   author: User;
 }
+
+export interface TypedMessage {
+  content: string;
+  author: User
+  channel: string
+}
