@@ -102,18 +102,28 @@ export default defineComponent({
       () => $store.getters['channels_v2/getActiveChannel'] as Channel | null
     );
 
+    const invitations = computed(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      () => $store.getters['invitations/getInvitations'] as Invitation[]
+    )
+
     const setActiveChannel = (name: string) => {
       console.log('Setting active channel: ', name);
       $store
         .dispatch('channels_v2/setActiveChannel', name)
-        .then(() => {
-          if (
-            !amIChannelMember.value &&
-            activeChannel.value?.type === ChannelType.Private
-          )
-            $router.push({ name: '404' }).catch(console.log);
+        .then(async (channel: Channel) => {
+          if(amIChannelMember.value) {
+            await $store.dispatch('channels_v2/tryJoin', name)
+          }
+          else if(activeChannel.value?.type === ChannelType.Private) {
+            const hasInvitation = !!invitations.value.find(invitation => invitation.channelId === channel.id)
+
+            if(!hasInvitation) {
+              await $router.push({name: '404'})
+            }
+          }
         })
-        .catch(() => $router.push({ name: '404' }).catch(console.log));
+        .catch(async () => await $router.push({ name: '404' }));
     };
 
     watch(

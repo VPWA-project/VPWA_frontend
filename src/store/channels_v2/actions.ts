@@ -27,6 +27,10 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
     }
   },
 
+  tryJoin({}, channel: string) {
+    if(!channelService.in(channel)) channelService.join(channel)
+  },
+
   async fetchMessages(
     { commit },
     { channel, page, limit }: { channel: string; page: number; limit: number }
@@ -127,19 +131,16 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
         channel = await channelService.getChannel(name);
       }
 
+      console.log('Received channel is: ', channel)
+
       commit('SET_ACTIVE', name);
       commit('SET_ACTIVE_CHANNEL', channel)
 
-      if (name && !channelService.in(name)) await dispatch('join', name);
-
-      // TODO: fetch info about channel
-      // TODO: check if I am member of the channel -> channels list
-      // TODO: if not, check if channel is public:
-        // if so, display join button
-        // if not, redirect
-        // if does not exist, redirect
+      //if (name && !channelService.in(name)) await dispatch('join', name);
 
       console.log('Newly active channel is: ', name);
+
+      return channel
     } catch (err) {
       await dispatch('leave', name);
       throw err;
