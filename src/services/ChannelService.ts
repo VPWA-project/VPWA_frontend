@@ -1,5 +1,4 @@
 import { BootFileParams } from '@quasar/app-webpack';
-import { useQuasar } from 'quasar';
 import { api } from 'src/boot/axios';
 import {
   CreateChannelRequest,
