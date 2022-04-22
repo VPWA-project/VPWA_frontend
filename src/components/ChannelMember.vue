@@ -141,12 +141,6 @@ export default defineComponent({
       });
     };
 
-    const banUser = (id: string) => {
-      //const index = channelMembers.value.map((member) => member.id).indexOf(id);
-
-      //kickUser(id).catch(console.log);
-    };
-
     return {
       confirmKickUser,
       confirmRevokeUser,
