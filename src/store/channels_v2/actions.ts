@@ -1,10 +1,13 @@
-import { Channel, RawMessage, UserStatus } from 'src/contracts';
+import {
+  Channel,
+  RawMessage,
+  UserStatus,
+  SearchPublicChannelsRequest,
+} from 'src/contracts';
 import { activityService, channelService } from 'src/services';
 import { ActionTree } from 'vuex';
-import { SearchPublicChannelsPayload } from 'src/contracts/Channel';
 import { StateInterface } from '../index';
 import { ChannelsV2StateInterface } from './state';
-import ActivityService from 'src/services/ActivityService';
 
 const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
   async join({ commit }, channel: string) {
@@ -22,6 +25,10 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
       commit('LOADING_ERROR', err);
       throw err;
     }
+  },
+
+  tryJoin({}, channel: string) {
+    if(!channelService.in(channel)) channelService.join(channel)
   },
 
   async fetchMessages(
@@ -57,10 +64,10 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
     });
   },
 
-  async addChannel({commit, dispatch}, channel: Channel) {
-    commit('ADD_CHANNEL', channel)
+  async addChannel({ commit, dispatch }, channel: Channel) {
+    commit('ADD_CHANNEL', channel);
 
-    await dispatch('join', channel.name)
+    await dispatch('join', channel.name);
   },
 
   async addMessage(
@@ -84,7 +91,8 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
       commit('GET_USER_CHANNELS', channels);
 
       channels.forEach((channel) => {
-        dispatch('join', channel.name).catch(console.log);
+        if (!channelService.in(channel.name))
+          dispatch('join', channel.name).catch(console.log);
       });
     } catch (err) {
       commit('LOADING_ERROR');
@@ -92,13 +100,13 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
     }
   },
 
-  async searchPublicChannels({ commit }, payload: SearchPublicChannelsPayload) {
+  async searchPublicChannels({ commit }, payload: SearchPublicChannelsRequest) {
     try {
       commit('LOADING_START');
 
       const channels = await channelService.getSearchedChannels(payload);
 
-      commit('GET_SEARCHED_CHANNELS', channels);
+      commit('GET_SEARCHED_CHANNELS', channels.data);
     } catch (err) {
       commit('LOADING_ERROR');
       throw err;
@@ -117,11 +125,22 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
 
       console.log('Currently active channel is: ', activeChannelName);
 
-      commit('SET_ACTIVE', name);
+      let channel = undefined
 
-      if (name && !channelService.in(name)) await dispatch('join', name);
+      if(name) {
+        channel = await channelService.getChannel(name);
+      }
+
+      console.log('Received channel is: ', channel)
+
+      commit('SET_ACTIVE', name);
+      commit('SET_ACTIVE_CHANNEL', channel)
+
+      //if (name && !channelService.in(name)) await dispatch('join', name);
 
       console.log('Newly active channel is: ', name);
+
+      return channel
     } catch (err) {
       await dispatch('leave', name);
       throw err;
@@ -150,7 +169,19 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
   },
 
   async changeUserStatus({}, status: UserStatus) {
-    await activityService.changeStatus(status);
+    console.log('Sending status: ', status);
+    void (await activityService.changeStatus(status));
+  },
+
+  async kickUser(
+    {},
+    { channelName, userId }: { channelName: string; userId: string }
+  ) {
+    const manager = channelService.in(channelName);
+
+    if (!manager) return;
+
+    await manager.kickUser(userId);
   },
 };
 

@@ -1,7 +1,7 @@
 import { GetterTree } from 'vuex';
 import { StateInterface } from '../index';
 import { ChannelsV2StateInterface } from './state';
-import { Channel, User, UserStatus } from 'src/contracts';
+import { Channel, SerializedMessage, User, UserStatus } from 'src/contracts';
 
 const getters: GetterTree<ChannelsV2StateInterface, StateInterface> = {
   joinedChannels(context) {
@@ -10,11 +10,13 @@ const getters: GetterTree<ChannelsV2StateInterface, StateInterface> = {
   currentMessages(context) {
     if (!context.active) return [];
 
-    const messages = context.messages[context.active];
+    const messages = context.messages[context.active] as
+      | SerializedMessage[]
+      | undefined;
 
-    return messages
+    return messages?.length
       ? messages.sort(
-          (a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt)
+          (a, b) => Date.parse(a.createdAt) - Date.parse(b.createdAt)
         )
       : [];
   },
@@ -28,9 +30,7 @@ const getters: GetterTree<ChannelsV2StateInterface, StateInterface> = {
     return context.channels;
   },
   getActiveChannel(context) {
-    if (!context.active) return null;
-
-    return context.channels.find((channel) => channel.name === context.active);
+    return context.activeChannel
   },
   getActiveChannelName(context) {
     return context.active;
@@ -46,6 +46,11 @@ const getters: GetterTree<ChannelsV2StateInterface, StateInterface> = {
 
     return activeChannel?.administratorId === authUser?.id;
   },
+  amIChannelMember(context) {
+    const activeChannel = context.active;
+
+    return !!context.channels.find((channel) => channel.name === activeChannel)
+  },
   getOnlineUsers(context) {
     return context.onlineDndUsers.filter(
       (user) => user.status === UserStatus.Online
@@ -60,6 +65,9 @@ const getters: GetterTree<ChannelsV2StateInterface, StateInterface> = {
     return context.onlineDndUsers.filter(
       (user) => user.status === UserStatus.OFFLINE
     );
+  },
+  getSearchedChannels(context) {
+    return context.searchedChannels;
   },
 };
 

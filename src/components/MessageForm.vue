@@ -46,14 +46,14 @@ export default defineComponent({
     const $q = useQuasar();
 
     const handleSubmit = async () => {
-      if(!state.message) return
+      if (!state.message) return;
 
       await $store
-          .dispatch('channels_v2/addMessage', {
-            channel: route.params.name as string,
-            message: state.message,
-          })
-          .catch(console.log);
+        .dispatch('channels_v2/addMessage', {
+          channel: route.params.name as string,
+          message: state.message,
+        })
+        .catch(console.log);
 
       state.message = '';
     };
@@ -70,7 +70,10 @@ export default defineComponent({
         });
       },
       activeChannel: computed(() => $store.state.channels_v2.active),
-      amIChannelMember: computed(() => $store.state.channels.amIChannelMember),
+      amIChannelMember: computed(
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        () => $store.getters['channels_v2/amIChannelMember'] as boolean
+      ),
     };
   },
   components: { TypingChips },

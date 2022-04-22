@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts">
-import { ChannelType } from 'src/store/channels/state';
+import { ChannelType } from 'src/contracts';
 import { defineComponent, computed, PropType } from 'vue';
 
 const getIconByType = (type: ChannelType): string => {

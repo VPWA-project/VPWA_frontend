@@ -1,5 +1,5 @@
 <template>
-  <q-list v-if="activeChannel">
+  <q-list v-if="activeChannel && amIChannelMember">
     <q-item class="q-mt-sm column">
       <q-item-label class="text-weight-medium text-subtitle1"
         >Channel members</q-item-label
@@ -52,7 +52,7 @@
           v-for="member in users"
           :key="member.id"
           v-bind="member"
-          :channelMembers="state.channelMembers"
+          :status="member.status"
         />
       </q-list>
     </div>
@@ -72,7 +72,6 @@
           v-for="member in offlineUser"
           :key="member.id"
           v-bind="member"
-          :channelMembers="state.channelMembers"
         />
       </q-list>
     </div>
@@ -127,7 +126,10 @@ export default defineComponent({
       offlineUsers,
 
       showInviteUsers: () => (state.isInviteUsersOpen = true),
-      amIChannelMember: computed(() => true),
+      amIChannelMember: computed(
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        () => $store.getters['channels_v2/amIChannelMember'] as boolean
+      ),
     };
   },
 });

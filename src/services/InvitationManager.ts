@@ -10,7 +10,7 @@ class InvitationManager extends SocketManager {
     });
   }
 
-  public async sendInvitation(data: CreateInvitationRequest) {
+  public async sendInvitation(data: CreateInvitationRequest): Promise<unknown> {
     return this.emitAsync('invitation:create', data);
   }
 }

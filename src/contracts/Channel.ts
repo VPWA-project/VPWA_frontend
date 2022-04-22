@@ -1,5 +1,10 @@
-import { ChannelType } from 'src/store/channels/state';
 import { User } from './Auth';
+import { PaginatedResponse } from './Global';
+
+export enum ChannelType {
+  Public = 'PUBLIC',
+  Private = 'PRIVATE',
+}
 
 export interface CreateChannelRequest {
   name: string;
@@ -17,28 +22,17 @@ export interface Channel {
   updatedAt: string;
 }
 
-export interface GetSearchChannelsResponse {
-  meta: {
-    current_page: number;
-    first_page: number;
-    first_page_url: string;
-    last_page: number;
-    last_page_url: string;
-    next_page_url: null;
-    per_page: number;
-    previous_page_url: null;
-    total: number;
-  };
-  data: GetUserChannelsResponse;
-}
+export type SearchPublicChannelsResponse = PaginatedResponse<Channel>;
 
-export type SearchPublicChannelsPayload = {
+export interface SearchPublicChannelsRequest {
   searchText: string;
   userId: string | undefined;
-};
+}
 
 export type CreateChannelResponse = Channel;
 
 export type GetUserChannelsResponse = Channel[];
 
 export type DeleteChannelResponse = unknown;
+
+export type GetChannelResponse = Channel;

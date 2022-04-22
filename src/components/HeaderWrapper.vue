@@ -115,6 +115,13 @@ export default defineComponent({
       () => $store.getters['channels_v2/getActiveChannel'] as Channel | null
     );
 
+    const amIChannelMember = computed(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      () => $store.getters['channels_v2/amIChannelMember'] as boolean
+    );
+
+    console.log('Am I channel member: ', amIChannelMember.value);
+
     return {
       state,
       ConfirmDialogType,
@@ -122,15 +129,16 @@ export default defineComponent({
         if (!activeChannel.value) return;
 
         if (state.confirmDialogType === ConfirmDialogType.Leave) {
-          $store
-            .dispatch(
-              'channels/leaveChannel',
-              $store.state.channels.activeChannel
-            )
-            .then(() => {
-              router.push({ name: 'dashboard' }).catch(console.log);
-            })
-            .catch(console.log);
+          // TODO: leave channel
+          // $store
+          //   .dispatch(
+          //     'channels/leaveChannel',
+          //     $store.state.channels.activeChannel
+          //   )
+          //   .then(() => {
+          //     router.push({ name: 'dashboard' }).catch(console.log);
+          //   })
+          //   .catch(console.log);
         } else if (state.confirmDialogType === ConfirmDialogType.Delete) {
           await $store
             .dispatch('channels_v2/delete', activeChannel.value.name)
@@ -163,7 +171,10 @@ export default defineComponent({
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         () => $store.getters['channels_v2/getActiveChannel'] as Channel | null
       ),
-      amIChannelMember: computed(() => true),
+      amIChannelMember: computed(
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        () => $store.getters['channels_v2/amIChannelMember'] as boolean
+      ),
       amIChannelAdmin,
     };
   },

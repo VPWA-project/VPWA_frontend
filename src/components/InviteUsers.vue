@@ -84,9 +84,8 @@
 </template>
 
 <script lang="ts">
-import { User } from 'src/contracts';
+import { Channel, User } from 'src/contracts';
 import { useStore } from 'src/store';
-import { Channel } from 'src/store/channels/state';
 import { computed, defineComponent, reactive, toRef } from 'vue';
 
 export default defineComponent({
