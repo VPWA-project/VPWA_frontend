@@ -38,3 +38,13 @@ export type DeleteChannelResponse = unknown;
 export type GetChannelResponse = Channel;
 
 export type JoinChannelResponse = Channel;
+
+export enum KickType {
+  Kick = 'KICK',
+  Revoke = 'REVOKE',
+}
+
+export interface KickUserRequest {
+  method: KickType;
+  userId: string;
+}

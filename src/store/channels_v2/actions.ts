@@ -1,5 +1,7 @@
 import {
   Channel,
+  KickType,
+  KickUserRequest,
   RawMessage,
   UserStatus,
 } from 'src/contracts';
@@ -167,13 +169,13 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
 
   async kickUser(
     {},
-    { channelName, userId }: { channelName: string; userId: string }
+    { channelName, userId, method }: { channelName: string; userId: string, method: KickType }
   ) {
     const manager = channelService.in(channelName);
 
     if (!manager) return;
 
-    await manager.kickUser(userId);
+    await manager.kickUser({ userId, method } as KickUserRequest);
   },
 };
 

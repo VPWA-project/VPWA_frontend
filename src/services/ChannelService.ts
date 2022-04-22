@@ -1,4 +1,5 @@
 import { BootFileParams } from '@quasar/app-webpack';
+import { useQuasar } from 'quasar';
 import { api } from 'src/boot/axios';
 import {
   CreateChannelRequest,
@@ -13,6 +14,7 @@ import {
   SearchPublicChannelsResponse,
   GetChannelResponse,
   JoinChannelResponse,
+  KickUserRequest,
 } from 'src/contracts';
 import { StateInterface } from 'src/store';
 import { SocketManager } from './SocketManager';
@@ -42,6 +44,7 @@ class ChannelSocketManager extends SocketManager {
         ] as User | null;
 
         if (authUser?.id === userId) {
+          store.commit('channels_v2/REMOVE_CHANNEL', channelName);
           await store.dispatch('channels_v2/leave', channelName);
         } else {
           // if not, delete user from the list of users
@@ -62,9 +65,9 @@ class ChannelSocketManager extends SocketManager {
     return this.emitAsync('loadMessages', page || 1, limit || 10);
   }
 
-  public kickUser(id: string) {
-    console.log('Kicking user with id: ', id);
-    return this.emitAsync('user:sendKick', id);
+  public kickUser(data: KickUserRequest) {
+    console.log('Kick data: ', data);
+    return this.emitAsync('user:sendKick', data);
   }
 }
 
