@@ -2,6 +2,7 @@ import {
   Channel,
   PageMetaData,
   SerializedMessage,
+  TypedMessage,
   User,
   UserStatus,
 } from 'src/contracts';
@@ -38,13 +39,23 @@ const mutation: MutationTree<ChannelsV2StateInterface> = {
     state.active = channel;
   },
   SET_ACTIVE_CHANNEL(state, channel: Channel | null) {
-    state.activeChannel = channel
+    state.activeChannel = channel;
   },
   NEW_MESSAGE(
     state,
     { channel, message }: { channel: string; message: SerializedMessage }
   ) {
     state.messages[channel].push(message);
+  },
+  NEW_TYPED_MESSAGE(state, message: TypedMessage ) {
+    if (!state.typedMessages[message.channel])
+      state.typedMessages[message.channel] = {};
+    state.typedMessages[message.channel][message.author.id] = message;
+  },
+  REMOVE_TYPED_MESSAGE(state, message: TypedMessage) {
+    if(!state.typedMessages[message.channel]) return
+
+    delete state.typedMessages[message.channel][message.author.id]
   },
   ADD_CHANNEL(state, channel: Channel) {
     state.channels.push(channel);

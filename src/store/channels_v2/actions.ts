@@ -177,6 +177,14 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
 
     await manager.kickUser({ userId, method } as KickUserRequest);
   },
+
+  async sendTypedMessage({}, { channelName, message }: { channelName: string, message: RawMessage }) {
+    const manager = channelService.in(channelName)
+
+    if(!manager) return
+
+    await manager.sendTypedMessage(message)
+  }
 };
 
 export default actions;

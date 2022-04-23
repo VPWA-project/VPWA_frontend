@@ -14,6 +14,7 @@ import {
   GetChannelResponse,
   JoinChannelResponse,
   KickUserRequest,
+  TypedMessage,
 } from 'src/contracts';
 import { StateInterface } from 'src/store';
 import { SocketManager } from './SocketManager';
@@ -51,6 +52,11 @@ class ChannelSocketManager extends SocketManager {
         }
       }
     );
+
+    this.socket.on('channel:receiveTyping', (message: TypedMessage) => {
+      if(!!message.content) store.commit('channels_v2/NEW_TYPED_MESSAGE', message);
+      else store.commit('channels_v2/REMOVE_TYPED_MESSAGE', message)
+    })
   }
 
   public addMessage(message: RawMessage): Promise<SerializedMessage> {
@@ -67,6 +73,10 @@ class ChannelSocketManager extends SocketManager {
   public kickUser(data: KickUserRequest) {
     console.log('Kick data: ', data);
     return this.emitAsync('user:sendKick', data);
+  }
+
+  public sendTypedMessage(message: RawMessage) {
+    return this.emitAsync('channel:sendTyping', message);
   }
 }
 

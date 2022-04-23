@@ -1,9 +1,15 @@
-import { Channel, PageMetaData, SerializedMessage } from 'src/contracts';
+import {
+  Channel,
+  PageMetaData,
+  SerializedMessage,
+  TypedMessage,
+} from 'src/contracts';
 import { User } from 'src/contracts';
 
 export interface ChannelsV2StateInterface {
   loading: boolean;
   error: Error | null;
+  typedMessages: { [channel: string]: { [userId: string]: TypedMessage } };
   messages: { [channel: string]: SerializedMessage[] };
   pagination: { [channel: string]: PageMetaData };
   channels: Channel[];
@@ -16,6 +22,7 @@ function state(): ChannelsV2StateInterface {
   return {
     loading: false,
     error: null,
+    typedMessages: {},
     messages: {},
     pagination: {},
     channels: [],

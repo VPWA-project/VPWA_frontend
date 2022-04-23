@@ -13,6 +13,7 @@
           dense
           class="col-grow q-mr-sm"
           bg-color="white"
+          @keyup="sendTypedMessage"
           v-model.trim="state.message"
           placeholder="Type a message"
         />
@@ -34,16 +35,23 @@ import TypingChips from './TypingChips.vue';
 import { useStore } from 'src/store';
 import { useRoute } from 'vue-router';
 import { useQuasar } from 'quasar';
+import { Channel } from 'src/contracts';
 
 export default defineComponent({
   name: 'MessageForm',
   setup() {
     const state = reactive({
       message: '',
+      sendedLastEdit: false
     });
     const $store = useStore();
     const route = useRoute();
     const $q = useQuasar();
+
+    const activeChannel = computed(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      () => $store.getters['channels_v2/getActiveChannel'] as Channel | null
+    );
 
     const handleSubmit = async () => {
       if (!state.message) return;
@@ -57,6 +65,7 @@ export default defineComponent({
 
       state.message = '';
     };
+
     return {
       state,
       handleSubmit,
@@ -74,6 +83,17 @@ export default defineComponent({
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         () => $store.getters['channels_v2/amIChannelMember'] as boolean
       ),
+      sendTypedMessage: async () => {
+        if(!state.message && !state.sendedLastEdit) return
+
+        await $store.dispatch('channels_v2/sendTypedMessage', {
+          channelName: activeChannel.value?.name,
+          message: state.message,
+        })
+
+        state.sendedLastEdit = true
+        if(!state.message) state.sendedLastEdit = false
+      }
     };
   },
   components: { TypingChips },
