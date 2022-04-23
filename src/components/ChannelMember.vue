@@ -69,7 +69,7 @@ export default defineComponent({
 
     const channelMembers = computed(
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      () => $store.getters['channels_v2/getOnlineUsers'] as User[]
+      () => $store.getters['channels_v2/getAllUsers'] as User[]
     );
 
     const activeChannelName = computed(
