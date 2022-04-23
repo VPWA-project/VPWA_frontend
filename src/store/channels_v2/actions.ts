@@ -3,6 +3,7 @@ import {
   KickType,
   KickUserRequest,
   RawMessage,
+  User,
   UserStatus,
 } from 'src/contracts';
 import { activityService, channelService } from 'src/services';
@@ -202,6 +203,13 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
     } catch (err) {
       commit('LOADING_ERROR');
       throw err;
+    }
+  },
+
+  userOnline({ commit }, userOnline: User) {
+    const storedUsers = this.state.channels_v2.onlineDndUsers;
+    if (!storedUsers.find((user) => user.id === userOnline.id)) {
+      commit('ADD_TO_USER_LIST', userOnline);
     }
   },
 };

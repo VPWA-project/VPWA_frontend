@@ -16,7 +16,9 @@ const mutation: MutationTree<AuthStateInterface> = {
     state.errors = errors;
   },
   CHANGE_STATUS(state, status: User['status']) {
-    state.user!.status = status;
+    if (state.user) {
+      state.user.status = status;
+    }
   },
 };
 

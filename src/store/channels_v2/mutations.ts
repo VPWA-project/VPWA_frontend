@@ -115,6 +115,8 @@ const mutation: MutationTree<ChannelsV2StateInterface> = {
     const index = state.onlineDndUsers.findIndex((u) => u.id === user.id);
     if (index > -1) {
       state.onlineDndUsers[index] = user;
+    } else {
+      state.onlineDndUsers.push(user);
     }
   },
 };

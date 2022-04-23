@@ -2,6 +2,8 @@ import { GetterTree } from 'vuex';
 import { StateInterface } from '../index';
 import { ChannelsV2StateInterface } from './state';
 import { Channel, SerializedMessage, User, UserStatus } from 'src/contracts';
+import auth from '../auth';
+//import auth from 'src/boot/auth';
 
 const getters: GetterTree<ChannelsV2StateInterface, StateInterface> = {
   joinedChannels(context) {
@@ -44,7 +46,6 @@ const getters: GetterTree<ChannelsV2StateInterface, StateInterface> = {
     const administrator = context.activeChannel!.administrator;
     const storedUsers = context.onlineDndUsers;
     const aa = storedUsers.find((admin) => admin.id === administrator.id);
-    console.log(aa);
     if (aa) {
       administrator.status = aa?.status;
       return administrator;
@@ -72,38 +73,51 @@ const getters: GetterTree<ChannelsV2StateInterface, StateInterface> = {
 
     return !!context.channels.find((channel) => channel.name === activeChannel);
   },
-  getOnlineDndUsers(context, getters) {
+  getOnlineDndUsers(context, getters, store) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const activeChannel = getters['getActiveChannel'] as Channel | null;
     const storedUsers = context.onlineDndUsers;
+    const administrator = context.activeChannel!.administrator;
+    const authUser = store.auth.user;
 
     const channelUsers = context.channelsUsers[activeChannel!.id];
     const onlineDndUsers = [] as User[];
 
     storedUsers.forEach((channelUser) => {
-      console.log(channelUser.status);
       if (channelUsers.find((storedUser) => storedUser.id === channelUser.id)) {
-        onlineDndUsers.push(channelUser);
+        if (
+          channelUser.id != administrator.id &&
+          channelUser.id != authUser!.id
+        ) {
+          onlineDndUsers.push(channelUser);
+        }
       }
     });
 
     return onlineDndUsers;
   },
-  getOfflineUsers(context, getters) {
+  getOfflineUsers(context, getters, store) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const activeChannel = getters['getActiveChannel'] as Channel | null;
     const storedUsers = context.onlineDndUsers;
+    const administrator = context.activeChannel!.administrator;
+    const authUser = store.auth.user;
 
     const channelUsers = context.channelsUsers[activeChannel!.id];
     const onlineDndUsers = [] as User[];
 
-    storedUsers.forEach((channelUser) => {
-      console.log(channelUser.status);
-      if (
-        !channelUsers.find((storedUser) => storedUser.id === channelUser.id)
-      ) {
-        channelUser.status = UserStatus.OFFLINE;
-        onlineDndUsers.push(channelUser);
+    console.log('STORED users: ', storedUsers);
+    console.log('DB users: ', channelUsers);
+
+    channelUsers.forEach((channelUser) => {
+      if (!storedUsers.find((storedUser) => storedUser.id === channelUser.id)) {
+        if (
+          channelUser.id != administrator.id &&
+          channelUser.id != authUser!.id
+        ) {
+          channelUser.status = UserStatus.OFFLINE;
+          onlineDndUsers.push(channelUser);
+        }
       }
     });
 
