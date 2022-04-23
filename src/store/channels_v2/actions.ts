@@ -103,6 +103,8 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
         if (!channelService.in(channel.name))
           dispatch('join', channel.name).catch(console.log);
       });
+
+      return channels;
     } catch (err) {
       commit('LOADING_ERROR');
       throw err;
@@ -169,7 +171,11 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
 
   async kickUser(
     {},
-    { channelName, userId, method }: { channelName: string; userId: string, method: KickType }
+    {
+      channelName,
+      userId,
+      method,
+    }: { channelName: string; userId: string; method: KickType }
   ) {
     const manager = channelService.in(channelName);
 
@@ -178,13 +184,26 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
     await manager.kickUser({ userId, method } as KickUserRequest);
   },
 
-  async sendTypedMessage({}, { channelName, message }: { channelName: string, message: RawMessage }) {
-    const manager = channelService.in(channelName)
+  async sendTypedMessage(
+    {},
+    { channelName, message }: { channelName: string; message: RawMessage }
+  ) {
+    const manager = channelService.in(channelName);
 
-    if(!manager) return
+    if (!manager) return;
 
-    await manager.sendTypedMessage(message)
-  }
+    await manager.sendTypedMessage(message);
+  },
+  async getChannelUsers({ commit }, payload: string) {
+    try {
+      commit('LOADING_START');
+      const users = await channelService.getSearchedUsers(payload);
+      commit('GET_CHANNEL_USERS', { channelId: payload, users });
+    } catch (err) {
+      commit('LOADING_ERROR');
+      throw err;
+    }
+  },
 };
 
 export default actions;

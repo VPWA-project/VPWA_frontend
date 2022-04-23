@@ -47,15 +47,15 @@ const mutation: MutationTree<ChannelsV2StateInterface> = {
   ) {
     state.messages[channel].push(message);
   },
-  NEW_TYPED_MESSAGE(state, message: TypedMessage ) {
+  NEW_TYPED_MESSAGE(state, message: TypedMessage) {
     if (!state.typedMessages[message.channel])
       state.typedMessages[message.channel] = {};
     state.typedMessages[message.channel][message.author.id] = message;
   },
   REMOVE_TYPED_MESSAGE(state, message: TypedMessage) {
-    if(!state.typedMessages[message.channel]) return
+    if (!state.typedMessages[message.channel]) return;
 
-    delete state.typedMessages[message.channel][message.author.id]
+    delete state.typedMessages[message.channel][message.author.id];
   },
   ADD_CHANNEL(state, channel: Channel) {
     state.channels.push(channel);
@@ -80,12 +80,28 @@ const mutation: MutationTree<ChannelsV2StateInterface> = {
   GET_USER_CHANNELS(state, channels: Channel[]) {
     state.channels = channels;
   },
-  SET_USER_LIST(state, users: User[]) {
-    state.onlineDndUsers = users.map((user) => ({
+
+  GET_CHANNEL_USERS(
+    state,
+    { channelId, users }: { channelId: string; users: User[] }
+  ) {
+    state.channelsUsers[channelId] = users;
+  },
+  SET_USER_LIST(
+    state,
+    { onlineUsers, dndUsers }: { onlineUsers: User[]; dndUsers: User[] }
+  ) {
+    const online = onlineUsers.map((user) => ({
       ...user,
       status: UserStatus.Online,
     }));
-    console.log(state.onlineDndUsers);
+
+    const dnd = dndUsers.map((user) => ({
+      ...user,
+      status: UserStatus.DND,
+    }));
+
+    state.onlineDndUsers = [...online, ...dnd];
   },
   ADD_TO_USER_LIST(state, user: User) {
     state.onlineDndUsers.push({ ...user, status: UserStatus.Online });
@@ -96,7 +112,6 @@ const mutation: MutationTree<ChannelsV2StateInterface> = {
     );
   },
   CHANGE_USER_STATUS(state, user: User) {
-    console.log(user);
     const index = state.onlineDndUsers.findIndex((u) => u.id === user.id);
     if (index > -1) {
       state.onlineDndUsers[index] = user;

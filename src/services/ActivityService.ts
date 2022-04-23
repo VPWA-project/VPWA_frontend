@@ -6,14 +6,15 @@ import { SocketManager } from './SocketManager';
 
 class ActivitySocketManager extends SocketManager {
   public subscribe({ store }: BootFileParams<StateInterface>): void {
-    this.socket.on('user:list', (onlineUsers: User[]) => {
+    this.socket.on('user:list', (onlineUsers: User[], dndUsers: User[]) => {
       console.log('Online users list', onlineUsers);
-      store.commit('channels_v2/SET_USER_LIST', onlineUsers);
+      console.log('DND users list', dndUsers);
+      store.commit('channels_v2/SET_USER_LIST', { onlineUsers, dndUsers });
     });
 
     this.socket.on('user:online', (userOnline: User) => {
       console.log('User is online', userOnline);
-      store.commit('channels_v2/ADD_TO_USER_LIST', userOnline);
+      //store.commit('channels_v2/ADD_TO_USER_LIST', userOnline);
     });
 
     this.socket.on('user:offline', (offlineUser: User) => {

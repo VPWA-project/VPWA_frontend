@@ -31,7 +31,7 @@
 
         <q-item
           clickable
-          @click="changeUserStatus(UserStatus.Dnd)"
+          @click="changeUserStatus(UserStatus.DND)"
           class="border-15 bg-white"
         >
           <q-item-section avatar>
@@ -44,7 +44,7 @@
 
         <q-item
           clickable
-          @click="changeUserStatus(UserStatus.Offline)"
+          @click="changeUserStatus(UserStatus.OFFLINE)"
           class="border-15 bg-white"
         >
           <q-item-section avatar>
@@ -107,10 +107,13 @@ export default defineComponent({
     return {
       state,
       UserStatus,
-      changeUserStatus: (status: UserStatus) =>
+      changeUserStatus: (status: UserStatus) => {
+        $store.dispatch('auth/changeUserStatus', status).catch(console.log);
+
         $store
           .dispatch('channels_v2/changeUserStatus', status)
-          .catch(console.log),
+          .catch(console.log);
+      },
       logout: async () => {
         await $store.dispatch('auth/logout');
         await $store.dispatch('channels_v2/leave');

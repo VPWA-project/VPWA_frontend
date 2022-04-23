@@ -40,6 +40,19 @@ const getters: GetterTree<ChannelsV2StateInterface, StateInterface> = {
   getActiveChannel(context) {
     return context.activeChannel;
   },
+  getAdministrator(context) {
+    const administrator = context.activeChannel!.administrator;
+    const storedUsers = context.onlineDndUsers;
+    const aa = storedUsers.find((admin) => admin.id === administrator.id);
+    console.log(aa);
+    if (aa) {
+      administrator.status = aa?.status;
+      return administrator;
+    } else {
+      administrator.status = UserStatus.OFFLINE;
+      return administrator;
+    }
+  },
   getActiveChannelName(context) {
     return context.active;
   },
@@ -59,20 +72,42 @@ const getters: GetterTree<ChannelsV2StateInterface, StateInterface> = {
 
     return !!context.channels.find((channel) => channel.name === activeChannel);
   },
-  getOnlineUsers(context) {
-    return context.onlineDndUsers.filter(
-      (user) => user.status === UserStatus.Online
-    );
+  getOnlineDndUsers(context, getters) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const activeChannel = getters['getActiveChannel'] as Channel | null;
+    const storedUsers = context.onlineDndUsers;
+
+    const channelUsers = context.channelsUsers[activeChannel!.id];
+    const onlineDndUsers = [] as User[];
+
+    storedUsers.forEach((channelUser) => {
+      console.log(channelUser.status);
+      if (channelUsers.find((storedUser) => storedUser.id === channelUser.id)) {
+        onlineDndUsers.push(channelUser);
+      }
+    });
+
+    return onlineDndUsers;
   },
-  getDndUsers(context) {
-    return context.onlineDndUsers.filter(
-      (user) => user.status === UserStatus.DND
-    );
-  },
-  getOfflineUsers(context) {
-    return context.onlineDndUsers.filter(
-      (user) => user.status === UserStatus.OFFLINE
-    );
+  getOfflineUsers(context, getters) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const activeChannel = getters['getActiveChannel'] as Channel | null;
+    const storedUsers = context.onlineDndUsers;
+
+    const channelUsers = context.channelsUsers[activeChannel!.id];
+    const onlineDndUsers = [] as User[];
+
+    storedUsers.forEach((channelUser) => {
+      console.log(channelUser.status);
+      if (
+        !channelUsers.find((storedUser) => storedUser.id === channelUser.id)
+      ) {
+        channelUser.status = UserStatus.OFFLINE;
+        onlineDndUsers.push(channelUser);
+      }
+    });
+
+    return onlineDndUsers;
   },
 };
 

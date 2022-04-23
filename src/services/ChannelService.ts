@@ -15,6 +15,7 @@ import {
   JoinChannelResponse,
   KickUserRequest,
   TypedMessage,
+  GetChannelUsersResponse,
 } from 'src/contracts';
 import { StateInterface } from 'src/store';
 import { SocketManager } from './SocketManager';
@@ -54,9 +55,10 @@ class ChannelSocketManager extends SocketManager {
     );
 
     this.socket.on('channel:receiveTyping', (message: TypedMessage) => {
-      if(!!message.content) store.commit('channels_v2/NEW_TYPED_MESSAGE', message);
-      else store.commit('channels_v2/REMOVE_TYPED_MESSAGE', message)
-    })
+      if (!!message.content)
+        store.commit('channels_v2/NEW_TYPED_MESSAGE', message);
+      else store.commit('channels_v2/REMOVE_TYPED_MESSAGE', message);
+    });
   }
 
   public addMessage(message: RawMessage): Promise<SerializedMessage> {
@@ -157,6 +159,13 @@ class ChannelService {
   public async joinChannel(id: string) {
     const response = await api.post<JoinChannelResponse>(`channels/${id}/join`);
     return response.data;
+  }
+  public async getSearchedUsers(payload: string) {
+    const users = await api.get<GetChannelUsersResponse>(
+      `channels/${payload}/users`,
+      {}
+    );
+    return users.data;
   }
 }
 

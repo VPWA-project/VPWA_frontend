@@ -66,8 +66,8 @@ export default defineComponent({
     });
 
     const $store = useStore();
-    const route = useRoute()
-    const $router = useRouter()
+    const route = useRoute();
+    const $router = useRouter();
 
     const amIChannelMember = computed(
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -81,20 +81,21 @@ export default defineComponent({
     const invitations = computed(
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       () => $store.getters['invitations/getInvitations'] as Invitation[]
-    )
+    );
 
     const setActiveChannel = (name: string) => {
       $store
         .dispatch('channels_v2/setActiveChannel', name)
         .then(async (channel: Channel) => {
-          if(amIChannelMember.value) {
-            await $store.dispatch('channels_v2/tryJoin', name)
-          }
-          else if(activeChannel.value?.type === ChannelType.Private) {
-            const hasInvitation = !!invitations.value.find(invitation => invitation.channelId === channel.id)
+          if (amIChannelMember.value) {
+            await $store.dispatch('channels_v2/tryJoin', name);
+          } else if (activeChannel.value?.type === ChannelType.Private) {
+            const hasInvitation = !!invitations.value.find(
+              (invitation) => invitation.channelId === channel.id
+            );
 
-            if(!hasInvitation) {
-              await $router.push({name: '404'})
+            if (!hasInvitation) {
+              await $router.push({ name: '404' });
             }
           }
         })
@@ -109,8 +110,19 @@ export default defineComponent({
     );
 
     onMounted(async () => {
-      await $store.dispatch('channels_v2/getUserChannels').catch(console.log);
-      await $store.dispatch('invitations/getUserInvitations').catch(console.log);
+      await $store
+        .dispatch('channels_v2/getUserChannels')
+        .then((channels: Channel[]) => {
+          channels.forEach((channel) => {
+            $store
+              .dispatch('channels_v2/getChannelUsers', channel.id)
+              .catch(console.log);
+          });
+        })
+        .catch(console.log);
+      await $store
+        .dispatch('invitations/getUserInvitations')
+        .catch(console.log);
       setActiveChannel(route.params.name as string);
     });
 
