@@ -54,7 +54,8 @@ class ChannelSocketManager extends SocketManager {
     );
 
     this.socket.on('channel:receiveTyping', (message: TypedMessage) => {
-      store.commit('channels_v2/NEW_TYPED_MESSAGE', { message });
+      if(!!message.content) store.commit('channels_v2/NEW_TYPED_MESSAGE', message);
+      else store.commit('channels_v2/REMOVE_TYPED_MESSAGE', message)
     })
   }
 

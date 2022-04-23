@@ -2,10 +2,10 @@
   <div :class="{ 'q-py-sm': typedMessages.length > 0 }">
     <q-card v-show="state.showMessage" class="q-my-sm border-15">
       <q-card-section class="bg-grey-2 text-black">
-        <div class="text-subtitle2">{{ state.nickname }} is typing</div>
+        <div class="text-subtitle2">{{ state.message?.author.nickname }} is typing</div>
       </q-card-section>
 
-      <q-card-section> {{ state.text }} </q-card-section>
+      <q-card-section> {{ state.message?.content }} </q-card-section>
 
       <q-card-actions align="right">
         <q-btn
@@ -46,7 +46,7 @@
 <script lang="ts">
 import { TypedMessage } from 'src/contracts';
 import { useStore } from 'src/store';
-import { computed, defineComponent, reactive } from 'vue';
+import { computed, defineComponent, reactive, watch } from 'vue';
 
 export default defineComponent({
   setup() {
@@ -54,8 +54,7 @@ export default defineComponent({
 
     const state = reactive({
       showMessage: false,
-      nickname: '',
-      text: '',
+      message: null as TypedMessage | null,
       lastOpenedUserId: '',
     });
 
@@ -63,6 +62,19 @@ export default defineComponent({
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       () => $store.getters['channels_v2/currentTypedMessages'] as TypedMessage[]
     );
+
+    watch(() => typedMessages.value, (newValue) => {
+      if(!state.message) return
+
+      const newMessage = newValue.find(m => m.author.id === state.message?.author.id)
+
+      if(newMessage) state.message = newMessage
+      else {
+        state.message = null
+        state.showMessage = false
+        state.lastOpenedUserId = ''
+      }
+    })
 
     const openShowMessage = () => (state.showMessage = true);
     const closeShowMessage = () => {
@@ -76,8 +88,7 @@ export default defineComponent({
         return;
       }
 
-      state.nickname = message.author.nickname;
-      state.text = message.content;
+      state.message = message
       state.lastOpenedUserId = message.author.id;
 
       openShowMessage();

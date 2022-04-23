@@ -13,7 +13,7 @@
           dense
           class="col-grow q-mr-sm"
           bg-color="white"
-          @keydown="sendTypedMessage"
+          @keyup="sendTypedMessage"
           v-model.trim="state.message"
           placeholder="Type a message"
         />
@@ -42,6 +42,7 @@ export default defineComponent({
   setup() {
     const state = reactive({
       message: '',
+      sendedLastEdit: false
     });
     const $store = useStore();
     const route = useRoute();
@@ -82,11 +83,17 @@ export default defineComponent({
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         () => $store.getters['channels_v2/amIChannelMember'] as boolean
       ),
-      sendTypedMessage: () =>
-        $store.dispatch('channels_v2/sendTypedMessage', {
+      sendTypedMessage: async () => {
+        if(!state.message && !state.sendedLastEdit) return
+
+        await $store.dispatch('channels_v2/sendTypedMessage', {
           channelName: activeChannel.value?.name,
           message: state.message,
-        }),
+        })
+
+        state.sendedLastEdit = true
+        if(!state.message) state.sendedLastEdit = false
+      }
     };
   },
   components: { TypingChips },
