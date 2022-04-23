@@ -15,6 +15,7 @@ class ActivitySocketManager extends SocketManager {
     this.socket.on('user:online', (userOnline: User) => {
       console.log('User is online', userOnline);
       //store.commit('channels_v2/ADD_TO_USER_LIST', userOnline);
+      void store.dispatch('channels_v2/userOnline', userOnline);
     });
 
     this.socket.on('user:offline', (offlineUser: User) => {
