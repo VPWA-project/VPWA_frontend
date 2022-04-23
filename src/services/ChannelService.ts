@@ -12,6 +12,7 @@ import {
   SearchPublicChannelsRequest,
   SearchPublicChannelsResponse,
   GetChannelResponse,
+  GetChannelUsersResponse,
 } from 'src/contracts';
 import { StateInterface } from 'src/store';
 import { SocketManager } from './SocketManager';
@@ -139,6 +140,14 @@ class ChannelService {
     });
 
     return channel.data;
+  }
+
+  public async getSearchedUsers(payload: string) {
+    const users = await api.get<GetChannelUsersResponse>(
+      `channels/${payload}/users`,
+      {}
+    );
+    return users.data;
   }
 }
 

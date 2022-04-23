@@ -46,6 +46,7 @@ import LeftDrawer from '../components/LeftDrawer.vue';
 import RightDrawer from 'src/components/RightDrawer.vue';
 import FooterWrapper from 'src/components/FooterWrapper.vue';
 import { useStore } from 'src/store';
+import { Channel } from 'src/contracts';
 
 export default defineComponent({
   name: 'MainLayout',
@@ -66,7 +67,16 @@ export default defineComponent({
     const $store = useStore();
 
     onMounted(() => {
-      $store.dispatch('channels_v2/getUserChannels').catch(console.log);
+      $store
+        .dispatch('channels_v2/getUserChannels')
+        .then((channels: Channel[]) => {
+          channels.forEach((channel) => {
+            $store
+              .dispatch('channels_v2/getChannelUsers', channel.id)
+              .catch(console.log);
+          });
+        })
+        .catch(console.log);
       $store.dispatch('invitations/getUserInvitations').catch(console.log);
     });
 

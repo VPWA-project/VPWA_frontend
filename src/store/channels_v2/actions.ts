@@ -28,7 +28,7 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
   },
 
   tryJoin({}, channel: string) {
-    if(!channelService.in(channel)) channelService.join(channel)
+    if (!channelService.in(channel)) channelService.join(channel);
   },
 
   async fetchMessages(
@@ -94,6 +94,8 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
         if (!channelService.in(channel.name))
           dispatch('join', channel.name).catch(console.log);
       });
+
+      return channels;
     } catch (err) {
       commit('LOADING_ERROR');
       throw err;
@@ -125,22 +127,22 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
 
       console.log('Currently active channel is: ', activeChannelName);
 
-      let channel = undefined
+      let channel = undefined;
 
-      if(name) {
+      if (name) {
         channel = await channelService.getChannel(name);
       }
 
-      console.log('Received channel is: ', channel)
+      console.log('Received channel is: ', channel);
 
       commit('SET_ACTIVE', name);
-      commit('SET_ACTIVE_CHANNEL', channel)
+      commit('SET_ACTIVE_CHANNEL', channel);
 
       //if (name && !channelService.in(name)) await dispatch('join', name);
 
       console.log('Newly active channel is: ', name);
 
-      return channel
+      return channel;
     } catch (err) {
       await dispatch('leave', name);
       throw err;
@@ -182,6 +184,17 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
     if (!manager) return;
 
     await manager.kickUser(userId);
+  },
+
+  async getChannelUsers({ commit }, payload: string) {
+    try {
+      commit('LOADING_START');
+      const users = await channelService.getSearchedUsers(payload);
+      commit('GET_CHANNEL_USERS', { channelId: payload, users });
+    } catch (err) {
+      commit('LOADING_ERROR');
+      throw err;
+    }
   },
 };
 

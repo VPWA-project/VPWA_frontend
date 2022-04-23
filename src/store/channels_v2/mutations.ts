@@ -38,7 +38,7 @@ const mutation: MutationTree<ChannelsV2StateInterface> = {
     state.active = channel;
   },
   SET_ACTIVE_CHANNEL(state, channel: Channel | null) {
-    state.activeChannel = channel
+    state.activeChannel = channel;
   },
   NEW_MESSAGE(
     state,
@@ -72,12 +72,27 @@ const mutation: MutationTree<ChannelsV2StateInterface> = {
   GET_SEARCHED_CHANNELS(state, channels: Channel[]) {
     state.searchedChannels = channels;
   },
-  SET_USER_LIST(state, users: User[]) {
-    state.onlineDndUsers = users.map((user) => ({
+  GET_CHANNEL_USERS(
+    state,
+    { channelId, users }: { channelId: string; users: User[] }
+  ) {
+    state.channelsUsers[channelId] = users;
+  },
+  SET_USER_LIST(
+    state,
+    { onlineUsers, dndUsers }: { onlineUsers: User[]; dndUsers: User[] }
+  ) {
+    const online = onlineUsers.map((user) => ({
       ...user,
       status: UserStatus.Online,
     }));
-    console.log(state.onlineDndUsers);
+
+    const dnd = dndUsers.map((user) => ({
+      ...user,
+      status: UserStatus.DND,
+    }));
+
+    state.onlineDndUsers = [...online, ...dnd];
   },
   ADD_TO_USER_LIST(state, user: User) {
     state.onlineDndUsers.push({ ...user, status: UserStatus.Online });
@@ -88,7 +103,6 @@ const mutation: MutationTree<ChannelsV2StateInterface> = {
     );
   },
   CHANGE_USER_STATUS(state, user: User) {
-    console.log(user);
     const index = state.onlineDndUsers.findIndex((u) => u.id === user.id);
     if (index > -1) {
       state.onlineDndUsers[index] = user;

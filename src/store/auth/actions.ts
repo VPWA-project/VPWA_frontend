@@ -5,6 +5,7 @@ import { authService, authManager } from 'src/services';
 import {
   LoginRequest,
   RegisterRequest,
+  UserStatus,
   ValidationErrorResponse,
 } from 'src/contracts';
 import { AxiosError } from 'axios';
@@ -27,7 +28,7 @@ const actions: ActionTree<AuthStateInterface, StateInterface> = {
       const response = await authService.register(form);
       commit('AUTH_SUCCESS', null);
 
-      authManager.setToken(response.token.token)
+      authManager.setToken(response.token.token);
       return response;
     } catch (err) {
       const error = err as AxiosError;
@@ -63,14 +64,17 @@ const actions: ActionTree<AuthStateInterface, StateInterface> = {
     try {
       commit('AUTH_START');
       await authService.logout();
-      await dispatch('channels/leave', null, { root: true })
+      await dispatch('channels/leave', null, { root: true });
       commit('AUTH_SUCCESS', null);
       // remove api token and notify listeners
       authManager.removeToken();
     } catch (err) {
       commit('AUTH_ERROR', err);
-      throw err
+      throw err;
     }
+  },
+  changeUserStatus({ commit }, status: UserStatus) {
+    commit('CHANGE_STATUS', status);
   },
 };
 

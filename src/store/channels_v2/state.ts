@@ -7,6 +7,7 @@ export interface ChannelsV2StateInterface {
   messages: { [channel: string]: SerializedMessage[] };
   pagination: { [channel: string]: PageMetaData };
   channels: Channel[];
+  channelsUsers: { [channel: string]: User[] };
   searchedChannels: Channel[];
   onlineDndUsers: User[];
   active: string | null;
@@ -20,6 +21,7 @@ function state(): ChannelsV2StateInterface {
     messages: {},
     pagination: {},
     channels: [],
+    channelsUsers: {},
     searchedChannels: [],
     onlineDndUsers: [],
     active: null,

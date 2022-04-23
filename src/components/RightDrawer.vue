@@ -31,8 +31,8 @@
       <q-list>
         <ChannelMember
           background="bg-white"
-          :key="activeChannel.administrator.id"
-          v-bind="activeChannel.administrator"
+          :key="administrator.id"
+          v-bind="administrator"
         />
       </q-list>
     </div>
@@ -69,7 +69,7 @@
       <q-list>
         <ChannelMember
           background="bg-white"
-          v-for="member in offlineUser"
+          v-for="member in offlineUsers"
           :key="member.id"
           v-bind="member"
         />
@@ -98,14 +98,14 @@ export default defineComponent({
       () => $store.getters['channels_v2/getActiveChannel'] as Channel | null
     );
 
-    const onlineUsers = computed(
+    const administrator = computed(
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      () => $store.getters['channels_v2/getOnlineUsers'] as User[]
+      () => $store.getters['channels_v2/getAdministrator'] as User
     );
 
-    const dndUsers = computed(
+    const users = computed(
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      () => $store.getters['channels_v2/getDndUsers'] as User[]
+      () => $store.getters['channels_v2/getOnlineDndUsers'] as User[]
     );
 
     const offlineUsers = computed(
@@ -113,7 +113,7 @@ export default defineComponent({
       () => $store.getters['channels_v2/getOfflineUsers'] as User[]
     );
 
-    const users = computed(() => [...onlineUsers.value, ...dndUsers.value]);
+    //console.log(offlineUsers.value);
 
     const state = reactive({
       isInviteUsersOpen: false,
@@ -122,6 +122,7 @@ export default defineComponent({
     return {
       state,
       activeChannel,
+      administrator,
       users,
       offlineUsers,
 
