@@ -33,6 +33,7 @@
           background="bg-white"
           :key="administrator.id"
           v-bind="administrator"
+          :show="false"
         />
       </q-list>
     </div>
@@ -53,6 +54,7 @@
           :key="member.id"
           v-bind="member"
           :status="member.status"
+          :show="true"
         />
       </q-list>
     </div>
@@ -72,6 +74,7 @@
           v-for="member in offlineUsers"
           :key="member.id"
           v-bind="member"
+          :show="true"
         />
       </q-list>
     </div>

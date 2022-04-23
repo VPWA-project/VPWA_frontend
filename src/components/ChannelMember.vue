@@ -6,7 +6,7 @@
     :nickname="nickname"
     :status="status"
   >
-    <template v-slot:append>
+    <template v-slot:append v-if="show">
       <q-btn flat class="no-border q-pa-none" icon="more_vert">
         <q-menu fit>
           <q-list style="width: 150px">
@@ -58,6 +58,7 @@ export default defineComponent({
       required: true,
     },
     background: String,
+    show: Boolean,
   },
   components: {
     UserBanner,
