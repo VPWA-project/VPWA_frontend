@@ -143,7 +143,7 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
     }
   },
 
-  async delete({ commit, dispatch, getters }, name: string) {
+  leaveChannel({ getters }, name: string) {
     try {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       const channels = getters['getUserChannels'] as Channel[];
@@ -152,13 +152,7 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
 
       if (!channelToDelete) return;
 
-      const response = await channelService.delete(channelToDelete.id);
-
-      await dispatch('leave', name);
-
-      commit('REMOVE_CHANNEL', name);
-
-      return response;
+      channelService.leave(name)
     } catch (err) {
       throw err;
     }

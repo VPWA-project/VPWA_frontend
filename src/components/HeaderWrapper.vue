@@ -26,24 +26,9 @@
         style="border-radius: 15px"
       >
         <q-list class="column q-gutter-sm" style="width: 150px">
-          <q-item
-            clickable
-            @click="toggleDialog(ConfirmDialogType.Leave)"
-            v-close-popup
-            v-if="!amIChannelAdmin"
-          >
+          <q-item clickable @click="toggleDialog()" v-close-popup>
             <q-item-section>
-              <q-item-label>Leave channel</q-item-label>
-            </q-item-section>
-          </q-item>
-          <q-item
-            clickable
-            @click="toggleDialog(ConfirmDialogType.Delete)"
-            v-close-popup
-            v-else
-          >
-            <q-item-section>
-              <q-item-label>Delete channel</q-item-label>
+              <q-item-label>{{ confirmDialogButtonText }}</q-item-label>
             </q-item-section>
           </q-item>
         </q-list>
@@ -86,11 +71,6 @@ import { useStore } from 'src/store';
 import { defineComponent, reactive, PropType, computed } from 'vue';
 import { useRouter } from 'vue-router';
 
-enum ConfirmDialogType {
-  Leave,
-  Delete,
-}
-
 export default defineComponent({
   props: {
     toggleLeftDrawer: Function as PropType<() => void>,
@@ -102,7 +82,6 @@ export default defineComponent({
 
     const state = reactive({
       isConfirmDialogOpen: false,
-      confirmDialogType: ConfirmDialogType.Leave,
     });
 
     const amIChannelAdmin = computed(
@@ -115,57 +94,24 @@ export default defineComponent({
       () => $store.getters['channels_v2/getActiveChannel'] as Channel | null
     );
 
-    const amIChannelMember = computed(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      () => $store.getters['channels_v2/amIChannelMember'] as boolean
-    );
-
-    console.log('Am I channel member: ', amIChannelMember.value);
-
     return {
       state,
-      ConfirmDialogType,
       confirmDialog: async () => {
         if (!activeChannel.value) return;
-
-        if (state.confirmDialogType === ConfirmDialogType.Leave) {
-          // TODO: leave channel
-          // $store
-          //   .dispatch(
-          //     'channels/leaveChannel',
-          //     $store.state.channels.activeChannel
-          //   )
-          //   .then(() => {
-          //     router.push({ name: 'dashboard' }).catch(console.log);
-          //   })
-          //   .catch(console.log);
-        } else if (state.confirmDialogType === ConfirmDialogType.Delete) {
-          await $store
-            .dispatch('channels_v2/delete', activeChannel.value.name)
-            .then(() => router.push({ name: 'home' }));
-        }
+        await $store
+          .dispatch('channels_v2/leaveChannel', activeChannel.value.name)
+          .then(() => router.push({ name: 'home' }));
       },
-      toggleDialog: (type: ConfirmDialogType) => {
+      toggleDialog: () => {
         state.isConfirmDialogOpen = !state.isConfirmDialogOpen;
-        state.confirmDialogType = type;
       },
       confirmDialogText: computed(() => {
-        if (state.confirmDialogType === ConfirmDialogType.Leave) {
-          return 'Do you really want to leave this channel ?';
-        }
-        if (state.confirmDialogType === ConfirmDialogType.Delete) {
-          return 'Do you really want to delete this channel?';
-        }
-        return '';
+        return amIChannelAdmin.value
+          ? 'Do you really want to delete this channel?'
+          : 'Do you really want to leave this channel?';
       }),
       confirmDialogButtonText: computed(() => {
-        if (state.confirmDialogType === ConfirmDialogType.Leave) {
-          return 'Leave channel';
-        }
-        if (state.confirmDialogType === ConfirmDialogType.Delete) {
-          return 'Delete channel';
-        }
-        return '';
+        return amIChannelAdmin.value ? 'Delete channel' : 'Leave channel';
       }),
       activeChannel: computed(
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access

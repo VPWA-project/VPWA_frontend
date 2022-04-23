@@ -3,7 +3,6 @@ import { api } from 'src/boot/axios';
 import {
   CreateChannelRequest,
   CreateChannelResponse,
-  DeleteChannelResponse,
   GetUserChannelsResponse,
   PaginatedResponse,
   RawMessage,
@@ -16,8 +15,10 @@ import {
   KickUserRequest,
   TypedMessage,
   GetChannelUsersResponse,
+  Channel,
 } from 'src/contracts';
 import { StateInterface } from 'src/store';
+import { channelService } from '.';
 import { SocketManager } from './SocketManager';
 
 class ChannelSocketManager extends SocketManager {
@@ -59,6 +60,30 @@ class ChannelSocketManager extends SocketManager {
         store.commit('channels_v2/NEW_TYPED_MESSAGE', message);
       else store.commit('channels_v2/REMOVE_TYPED_MESSAGE', message);
     });
+
+    this.socket.on('channel:delete', (channel: Channel) => {
+      store.commit('channels_v2/REMOVE_CHANNEL', channel.name);
+      channelService.disconnect(channel.name);
+    });
+
+    this.socket.on(
+      'channel:leave',
+      ({ user, channel }: { user: User; channel: Channel }) => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        const authUser = store.getters[
+          'auth/getAuthenticatedUser'
+        ] as User | null;
+
+        if (authUser?.id === user.id) {
+          store.commit('channels_v2/REMOVE_CHANNEL', channel.name);
+          channelService.disconnect(channel.name);
+
+          return;
+        }
+
+        console.log(`User: ${user.nickname} left the channel`);
+      }
+    );
   }
 
   public addMessage(message: RawMessage): Promise<SerializedMessage> {
@@ -80,6 +105,11 @@ class ChannelSocketManager extends SocketManager {
   public sendTypedMessage(message: RawMessage) {
     return this.emitAsync('channel:sendTyping', message);
   }
+
+  public leaveChannel() {
+    console.log('Leaving channel');
+    return this.emitAsync('channel:leave');
+  }
 }
 
 class ChannelService {
@@ -97,17 +127,23 @@ class ChannelService {
     return channel;
   }
 
-  public leave(name: string): boolean {
+  public leave(name: string) {
     const channel = this.channels.get(name);
 
     if (!channel) {
-      return false;
+      return;
     }
 
-    // disconnect namespace and remove references to socket
-    channel.destroy();
+    void channel.leaveChannel();
+  }
 
-    return this.channels.delete(name);
+  public disconnect(name: string) {
+    const channel = this.in(name);
+
+    if (!channel) return;
+
+    channel.destroy();
+    this.channels.delete(name);
   }
 
   public in(name: string): ChannelSocketManager | undefined {
@@ -124,12 +160,6 @@ class ChannelService {
       '/auth/me/channels'
     );
     return channels.data;
-  }
-
-  public async delete(id: string) {
-    const response = await api.delete<DeleteChannelResponse>(`channels/${id}`);
-
-    return response.data;
   }
 
   // get user's channels, in which he already is
@@ -160,6 +190,7 @@ class ChannelService {
     const response = await api.post<JoinChannelResponse>(`channels/${id}/join`);
     return response.data;
   }
+
   public async getSearchedUsers(payload: string) {
     const users = await api.get<GetChannelUsersResponse>(
       `channels/${payload}/users`,
