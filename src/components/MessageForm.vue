@@ -95,6 +95,15 @@ export default defineComponent({
               userId: userToBeKicked.id,
               method: command === '/kick' ? KickType.Kick : KickType.Revoke,
             });
+        } else if (
+          command === '/invite' &&
+          activeChannel.value &&
+          args.length === 1
+        ) {
+          await $store.dispatch('invitations/inviteByNickname', {
+            channelId: activeChannel.value.id,
+            nicknames: args,
+          });
         }
       } else
         await $store
