@@ -20,6 +20,7 @@ import {
 import { StateInterface } from 'src/store';
 import { channelService } from '.';
 import { SocketManager } from './SocketManager';
+import { Notify } from 'quasar'
 
 class ChannelSocketManager extends SocketManager {
   public subscribe({ store }: BootFileParams<StateInterface>): void {
@@ -28,6 +29,19 @@ class ChannelSocketManager extends SocketManager {
     this.socket.on('message', (message: SerializedMessage) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       store.commit('channels_v2/NEW_MESSAGE', { channel, message });
+
+      console.log(message)
+
+      Notify.create({
+        message: `${message.message.substring(0, 30)}${
+          message.message.length > 30 ? '...' : ''
+        }`,
+        //message: `${message.user.firstname} ${message.user.lastname}\n${message.user.nickname}`,
+        caption: `@${message.user.nickname} - ${message.user.firstname} ${message.user.lastname}`,
+        color: 'grey-2',
+        textColor: 'black',
+        position: 'bottom-right',
+      });
     });
 
     this.socket.on(

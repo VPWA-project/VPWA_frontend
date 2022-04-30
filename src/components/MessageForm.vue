@@ -22,7 +22,6 @@
           color="cyan-8"
           icon="send"
           type="submit"
-          @click="showNotif"
         />
       </q-form>
     </div>
@@ -34,7 +33,6 @@ import { defineComponent, reactive, computed } from 'vue';
 import TypingChips from './TypingChips.vue';
 import { useStore } from 'src/store';
 import { useRoute } from 'vue-router';
-import { useQuasar } from 'quasar';
 import { Channel } from 'src/contracts';
 
 export default defineComponent({
@@ -46,7 +44,6 @@ export default defineComponent({
     });
     const $store = useStore();
     const route = useRoute();
-    const $q = useQuasar();
 
     const activeChannel = computed(
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -68,12 +65,15 @@ export default defineComponent({
     const handleSubmit = async () => {
       if (!state.message) return;
 
-      await $store
-        .dispatch('channels_v2/addMessage', {
-          channel: route.params.name as string,
-          message: state.message,
-        })
-        .catch(console.log);
+      if (state.message.startsWith('/')) {
+        // command
+      } else
+        await $store
+          .dispatch('channels_v2/addMessage', {
+            channel: route.params.name as string,
+            message: state.message,
+          })
+          .catch(console.log);
 
       state.message = '';
 
@@ -83,15 +83,6 @@ export default defineComponent({
     return {
       state,
       handleSubmit,
-      showNotif() {
-        $q.notify({
-          message: 'John Doe',
-          caption: 'Heeey Jozko, How are you ?',
-          color: 'grey-2',
-          textColor: 'black',
-          position: 'bottom-right',
-        });
-      },
       activeChannel: computed(() => $store.state.channels_v2.active),
       amIChannelMember: computed(
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access

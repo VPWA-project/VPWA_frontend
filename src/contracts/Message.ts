@@ -3,13 +3,13 @@ import { User } from './Auth';
 export type RawMessage = string;
 
 export interface SerializedMessage {
-  createdBy: string;
-  content: string;
+  userId: string;
+  message: string;
   channelId: string;
   createdAt: string;
   updatedAt: string;
-  id: number;
-  author: User;
+  id: string;
+  user: User
 }
 
 export interface TypedMessage {
