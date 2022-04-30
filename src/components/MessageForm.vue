@@ -127,13 +127,21 @@ export default defineComponent({
             invitations: undefined,
           } as CreateChannelRequest);
         }
-      } else
+      } else {
+        // TODO: parse tags
+        const tags = state.message
+          .split(' ')
+          .filter((word) => word.startsWith('@'))
+          .map((nickname) => nickname.slice(1));
+
         await $store
           .dispatch('channels_v2/addMessage', {
             channel: route.params.name as string,
             message: state.message,
+            tags,
           })
           .catch(console.log);
+      }
 
       state.message = '';
 

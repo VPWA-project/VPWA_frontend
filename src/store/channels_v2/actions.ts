@@ -81,10 +81,10 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
 
   async addMessage(
     { commit },
-    { channel, message }: { channel: string; message: RawMessage }
+    { channel, message, tags }: { channel: string; message: RawMessage, tags?: string[] }
   ) {
     try {
-      const newMessage = await channelService.in(channel)?.addMessage(message);
+      const newMessage = await channelService.in(channel)?.addMessage(message, tags);
       commit('NEW_MESSAGE', { channel, message: newMessage });
     } catch (err) {
       throw err;

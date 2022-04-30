@@ -21,7 +21,6 @@ import { StateInterface } from 'src/store';
 import { channelService } from '.';
 import { SocketManager } from './SocketManager';
 import { Notify } from 'quasar';
-import { stringTypeAnnotation } from '@babel/types';
 
 class ChannelSocketManager extends SocketManager {
   public subscribe({ store }: BootFileParams<StateInterface>): void {
@@ -114,8 +113,8 @@ class ChannelSocketManager extends SocketManager {
     });
   }
 
-  public addMessage(message: RawMessage): Promise<SerializedMessage> {
-    return this.emitAsync('addMessage', message);
+  public addMessage(message: RawMessage, tags?: string[]): Promise<SerializedMessage> {
+    return this.emitAsync('addMessage', message, tags);
   }
 
   public loadMessages(

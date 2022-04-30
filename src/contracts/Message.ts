@@ -9,11 +9,12 @@ export interface SerializedMessage {
   createdAt: string;
   updatedAt: string;
   id: string;
-  user: User
+  user: User;
+  tags: User[];
 }
 
 export interface TypedMessage {
   content: string;
-  author: User
-  channel: string
+  author: User;
+  channel: string;
 }
