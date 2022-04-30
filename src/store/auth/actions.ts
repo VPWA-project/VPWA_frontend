@@ -1,7 +1,7 @@
 import { ActionTree } from 'vuex';
 import { StateInterface } from '../index';
 import { AuthStateInterface } from './state';
-import { authService, authManager } from 'src/services';
+import { authService, authManager, activityService } from 'src/services';
 import {
   LoginRequest,
   RegisterRequest,
@@ -75,6 +75,7 @@ const actions: ActionTree<AuthStateInterface, StateInterface> = {
   },
   changeUserStatus({ commit }, status: UserStatus) {
     commit('CHANGE_STATUS', status);
+    void activityService.changeStatus(status);
   },
 };
 

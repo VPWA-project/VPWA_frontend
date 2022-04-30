@@ -109,10 +109,6 @@ export default defineComponent({
       UserStatus,
       changeUserStatus: (status: UserStatus) => {
         $store.dispatch('auth/changeUserStatus', status).catch(console.log);
-
-        $store
-          .dispatch('channels_v2/changeUserStatus', status)
-          .catch(console.log);
       },
       logout: async () => {
         await $store.dispatch('auth/logout');
