@@ -28,7 +28,7 @@ import { defineComponent, reactive, computed } from 'vue';
 import TypingChips from './TypingChips.vue';
 import { useStore } from 'src/store';
 import { useRoute, useRouter } from 'vue-router';
-import { Channel } from 'src/contracts';
+import { Channel, KickType, User } from 'src/contracts';
 
 export default defineComponent({
   name: 'MessageForm',
@@ -79,6 +79,22 @@ export default defineComponent({
           await $store
             .dispatch('channels_v2/leaveChannel', activeChannel.value.name)
             .then(() => router.push({ name: 'home' }));
+        } else if (
+          command === '/kick' &&
+          activeChannel.value &&
+          args.length === 1
+        ) {
+          const userToBeKicked = (await $store.dispatch(
+            'channels_v2/getUserByNicknameFromActiveChannelStore',
+            args[0]
+          )) as User | undefined;
+
+          if (userToBeKicked)
+            await $store.dispatch('channels_v2/kickUser', {
+              channelName: activeChannel.value.name,
+              userId: userToBeKicked.id,
+              method: KickType.Kick,
+            });
         }
       } else
         await $store

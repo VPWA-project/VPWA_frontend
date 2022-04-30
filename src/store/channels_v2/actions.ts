@@ -200,6 +200,13 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
       commit('ADD_TO_USER_LIST', userOnline);
     }
   },
+
+  getUserByNicknameFromActiveChannelStore({getters}, nickname: string) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const channelUsers = getters['getAllUsers'] as User[]
+
+    return channelUsers.find((user) => user.nickname === nickname)
+  }
 };
 
 export default actions;
