@@ -42,7 +42,7 @@ export default defineComponent({
   setup() {
     const state = reactive({
       message: '',
-      sendedLastEdit: false
+      sendedLastEdit: false,
     });
     const $store = useStore();
     const route = useRoute();
@@ -52,6 +52,18 @@ export default defineComponent({
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       () => $store.getters['channels_v2/getActiveChannel'] as Channel | null
     );
+
+    const sendTypedMessage = async () => {
+      if (!state.message && !state.sendedLastEdit) return;
+
+      await $store.dispatch('channels_v2/sendTypedMessage', {
+        channelName: activeChannel.value?.name,
+        message: state.message,
+      });
+
+      state.sendedLastEdit = true;
+      if (!state.message) state.sendedLastEdit = false;
+    };
 
     const handleSubmit = async () => {
       if (!state.message) return;
@@ -64,6 +76,8 @@ export default defineComponent({
         .catch(console.log);
 
       state.message = '';
+
+      await sendTypedMessage();
     };
 
     return {
@@ -83,17 +97,7 @@ export default defineComponent({
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         () => $store.getters['channels_v2/amIChannelMember'] as boolean
       ),
-      sendTypedMessage: async () => {
-        if(!state.message && !state.sendedLastEdit) return
-
-        await $store.dispatch('channels_v2/sendTypedMessage', {
-          channelName: activeChannel.value?.name,
-          message: state.message,
-        })
-
-        state.sendedLastEdit = true
-        if(!state.message) state.sendedLastEdit = false
-      }
+      sendTypedMessage,
     };
   },
   components: { TypingChips },
