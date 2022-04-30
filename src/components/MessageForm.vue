@@ -32,7 +32,7 @@
 import { defineComponent, reactive, computed } from 'vue';
 import TypingChips from './TypingChips.vue';
 import { useStore } from 'src/store';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { Channel } from 'src/contracts';
 
 export default defineComponent({
@@ -44,6 +44,7 @@ export default defineComponent({
     });
     const $store = useStore();
     const route = useRoute();
+    const router = useRouter();
 
     const activeChannel = computed(
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -67,6 +68,16 @@ export default defineComponent({
 
       if (state.message.startsWith('/')) {
         // command
+        const words = state.message.split(' ')
+        const command = words[0]
+        const args = words.slice(1)
+
+        if(command === '/cancel' && activeChannel.value) {
+           await $store
+          .dispatch('channels_v2/leaveChannel', activeChannel.value.name)
+          .then(() => router.push({ name: 'home' }));
+        }
+
       } else
         await $store
           .dispatch('channels_v2/addMessage', {

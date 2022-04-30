@@ -36,7 +36,6 @@ class ChannelSocketManager extends SocketManager {
         message: `${message.message.substring(0, 30)}${
           message.message.length > 30 ? '...' : ''
         }`,
-        //message: `${message.user.firstname} ${message.user.lastname}\n${message.user.nickname}`,
         caption: `@${message.user.nickname} - ${message.user.firstname} ${message.user.lastname}`,
         color: 'grey-2',
         textColor: 'black',
