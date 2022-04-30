@@ -132,12 +132,25 @@ import { computed, defineComponent, reactive, toRef } from 'vue';
 import { useStore } from '../store';
 import useVuelidate from '@vuelidate/core';
 import { required, helpers } from '@vuelidate/validators';
-import { ChannelType, CreateChannelRequest, ServerErrors, User } from 'src/contracts';
+import {
+  ChannelType,
+  CreateChannelRequest,
+  ServerErrors,
+  User,
+} from 'src/contracts';
 import { groupValidationErrors, clearServerError } from 'src/utils/utils';
+
+const doesTheNameContainSpace = (value: string) => {
+  return !(value.indexOf(' ') >= 0);
+};
 
 const rules = {
   name: {
     required: helpers.withMessage("Channel name can't be empty", required),
+    doesTheNameContainSpace: helpers.withMessage(
+      "Channel name can't contain space",
+      doesTheNameContainSpace
+    ),
   },
 };
 

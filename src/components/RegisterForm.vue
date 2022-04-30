@@ -241,13 +241,15 @@ export default defineComponent({
 
     const $store = useStore();
     const router = useRouter();
-    const route = useRoute()
+    const route = useRoute();
 
     const v$ = useVuelidate(rules, state);
 
     const submitting = computed(() => $store.state.auth.status === 'pending');
     const redirectTo = computed(
-      () => (route.query.redirect as string) || { name: 'home' } as RouteLocationRaw
+      () =>
+        (route.query.redirect as string) ||
+        ({ name: 'home' } as RouteLocationRaw)
     );
 
     const handleSubmit = () => {
