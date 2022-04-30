@@ -66,6 +66,16 @@ const mutation: MutationTree<ChannelsV2StateInterface> = {
     delete state.pagination[name];
     state.channels = state.channels.filter((channel) => channel.name !== name);
   },
+  REMOVE_USER_FROM_CHANNEL(
+    state,
+    { user, channel }: { user: User; channel: Channel }
+  ) {
+    console.log(state.channelsUsers);
+    state.channelsUsers[channel.id] = state.channelsUsers[channel.id].filter(
+      (obj) => obj.id !== user.id
+    );
+    console.log(state.channelsUsers);
+  },
   FETCH_MESSAGES(
     state,
     {

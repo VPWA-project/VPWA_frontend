@@ -74,6 +74,31 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
     });
   },
 
+  offline({ getters }, channel: string | null) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const leaving: string[] =
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      getters.joinedChannels;
+
+    console.log(leaving);
+    leaving.forEach((c) => {
+      channelService.disconnect(c);
+    });
+  },
+
+  async onlineDnd({ commit }) {
+    try {
+      const channels = await channelService.getUserChannels();
+
+      channels.forEach((channel) => {
+        channelService.join(channel.name);
+      });
+    } catch (err) {
+      commit('LOADING_ERROR');
+      throw err;
+    }
+  },
+
   async addChannel({ commit, dispatch }, channel: Channel) {
     commit('ADD_CHANNEL', channel);
 
@@ -153,7 +178,7 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
 
       if (!channelToDelete) return;
 
-      channelService.leave(name)
+      channelService.leave(name);
     } catch (err) {
       throw err;
     }

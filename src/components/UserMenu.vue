@@ -95,6 +95,7 @@
 import { UserStatus } from 'src/contracts';
 import { useStore } from 'src/store';
 import { defineComponent, reactive } from 'vue';
+import { Use } from 'webpack-chain';
 
 export default defineComponent({
   setup() {
@@ -109,6 +110,11 @@ export default defineComponent({
       UserStatus,
       changeUserStatus: (status: UserStatus) => {
         $store.dispatch('auth/changeUserStatus', status).catch(console.log);
+        if (status === UserStatus.OFFLINE) {
+          $store.dispatch('channels_v2/offline').catch(console.log);
+        } else {
+          $store.dispatch('channels_v2/onlineDnd').catch(console.log);
+        }
       },
       logout: async () => {
         await $store.dispatch('auth/logout');
