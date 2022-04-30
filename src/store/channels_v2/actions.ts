@@ -4,9 +4,8 @@ import {
   KickUserRequest,
   RawMessage,
   User,
-  UserStatus,
 } from 'src/contracts';
-import { activityService, channelService } from 'src/services';
+import { channelService } from 'src/services';
 import { ActionTree } from 'vuex';
 import { StateInterface } from '../index';
 import { ChannelsV2StateInterface } from './state';

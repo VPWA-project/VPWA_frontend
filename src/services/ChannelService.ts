@@ -84,6 +84,10 @@ class ChannelSocketManager extends SocketManager {
         console.log(`User: ${user.nickname} left the channel`);
       }
     );
+
+    this.socket.on('channel:join', async (user: User) => {
+      await store.dispatch('channels_v2/userOnline', user);
+    })
   }
 
   public addMessage(message: RawMessage): Promise<SerializedMessage> {
