@@ -77,11 +77,11 @@ class ChannelSocketManager extends SocketManager {
         if (authUser?.id === user.id) {
           store.commit('channels_v2/REMOVE_CHANNEL', channel.name);
           channelService.disconnect(channel.name);
-
-          return;
         }
 
-        console.log(`User: ${user.nickname} left the channel`);
+        store.commit('channels_v2/REMOVE_USER_FROM_CHANNEL', { user, channel });
+
+        //console.log(`User: ${user.nickname} left the channel`);
       }
     );
   }
