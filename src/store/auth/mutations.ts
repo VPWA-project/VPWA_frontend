@@ -1,4 +1,4 @@
-import { User } from 'src/contracts';
+import { User, UserStatus } from 'src/contracts';
 import { MutationTree } from 'vuex';
 import { AuthStateInterface } from './state';
 
@@ -15,7 +15,7 @@ const mutation: MutationTree<AuthStateInterface> = {
     state.status = 'error';
     state.errors = errors;
   },
-  CHANGE_STATUS(state, status: User['status']) {
+  CHANGE_STATUS(state, status: UserStatus) {
     if (state.user) {
       state.user.status = status;
     }

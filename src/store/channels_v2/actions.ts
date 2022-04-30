@@ -159,11 +159,6 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
     }
   },
 
-  async changeUserStatus({}, status: UserStatus) {
-    console.log('Sending status: ', status);
-    void (await activityService.changeStatus(status));
-  },
-
   async kickUser(
     {},
     {
