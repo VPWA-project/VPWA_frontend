@@ -28,7 +28,13 @@ import { defineComponent, reactive, computed } from 'vue';
 import TypingChips from './TypingChips.vue';
 import { useStore } from 'src/store';
 import { useRoute, useRouter } from 'vue-router';
-import { Channel, KickType, User } from 'src/contracts';
+import {
+  Channel,
+  ChannelType,
+  CreateChannelRequest,
+  KickType,
+  User,
+} from 'src/contracts';
 
 export default defineComponent({
   name: 'MessageForm',
@@ -104,6 +110,22 @@ export default defineComponent({
             channelId: activeChannel.value.id,
             nicknames: args,
           });
+        } else if (
+          command === '/join' &&
+          args.length >= 1 &&
+          args.length <= 2
+        ) {
+          const channelName = args[0];
+          const channelType =
+            args[1] && args[1] === 'private'
+              ? ChannelType.Private
+              : ChannelType.Public;
+
+          await $store.dispatch('createChannel/create', {
+            name: channelName,
+            type: channelType,
+            invitations: undefined,
+          } as CreateChannelRequest);
         }
       } else
         await $store
