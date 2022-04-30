@@ -17,12 +17,7 @@
           v-model.trim="state.message"
           placeholder="Type a message"
         />
-        <q-btn
-          round
-          color="cyan-8"
-          icon="send"
-          type="submit"
-        />
+        <q-btn round color="cyan-8" icon="send" type="submit" />
       </q-form>
     </div>
   </div>
@@ -51,6 +46,11 @@ export default defineComponent({
       () => $store.getters['channels_v2/getActiveChannel'] as Channel | null
     );
 
+    const amIChannelAdmin = computed(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      () => $store.getters['channels_v2/amIChannelAdmin'] as boolean
+    );
+
     const sendTypedMessage = async () => {
       if (!state.message && !state.sendedLastEdit) return;
 
@@ -68,16 +68,18 @@ export default defineComponent({
 
       if (state.message.startsWith('/')) {
         // command
-        const words = state.message.split(' ')
-        const command = words[0]
-        const args = words.slice(1)
+        const words = state.message.split(' ');
+        const command = words[0];
+        const args = words.slice(1);
 
-        if(command === '/cancel' && activeChannel.value) {
-           await $store
-          .dispatch('channels_v2/leaveChannel', activeChannel.value.name)
-          .then(() => router.push({ name: 'home' }));
+        if (
+          (command === '/cancel' && activeChannel.value) ||
+          (command === '/quit' && activeChannel.value && amIChannelAdmin)
+        ) {
+          await $store
+            .dispatch('channels_v2/leaveChannel', activeChannel.value.name)
+            .then(() => router.push({ name: 'home' }));
         }
-
       } else
         await $store
           .dispatch('channels_v2/addMessage', {
