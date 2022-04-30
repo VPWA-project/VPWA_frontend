@@ -20,7 +20,8 @@ import {
 import { StateInterface } from 'src/store';
 import { channelService } from '.';
 import { SocketManager } from './SocketManager';
-import { Notify } from 'quasar'
+import { Notify } from 'quasar';
+import { stringTypeAnnotation } from '@babel/types';
 
 class ChannelSocketManager extends SocketManager {
   public subscribe({ store }: BootFileParams<StateInterface>): void {
@@ -29,8 +30,6 @@ class ChannelSocketManager extends SocketManager {
     this.socket.on('message', (message: SerializedMessage) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       store.commit('channels_v2/NEW_MESSAGE', { channel, message });
-
-      console.log(message)
 
       Notify.create({
         message: `${message.message.substring(0, 30)}${
@@ -71,7 +70,11 @@ class ChannelSocketManager extends SocketManager {
     this.socket.on('channel:receiveTyping', (message: TypedMessage) => {
       if (!!message.content)
         store.commit('channels_v2/NEW_TYPED_MESSAGE', message);
-      else store.commit('channels_v2/REMOVE_TYPED_MESSAGE', message);
+      else
+        store.commit('channels_v2/REMOVE_TYPED_MESSAGE', {
+          channelName: message.channel,
+          userId: message.author.id,
+        });
     });
 
     this.socket.on('channel:delete', (channel: Channel) => {
@@ -98,9 +101,17 @@ class ChannelSocketManager extends SocketManager {
       }
     );
 
-    this.socket.on('channel:join', async (user: User) => {
+    this.socket.on('channel:connect', async (user: User) => {
       await store.dispatch('channels_v2/userOnline', user);
-    })
+    });
+
+    this.socket.on('channel:disconnect', (user: User) => {
+      console.log(`User ${user.nickname} is disconnecting from ${channel}`)
+      store.commit('channels_v2/REMOVE_TYPED_MESSAGE', {
+        channelName: channel,
+        userId: user.id,
+      });
+    });
   }
 
   public addMessage(message: RawMessage): Promise<SerializedMessage> {
