@@ -80,7 +80,7 @@ export default defineComponent({
             .dispatch('channels_v2/leaveChannel', activeChannel.value.name)
             .then(() => router.push({ name: 'home' }));
         } else if (
-          command === '/kick' &&
+          (command === '/kick' || command === '/revoke') &&
           activeChannel.value &&
           args.length === 1
         ) {
@@ -93,7 +93,7 @@ export default defineComponent({
             await $store.dispatch('channels_v2/kickUser', {
               channelName: activeChannel.value.name,
               userId: userToBeKicked.id,
-              method: KickType.Kick,
+              method: command === '/kick' ? KickType.Kick : KickType.Revoke,
             });
         }
       } else
