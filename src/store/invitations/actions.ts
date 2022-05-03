@@ -99,6 +99,28 @@ const actions: ActionTree<InvitationsStateInterface, StateInterface> = {
       commit('SUBMIT_FINISH');
     }
   },
+
+  async inviteByNickname(
+    { commit },
+    { channelId, nicknames }: { channelId: string; nicknames: string[] }
+  ) {
+    try {
+      commit('SUBMIT_START');
+
+      await Promise.all(
+        nicknames.map((nickname) =>
+          invitationManager.sendInvitation({
+            channelId,
+            nickname,
+          } as CreateInvitationRequest)
+        )
+      );
+    } catch (err) {
+      throw err;
+    } finally {
+      commit('SUBMIT_FINISH');
+    }
+  },
 };
 
 export default actions;

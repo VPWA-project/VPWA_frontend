@@ -26,10 +26,10 @@
         <div class="row items-center">
           <q-chat-message
             push
-            :class="{ 'q-mb-none': message.tag }"
+            :class="{ 'q-mb-none': message.tags?.find(user => user.id === authUser.id) }"
             :name="fullName(message.user.firstname, message.user.lastname)"
             :text="[message.message]"
-            :bg-color="message.tag ? 'cyan-5' : 'blue-grey-2'"
+            :bg-color="message.tags?.find(user => user.id === authUser.id) ? 'cyan-5' : 'blue-grey-2'"
             :stamp="timeStamp(message.createdAt)"
           >
             <template v-slot:avatar>
@@ -55,7 +55,7 @@
 import { computed, defineComponent, nextTick, ref, watch } from 'vue';
 import moment from 'moment';
 // import { useStore } from 'src/store';
-import { PageMetaData, SerializedMessage } from 'src/contracts';
+import { PageMetaData, SerializedMessage, User } from 'src/contracts';
 import { QInfiniteScroll } from 'quasar';
 import { useStore } from 'src/store';
 
@@ -76,6 +76,11 @@ export default defineComponent({
         $store.getters[
           'channels_v2/getCurrentPageMetaData'
         ] as PageMetaData | null
+    );
+
+    const authUser = computed(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      () => $store.getters['auth/getAuthenticatedUser'] as User | null
     );
 
     // const { getVerticalScrollPosition, setVerticalScrollPosition } = scroll
@@ -112,6 +117,7 @@ export default defineComponent({
       },
       area,
       messages,
+      authUser,
       activeChannel,
       timeStamp: computed(() => {
         return (time: string) => {

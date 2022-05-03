@@ -31,7 +31,8 @@ export type GetAllUsersResponse = PaginatedResponse<User[]>;
 
 export interface CreateInvitationRequest {
   channelId: string;
-  userId: string;
+  userId?: string;
+  nickname?: string
 }
 
 export type CreateInvitationResponse = unknown;

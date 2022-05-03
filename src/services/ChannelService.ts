@@ -20,6 +20,7 @@ import {
 import { StateInterface } from 'src/store';
 import { channelService } from '.';
 import { SocketManager } from './SocketManager';
+import { Notify } from 'quasar';
 
 class ChannelSocketManager extends SocketManager {
   public subscribe({ store }: BootFileParams<StateInterface>): void {
@@ -28,6 +29,16 @@ class ChannelSocketManager extends SocketManager {
     this.socket.on('message', (message: SerializedMessage) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       store.commit('channels_v2/NEW_MESSAGE', { channel, message });
+
+      Notify.create({
+        message: `${message.message.substring(0, 30)}${
+          message.message.length > 30 ? '...' : ''
+        }`,
+        caption: `@${message.user.nickname} - ${message.user.firstname} ${message.user.lastname}`,
+        color: 'grey-2',
+        textColor: 'black',
+        position: 'bottom-right',
+      });
     });
 
     this.socket.on(
@@ -58,7 +69,11 @@ class ChannelSocketManager extends SocketManager {
     this.socket.on('channel:receiveTyping', (message: TypedMessage) => {
       if (!!message.content)
         store.commit('channels_v2/NEW_TYPED_MESSAGE', message);
-      else store.commit('channels_v2/REMOVE_TYPED_MESSAGE', message);
+      else
+        store.commit('channels_v2/REMOVE_TYPED_MESSAGE', {
+          channelName: message.channel,
+          userId: message.author.id,
+        });
     });
 
     this.socket.on('channel:delete', (channel: Channel) => {
@@ -84,10 +99,22 @@ class ChannelSocketManager extends SocketManager {
         //console.log(`User: ${user.nickname} left the channel`);
       }
     );
+
+    this.socket.on('channel:connect', async (user: User) => {
+      await store.dispatch('channels_v2/userOnline', user);
+    });
+
+    this.socket.on('channel:disconnect', (user: User) => {
+      console.log(`User ${user.nickname} is disconnecting from ${channel}`)
+      store.commit('channels_v2/REMOVE_TYPED_MESSAGE', {
+        channelName: channel,
+        userId: user.id,
+      });
+    });
   }
 
-  public addMessage(message: RawMessage): Promise<SerializedMessage> {
-    return this.emitAsync('addMessage', message);
+  public addMessage(message: RawMessage, tags?: string[]): Promise<SerializedMessage> {
+    return this.emitAsync('addMessage', message, tags);
   }
 
   public loadMessages(

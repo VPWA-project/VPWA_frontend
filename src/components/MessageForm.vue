@@ -17,13 +17,7 @@
           v-model.trim="state.message"
           placeholder="Type a message"
         />
-        <q-btn
-          round
-          color="cyan-8"
-          icon="send"
-          type="submit"
-          @click="showNotif"
-        />
+        <q-btn round color="cyan-8" icon="send" type="submit" />
       </q-form>
     </div>
   </div>
@@ -33,9 +27,14 @@
 import { defineComponent, reactive, computed } from 'vue';
 import TypingChips from './TypingChips.vue';
 import { useStore } from 'src/store';
-import { useRoute } from 'vue-router';
-import { useQuasar } from 'quasar';
-import { Channel } from 'src/contracts';
+import { useRoute, useRouter } from 'vue-router';
+import {
+  Channel,
+  ChannelType,
+  CreateChannelRequest,
+  KickType,
+  User,
+} from 'src/contracts';
 
 export default defineComponent({
   name: 'MessageForm',
@@ -46,11 +45,16 @@ export default defineComponent({
     });
     const $store = useStore();
     const route = useRoute();
-    const $q = useQuasar();
+    const router = useRouter();
 
     const activeChannel = computed(
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       () => $store.getters['channels_v2/getActiveChannel'] as Channel | null
+    );
+
+    const amIChannelAdmin = computed(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      () => $store.getters['channels_v2/amIChannelAdmin'] as boolean
     );
 
     const sendTypedMessage = async () => {
@@ -68,12 +72,76 @@ export default defineComponent({
     const handleSubmit = async () => {
       if (!state.message) return;
 
-      await $store
-        .dispatch('channels_v2/addMessage', {
-          channel: route.params.name as string,
-          message: state.message,
-        })
-        .catch(console.log);
+      if (state.message.startsWith('/')) {
+        // command
+        const words = state.message.split(' ');
+        const command = words[0];
+        const args = words.slice(1);
+
+        if (
+          (command === '/cancel' && activeChannel.value) ||
+          (command === '/quit' && activeChannel.value && amIChannelAdmin)
+        ) {
+          await $store
+            .dispatch('channels_v2/leaveChannel', activeChannel.value.name)
+            .then(() => router.push({ name: 'home' }));
+        } else if (
+          (command === '/kick' || command === '/revoke') &&
+          activeChannel.value &&
+          args.length === 1
+        ) {
+          const userToBeKicked = (await $store.dispatch(
+            'channels_v2/getUserByNicknameFromActiveChannelStore',
+            args[0]
+          )) as User | undefined;
+
+          if (userToBeKicked)
+            await $store.dispatch('channels_v2/kickUser', {
+              channelName: activeChannel.value.name,
+              userId: userToBeKicked.id,
+              method: command === '/kick' ? KickType.Kick : KickType.Revoke,
+            });
+        } else if (
+          command === '/invite' &&
+          activeChannel.value &&
+          args.length === 1
+        ) {
+          await $store.dispatch('invitations/inviteByNickname', {
+            channelId: activeChannel.value.id,
+            nicknames: args,
+          });
+        } else if (
+          command === '/join' &&
+          args.length >= 1 &&
+          args.length <= 2
+        ) {
+          const channelName = args[0];
+          const channelType =
+            args[1] && args[1] === 'private'
+              ? ChannelType.Private
+              : ChannelType.Public;
+
+          await $store.dispatch('createChannel/create', {
+            name: channelName,
+            type: channelType,
+            invitations: undefined,
+          } as CreateChannelRequest);
+        }
+      } else {
+        // TODO: parse tags
+        const tags = state.message
+          .split(' ')
+          .filter((word) => word.startsWith('@'))
+          .map((nickname) => nickname.slice(1));
+
+        await $store
+          .dispatch('channels_v2/addMessage', {
+            channel: route.params.name as string,
+            message: state.message,
+            tags,
+          })
+          .catch(console.log);
+      }
 
       state.message = '';
 
@@ -83,15 +151,6 @@ export default defineComponent({
     return {
       state,
       handleSubmit,
-      showNotif() {
-        $q.notify({
-          message: 'John Doe',
-          caption: 'Heeey Jozko, How are you ?',
-          color: 'grey-2',
-          textColor: 'black',
-          position: 'bottom-right',
-        });
-      },
       activeChannel: computed(() => $store.state.channels_v2.active),
       amIChannelMember: computed(
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access

@@ -52,10 +52,13 @@ const mutation: MutationTree<ChannelsV2StateInterface> = {
       state.typedMessages[message.channel] = {};
     state.typedMessages[message.channel][message.author.id] = message;
   },
-  REMOVE_TYPED_MESSAGE(state, message: TypedMessage) {
-    if (!state.typedMessages[message.channel]) return;
+  REMOVE_TYPED_MESSAGE(
+    state,
+    { channelName, userId }: { channelName: string; userId: string }
+  ) {
+    if (!state.typedMessages[channelName]) return;
 
-    delete state.typedMessages[message.channel][message.author.id];
+    delete state.typedMessages[channelName][userId];
   },
   ADD_CHANNEL(state, channel: Channel) {
     state.channels.push(channel);

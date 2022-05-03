@@ -4,9 +4,8 @@ import {
   KickUserRequest,
   RawMessage,
   User,
-  UserStatus,
 } from 'src/contracts';
-import { activityService, channelService } from 'src/services';
+import { channelService } from 'src/services';
 import { ActionTree } from 'vuex';
 import { StateInterface } from '../index';
 import { ChannelsV2StateInterface } from './state';
@@ -107,10 +106,10 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
 
   async addMessage(
     { commit },
-    { channel, message }: { channel: string; message: RawMessage }
+    { channel, message, tags }: { channel: string; message: RawMessage, tags?: string[] }
   ) {
     try {
-      const newMessage = await channelService.in(channel)?.addMessage(message);
+      const newMessage = await channelService.in(channel)?.addMessage(message, tags);
       commit('NEW_MESSAGE', { channel, message: newMessage });
     } catch (err) {
       throw err;
@@ -226,6 +225,13 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
       commit('ADD_TO_USER_LIST', userOnline);
     }
   },
+
+  getUserByNicknameFromActiveChannelStore({getters}, nickname: string) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const channelUsers = getters['getAllUsers'] as User[]
+
+    return channelUsers.find((user) => user.nickname === nickname)
+  }
 };
 
 export default actions;
