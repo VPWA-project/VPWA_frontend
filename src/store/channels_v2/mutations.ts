@@ -74,7 +74,7 @@ const mutation: MutationTree<ChannelsV2StateInterface> = {
     { user, channel }: { user: User; channel: Channel }
   ) {
     console.log(state.channelsUsers);
-    state.channelsUsers[channel.id] = state.channelsUsers[channel.id].filter(
+    state.channelsUsers[channel.name] = state.channelsUsers[channel.name].filter(
       (obj) => obj.id !== user.id
     );
     console.log(state.channelsUsers);
@@ -93,12 +93,20 @@ const mutation: MutationTree<ChannelsV2StateInterface> = {
   GET_USER_CHANNELS(state, channels: Channel[]) {
     state.channels = channels;
   },
+  ADD_CHANNEL_USER(
+    state,
+    { channel, user }: { channel: string; user: User }
+  ) {
+    const users = state.channelsUsers[channel] || [];
+    users.push(user);
 
+    if (!state.channelsUsers[channel]) state.channelsUsers[channel] = users;
+  },
   GET_CHANNEL_USERS(
     state,
-    { channelId, users }: { channelId: string; users: User[] }
+    { channel, users }: { channel: string; users: User[] }
   ) {
-    state.channelsUsers[channelId] = users;
+    state.channelsUsers[channel] = users;
   },
   SET_USER_LIST(
     state,

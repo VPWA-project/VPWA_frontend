@@ -78,7 +78,7 @@ const getters: GetterTree<ChannelsV2StateInterface, StateInterface> = {
     const administrator = context.activeChannel!.administrator;
     const authUser = store.auth.user;
 
-    const channelUsers = context.channelsUsers[activeChannel!.id] || [];
+    const channelUsers = context.channelsUsers[activeChannel!.name] || [];
     const onlineDndUsers = [] as User[];
 
     storedUsers.forEach((channelUser) => {
@@ -101,7 +101,7 @@ const getters: GetterTree<ChannelsV2StateInterface, StateInterface> = {
     const administrator = context.activeChannel!.administrator;
     const authUser = store.auth.user;
 
-    const channelUsers = context.channelsUsers[activeChannel!.id] || [];
+    const channelUsers = context.channelsUsers[activeChannel!.name] || [];
     const onlineDndUsers = [] as User[];
 
     console.log('STORED users: ', storedUsers);
@@ -126,7 +126,7 @@ const getters: GetterTree<ChannelsV2StateInterface, StateInterface> = {
 
     if(!activeChannel) return
 
-    return activeChannel ? context.channelsUsers[activeChannel?.id] : [];
+    return activeChannel ? context.channelsUsers[activeChannel?.name] : [];
   },
 };
 

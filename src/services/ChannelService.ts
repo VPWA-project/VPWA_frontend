@@ -102,6 +102,7 @@ class ChannelSocketManager extends SocketManager {
 
     this.socket.on('channel:connect', async (user: User) => {
       await store.dispatch('channels_v2/userOnline', user);
+      store.commit('channels_v2/ADD_CHANNEL_USER', { channel, user })
     });
 
     this.socket.on('channel:disconnect', (user: User) => {
