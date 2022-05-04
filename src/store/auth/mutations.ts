@@ -20,6 +20,9 @@ const mutation: MutationTree<AuthStateInterface> = {
       state.user.status = status;
     }
   },
+  CHANGE_ONLY_NOTIFICATIONS(state, onlyNotifications: boolean) {
+    if (state.user) state.user.onlyNotifications = onlyNotifications;
+  },
 };
 
 export default mutation;

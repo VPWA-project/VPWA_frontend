@@ -37,6 +37,7 @@ export interface User {
   lastname: string;
   nickname: string;
   status?: UserStatus;
+  onlyNotifications: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -50,3 +51,9 @@ export interface ValidationError {
 export interface ValidationErrorResponse {
   errors: ValidationError[];
 }
+
+export interface UpdateUserRequest {
+  onlyNotifications?: boolean;
+}
+
+export type UpdateUserResponse = User;
