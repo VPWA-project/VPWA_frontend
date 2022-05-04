@@ -77,6 +77,11 @@ const actions: ActionTree<AuthStateInterface, StateInterface> = {
     commit('CHANGE_STATUS', status);
     void activityService.changeStatus(status);
   },
+
+  async update({ commit }, onlyNotifications: boolean) {
+    const user = await authService.update({ onlyNotifications });
+    commit('CHANGE_ONLY_NOTIFICATIONS', user.onlyNotifications);
+  },
 };
 
 export default actions;

@@ -115,7 +115,10 @@ export default defineComponent({
         .then((channels: Channel[]) => {
           channels.forEach((channel) => {
             $store
-              .dispatch('channels_v2/getChannelUsers', channel.id)
+              .dispatch('channels_v2/getChannelUsers', {
+                channelId: channel.id,
+                channelName: channel.name,
+              })
               .catch(console.log);
           });
         })

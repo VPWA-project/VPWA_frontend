@@ -1,9 +1,11 @@
 import type { AxiosError, AxiosRequestConfig } from 'axios';
-import type {
+import {
   ApiToken,
   LoginRequest,
   RegisterRequest,
   RegisterResponse,
+  UpdateUserRequest,
+  UpdateUserResponse,
   User,
 } from 'src/contracts';
 import { api } from 'src/boot/axios';
@@ -34,6 +36,11 @@ class AuthService {
 
   async logout(): Promise<void> {
     await api.post('auth/logout');
+  }
+
+  async update(data: UpdateUserRequest): Promise<User> {
+    const response = await api.put<UpdateUserResponse>('auth/me', data);
+    return response.data;
   }
 }
 

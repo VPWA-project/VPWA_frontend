@@ -69,7 +69,11 @@
           <q-item-label>Only @mentions</q-item-label>
         </q-item-section>
         <q-item-section avatar>
-          <q-toggle color="cyan-9" v-model="state.allowOnlyMentions" />
+          <q-toggle
+            @click="changeOnlyNotifications"
+            color="cyan-9"
+            v-model="onlyNotifications"
+          />
         </q-item-section>
       </q-item>
 
@@ -92,22 +96,28 @@
 </template>
 
 <script lang="ts">
-import { UserStatus } from 'src/contracts';
+import { User, UserStatus } from 'src/contracts';
 import { useStore } from 'src/store';
-import { defineComponent, reactive } from 'vue';
-import { Use } from 'webpack-chain';
+import { computed, defineComponent } from 'vue';
 
 export default defineComponent({
   setup() {
     const $store = useStore();
 
-    const state = reactive({
-      allowOnlyMentions: false,
+    const onlyNotifications = computed({
+      get() {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        const user = $store.getters['auth/getAuthenticatedUser'] as User | null;
+        return user ? user.onlyNotifications : false;
+      },
+      set() {
+        return
+      },
     });
 
     return {
-      state,
       UserStatus,
+      onlyNotifications,
       changeUserStatus: (status: UserStatus) => {
         $store.dispatch('auth/changeUserStatus', status).catch(console.log);
         if (status === UserStatus.OFFLINE) {
@@ -120,6 +130,7 @@ export default defineComponent({
         await $store.dispatch('auth/logout');
         await $store.dispatch('channels_v2/leave');
       },
+      changeOnlyNotifications: () => $store.dispatch('auth/update', !onlyNotifications.value),
     };
   },
 });

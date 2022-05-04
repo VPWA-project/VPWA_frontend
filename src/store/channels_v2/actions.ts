@@ -106,10 +106,16 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
 
   async addMessage(
     { commit },
-    { channel, message, tags }: { channel: string; message: RawMessage, tags?: string[] }
+    {
+      channel,
+      message,
+      tags,
+    }: { channel: string; message: RawMessage; tags?: string[] }
   ) {
     try {
-      const newMessage = await channelService.in(channel)?.addMessage(message, tags);
+      const newMessage = await channelService
+        .in(channel)
+        ?.addMessage(message, tags);
       commit('NEW_MESSAGE', { channel, message: newMessage });
     } catch (err) {
       throw err;
@@ -208,11 +214,17 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
 
     await manager.sendTypedMessage(message);
   },
-  async getChannelUsers({ commit }, payload: string) {
+
+  async getChannelUsers(
+    { commit },
+    { channelName, channelId }: { channelName: string; channelId: string }
+  ) {
     try {
       commit('LOADING_START');
-      const users = await channelService.getSearchedUsers(payload);
-      commit('GET_CHANNEL_USERS', { channelId: payload, users });
+      const users = await channelService.getSearchedUsers(channelId);
+      console.log('Received users: ', users);
+      console.log('Payload was: ', channelName);
+      commit('GET_CHANNEL_USERS', { channel: channelName, users });
     } catch (err) {
       commit('LOADING_ERROR');
       throw err;
@@ -226,12 +238,12 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
     }
   },
 
-  getUserByNicknameFromActiveChannelStore({getters}, nickname: string) {
+  getUserByNicknameFromActiveChannelStore({ getters }, nickname: string) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    const channelUsers = getters['getAllUsers'] as User[]
+    const channelUsers = getters['getAllUsers'] as User[];
 
-    return channelUsers.find((user) => user.nickname === nickname)
-  }
+    return channelUsers.find((user) => user.nickname === nickname);
+  },
 };
 
 export default actions;
