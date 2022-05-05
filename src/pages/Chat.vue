@@ -1,11 +1,13 @@
 <template>
   <q-page class="row items-center justify-evenly">
-    <ChatMessagesComponent />
+    <ChatMessagesComponent :key="activeChannel ? `chat-messages-${activeChannel.id}`: `chat-messages`" />
   </q-page>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { Channel } from 'src/contracts';
+import { useStore } from 'src/store';
+import { defineComponent, computed } from 'vue';
 import ChatMessagesComponent from '../components/ChatMessagesComponent.vue';
 
 export default defineComponent({
@@ -13,7 +15,14 @@ export default defineComponent({
   components: { ChatMessagesComponent },
 
   setup() {
-    return {};
+    const $store = useStore();
+
+    return {
+      activeChannel: computed(
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        () => $store.getters['channels_v2/getActiveChannel'] as Channel | null
+      ),
+    };
   },
 });
 </script>

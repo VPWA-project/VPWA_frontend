@@ -122,7 +122,7 @@ class ChannelSocketManager extends SocketManager {
     page?: number,
     limit?: number
   ): Promise<PaginatedResponse<SerializedMessage[]>> {
-    return this.emitAsync('loadMessages', page || 1, limit || 10);
+    return this.emitAsync('loadMessages', page || 1, limit || 50);
   }
 
   public kickUser(data: KickUserRequest) {

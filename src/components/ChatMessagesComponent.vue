@@ -3,12 +3,7 @@
     v-if="amIChannelMember && activeChannel"
     class="q-pa-md full-width bg-white"
   >
-    <q-infinite-scroll
-      :key="activeChannel.id"
-      ref="area"
-      @load="onLoad"
-      reverse
-    >
+    <q-infinite-scroll :key="activeChannel.id" @load="onLoad" reverse>
       <template v-slot:loading>
         <div class="row justify-center q-my-md">
           <q-spinner color="cyan-9" name="dots" size="40px" />
@@ -26,10 +21,18 @@
         <div class="row items-center">
           <q-chat-message
             push
-            :class="{ 'q-mb-none': message.tags?.find(user => user.id === authUser.id) }"
+            :class="{
+              'q-mb-none': message.tags?.find(
+                (user) => user.id === authUser.id
+              ),
+            }"
             :name="fullName(message.user.firstname, message.user.lastname)"
             :text="[message.message]"
-            :bg-color="message.tags?.find(user => user.id === authUser.id) ? 'cyan-5' : 'blue-grey-2'"
+            :bg-color="
+              message.tags?.find((user) => user.id === authUser.id)
+                ? 'cyan-5'
+                : 'blue-grey-2'
+            "
             :stamp="timeStamp(message.createdAt)"
           >
             <template v-slot:avatar>
@@ -52,11 +55,9 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, nextTick, ref, watch } from 'vue';
+import { computed, defineComponent, ref } from 'vue';
 import moment from 'moment';
-// import { useStore } from 'src/store';
 import { PageMetaData, SerializedMessage, User } from 'src/contracts';
-import { QInfiniteScroll } from 'quasar';
 import { useStore } from 'src/store';
 
 export default defineComponent({
@@ -83,18 +84,6 @@ export default defineComponent({
       () => $store.getters['auth/getAuthenticatedUser'] as User | null
     );
 
-    // const { getVerticalScrollPosition, setVerticalScrollPosition } = scroll
-
-    const area = ref<QInfiniteScroll>();
-
-    const scrollMessages = () => {
-      console.log(area.value?.scrollTarget);
-    };
-
-    watch(messages, () => {
-      void nextTick(() => scrollMessages());
-    });
-
     const activeChannel = computed(() => $store.state.channels_v2.active);
 
     return {
@@ -115,7 +104,6 @@ export default defineComponent({
           done(false);
         }
       },
-      area,
       messages,
       authUser,
       activeChannel,
@@ -155,6 +143,7 @@ export default defineComponent({
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         () => $store.getters['channels_v2/amIChannelMember'] as boolean
       ),
+      scrollTarget: ref(null),
     };
   },
 });
