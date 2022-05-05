@@ -21,7 +21,6 @@ import { StateInterface } from 'src/store';
 import { channelService } from '.';
 import { SocketManager } from './SocketManager';
 import { Notify } from 'quasar';
-import Vue from 'vue' 
 
 class ChannelSocketManager extends SocketManager {
   public subscribe({ store }: BootFileParams<StateInterface>): void {
