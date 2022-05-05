@@ -3,51 +3,56 @@
     v-if="amIChannelMember && activeChannel"
     class="q-pa-md full-width bg-white"
   >
-    <q-infinite-scroll
-      :key="activeChannel.id"
-      ref="area"
-      @load="onLoad"
-      reverse
-    >
-      <template v-slot:loading>
-        <div class="row justify-center q-my-md">
-          <q-spinner color="cyan-9" name="dots" size="40px" />
-        </div>
-      </template>
+    <q-scroll-area ref="area" style="width: 100%; height: calc(100vh - 150px)">
+      <q-infinite-scroll :key="activeChannel.id" @load="onLoad" reverse>
+        <template v-slot:loading>
+          <div class="row justify-center q-my-md">
+            <q-spinner color="cyan-9" name="dots" size="40px" />
+          </div>
+        </template>
 
-      <div v-for="(message, index) in messages" :key="index">
-        <q-chat-message
-          v-if="
-            index == 0 ||
-            !areDatesSame(message.createdAt, messages[index - 1].createdAt)
-          "
-          :label="date(message.createdAt)"
-        />
-        <div class="row items-center">
+        <div v-for="(message, index) in messages" :key="index">
           <q-chat-message
-            push
-            :class="{ 'q-mb-none': message.tags?.find(user => user.id === authUser.id) }"
-            :name="fullName(message.user.firstname, message.user.lastname)"
-            :text="[message.message]"
-            :bg-color="message.tags?.find(user => user.id === authUser.id) ? 'cyan-5' : 'blue-grey-2'"
-            :stamp="timeStamp(message.createdAt)"
-          >
-            <template v-slot:avatar>
-              <q-avatar
-                class="q-mr-md"
-                rounded
-                color="cyan-7"
-                text-color="white"
-              >
-                {{
-                  nameInitials(message.user.firstname, message.user.lastname)
-                }}
-              </q-avatar>
-            </template>
-          </q-chat-message>
+            v-if="
+              index == 0 ||
+              !areDatesSame(message.createdAt, messages[index - 1].createdAt)
+            "
+            :label="date(message.createdAt)"
+          />
+          <div class="row items-center">
+            <q-chat-message
+              push
+              :class="{
+                'q-mb-none': message.tags?.find(
+                  (user) => user.id === authUser.id
+                ),
+              }"
+              :name="fullName(message.user.firstname, message.user.lastname)"
+              :text="[message.message]"
+              :bg-color="
+                message.tags?.find((user) => user.id === authUser.id)
+                  ? 'cyan-5'
+                  : 'blue-grey-2'
+              "
+              :stamp="timeStamp(message.createdAt)"
+            >
+              <template v-slot:avatar>
+                <q-avatar
+                  class="q-mr-md"
+                  rounded
+                  color="cyan-7"
+                  text-color="white"
+                >
+                  {{
+                    nameInitials(message.user.firstname, message.user.lastname)
+                  }}
+                </q-avatar>
+              </template>
+            </q-chat-message>
+          </div>
         </div>
-      </div>
-    </q-infinite-scroll>
+      </q-infinite-scroll>
+    </q-scroll-area>
   </div>
 </template>
 
@@ -56,7 +61,7 @@ import { computed, defineComponent, nextTick, ref, watch } from 'vue';
 import moment from 'moment';
 // import { useStore } from 'src/store';
 import { PageMetaData, SerializedMessage, User } from 'src/contracts';
-import { QInfiniteScroll } from 'quasar';
+import { QInfiniteScroll, QScrollArea } from 'quasar';
 import { useStore } from 'src/store';
 
 export default defineComponent({
@@ -85,10 +90,10 @@ export default defineComponent({
 
     // const { getVerticalScrollPosition, setVerticalScrollPosition } = scroll
 
-    const area = ref<QInfiniteScroll>();
+    const area = ref<QScrollArea>();
 
     const scrollMessages = () => {
-      console.log(area.value?.scrollTarget);
+      area.value?.setScrollPercentage('vertical', 1.1);
     };
 
     watch(messages, () => {
