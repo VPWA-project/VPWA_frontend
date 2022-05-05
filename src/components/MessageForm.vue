@@ -99,8 +99,27 @@ export default defineComponent({
             type: channelType,
             invitations: undefined,
           } as CreateChannelRequest)
-          .then(() => notifyUserPositive('Success'))
-          .catch(() => notifyUserNegative('Unexpected error'));
+          .then(() =>
+            notifyUserPositive(
+              `The channel ${channelName} was created successfully`
+            )
+          )
+          .catch(async () => {
+            const channel = (await $store.dispatch(
+              'channels_v2/getChannel',
+              channelName
+            )) as Channel | null;
+
+            if (channel)
+              await $store
+                .dispatch('channels_v2/joinChannel', channel.id)
+                .then(() =>
+                  notifyUserPositive(
+                    `Successfully joined to the channel ${channelName}`
+                  )
+                )
+                .catch(() => notifyUserNegative('Unexpected error'));
+          });
       } else
         notifyUserNegative(
           'The syntax of the command is incorrect. Use: /join channelName [private]'

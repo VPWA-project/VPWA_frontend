@@ -142,6 +142,14 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
     }
   },
 
+  async getChannel({}, channelName: string | undefined) {
+    if (channelName) {
+      return await channelService.getChannel(channelName);
+    }
+
+    return null;
+  },
+
   async setActiveChannel(
     { getters, commit, dispatch },
     name: string | undefined
@@ -154,11 +162,7 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
 
       console.log('Currently active channel is: ', activeChannelName);
 
-      let channel = undefined;
-
-      if (name) {
-        channel = await channelService.getChannel(name);
-      }
+      const channel = (await dispatch('getChannel', name)) as Channel | null;
 
       console.log('Received channel is: ', channel);
 
