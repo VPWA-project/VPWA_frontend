@@ -21,6 +21,7 @@ import { StateInterface } from 'src/store';
 import { channelService } from '.';
 import { SocketManager } from './SocketManager';
 import { Notify } from 'quasar';
+import Vue from 'vue' 
 
 class ChannelSocketManager extends SocketManager {
   public subscribe({ store }: BootFileParams<StateInterface>): void {
@@ -75,6 +76,8 @@ class ChannelSocketManager extends SocketManager {
     this.socket.on('channel:delete', (channel: Channel) => {
       store.commit('channels_v2/REMOVE_CHANNEL', channel.name);
       channelService.disconnect(channel.name);
+       // TODO: redirect with vue router
+       window.location.href = '/';
     });
 
     this.socket.on(
