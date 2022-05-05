@@ -6,7 +6,6 @@ import {
   User,
   KickType,
 } from 'src/contracts';
-import router from 'src/router';
 import { StateInterface } from 'src/store';
 import { Router } from 'vue-router';
 import { Store } from 'vuex';

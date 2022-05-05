@@ -73,7 +73,7 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
     });
   },
 
-  offline({ getters }, channel: string | null) {
+  offline({ getters }) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const leaving: string[] =
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
