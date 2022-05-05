@@ -2,12 +2,16 @@
   <form @submit.prevent.stop="handleSubmit">
     <h2 class="text-h6 text-center">Login</h2>
 
+    <q-banner v-if="serverError" inline-actions class="text-white bg-red">
+      {{ serverError.message }}
+    </q-banner>
+
     <q-input
       class="q-mt-lg border-15 bg-white q-pb-none q-pl-md q-pr-md"
       color="cyan-9"
       borderless
       v-model="state.email"
-      :error="v$.email.$error || !!state.serverErrors?.email"
+      :error="v$.email.$error || !!state.serverValidationErrors?.email"
       @keyup="clearServerError(state, 'email')"
       name="email"
       label="Email"
@@ -17,7 +21,10 @@
         <div :key="error.$uid" v-for="error of v$.email.$errors">
           {{ error.$message }}
         </div>
-        <div :key="index" v-for="(error, index) of state.serverErrors.email">
+        <div
+          :key="index"
+          v-for="(error, index) of state.serverValidationErrors.email"
+        >
           {{ error }}
         </div>
       </template>
@@ -28,7 +35,7 @@
       color="cyan-9"
       borderless
       v-model="state.password"
-      :error="v$.password.$error || !!state.serverErrors?.password"
+      :error="v$.password.$error || !!state.serverValidationErrors?.password"
       :type="state.isPwd ? 'password' : 'text'"
       @keyup="clearServerError(state, 'password')"
       name="password"
@@ -46,7 +53,10 @@
         <div :key="error.$uid" v-for="error of v$.password.$errors">
           {{ error.$message }}
         </div>
-        <div :key="index" v-for="(error, index) of state.serverErrors.password">
+        <div
+          :key="index"
+          v-for="(error, index) of state.serverValidationErrors.password"
+        >
           {{ error }}
         </div>
       </template>
@@ -75,7 +85,12 @@ import { useStore } from '../store';
 import { helpers, required, email, minLength } from '@vuelidate/validators';
 import useVuelidate from '@vuelidate/core';
 import { RouteLocationRaw, useRoute, useRouter } from 'vue-router';
-import { LoginRequest, ServerErrors } from 'src/contracts';
+import {
+  LoginRequest,
+  ServerError,
+  ServerErrors,
+  ValidationError,
+} from 'src/contracts';
 import { groupValidationErrors, clearServerError } from 'src/utils/utils';
 
 const rules = {
@@ -104,15 +119,22 @@ export default defineComponent({
       email: '',
       password: '',
       isPwd: true,
-      serverErrors: {} as ServerErrors
+      serverValidationErrors: {} as ServerErrors,
     });
 
     const v$ = useVuelidate(rules, state);
 
     const redirectTo = computed(
-      () => (route.query.redirect as string) || { name: 'home' } as RouteLocationRaw
+      () =>
+        (route.query.redirect as string) ||
+        ({ name: 'home' } as RouteLocationRaw)
     );
     const submitting = computed(() => $store.state.auth.status === 'pending');
+
+    const validationErrors = computed(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      () => $store.getters['auth/getValidationErrors'] as ValidationError[]
+    );
 
     const handleSubmit = () => {
       v$.value
@@ -128,9 +150,9 @@ export default defineComponent({
               .dispatch('auth/login', payload)
               .then(() => router.push(redirectTo.value))
               .catch(() => {
-                state.serverErrors = groupValidationErrors(
-                  $store.state.auth.validationErrors
-                )
+                state.serverValidationErrors = groupValidationErrors(
+                  validationErrors.value
+                );
               });
           }
         })
@@ -143,6 +165,10 @@ export default defineComponent({
       submitting,
       clearServerError,
       handleSubmit,
+      serverError: computed(
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        () => $store.getters['auth/getServerError'] as ServerError | null
+      ),
     };
   },
 });
