@@ -129,7 +129,7 @@ export default defineComponent({
               .then(() => router.push(redirectTo.value))
               .catch(() => {
                 state.serverErrors = groupValidationErrors(
-                  $store.state.auth.errors
+                  $store.state.auth.validationErrors
                 )
               });
           }

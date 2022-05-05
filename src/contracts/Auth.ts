@@ -52,6 +52,10 @@ export interface ValidationErrorResponse {
   errors: ValidationError[];
 }
 
+export interface ServerError {
+  message: string;
+}
+
 export interface UpdateUserRequest {
   onlyNotifications?: boolean;
 }

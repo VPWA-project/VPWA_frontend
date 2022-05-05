@@ -1,16 +1,18 @@
-import { User, ValidationError } from 'src/contracts';
+import { User, ValidationError, ServerError } from 'src/contracts';
 
 export interface AuthStateInterface {
   user: User | null;
   status: 'pending' | 'success' | 'error';
-  errors: ValidationError[]
+  validationErrors: ValidationError[];
+  serverError: ServerError | null;
 }
 
 function state(): AuthStateInterface {
   return {
     user: null,
     status: 'pending',
-    errors: [],
+    validationErrors: [],
+    serverError: null,
   };
 }
 

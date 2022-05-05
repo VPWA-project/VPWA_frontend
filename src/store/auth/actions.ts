@@ -5,6 +5,7 @@ import { authService, authManager, activityService } from 'src/services';
 import {
   LoginRequest,
   RegisterRequest,
+  ServerError,
   UserStatus,
   ValidationErrorResponse,
 } from 'src/contracts';
@@ -18,7 +19,9 @@ const actions: ActionTree<AuthStateInterface, StateInterface> = {
       commit('AUTH_SUCCESS', user);
       return user !== null;
     } catch (err) {
-      commit('AUTH_ERROR', err);
+      const error = err as AxiosError;
+
+      commit('AUTH_SERVER_ERROR', error.message);
       throw err;
     }
   },
@@ -35,7 +38,9 @@ const actions: ActionTree<AuthStateInterface, StateInterface> = {
 
       if (error.response?.status == 422) {
         const errors = error.response?.data as ValidationErrorResponse;
-        commit('AUTH_ERROR', errors.errors);
+        commit('AUTH_VALIDATION_ERROR', errors.errors);
+      } else {
+        commit('AUTH_SERVER_ERROR', { message: error.message } as ServerError);
       }
 
       throw err;
@@ -52,9 +57,11 @@ const actions: ActionTree<AuthStateInterface, StateInterface> = {
     } catch (err) {
       const error = err as AxiosError;
 
-      if (error.response?.status == 422) {
+      if (error.response?.status == 422 || error.response?.status === 401) {
         const errors = error.response.data as ValidationErrorResponse;
-        commit('AUTH_ERROR', errors.errors);
+        commit('AUTH_VALIDATION_ERROR', errors.errors);
+      } else {
+        commit('AUTH_SERVER_ERROR', { message: error.message } as ServerError);
       }
 
       throw err;
@@ -69,7 +76,9 @@ const actions: ActionTree<AuthStateInterface, StateInterface> = {
       // remove api token and notify listeners
       authManager.removeToken();
     } catch (err) {
-      commit('AUTH_ERROR', err);
+      const error = err as AxiosError;
+
+      commit('AUTH_ERROR', error.message);
       throw err;
     }
   },

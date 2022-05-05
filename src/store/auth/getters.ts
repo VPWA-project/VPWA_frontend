@@ -9,6 +9,12 @@ const getters: GetterTree<AuthStateInterface, StateInterface> = {
   getAuthenticatedUser(context) {
     return context.user;
   },
+  getValidationErrors(context) {
+    return context.validationErrors;
+  },
+  getServerError(context) {
+    return context.serverError;
+  },
 };
 
 export default getters;

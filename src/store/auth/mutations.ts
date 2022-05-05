@@ -1,19 +1,24 @@
-import { User, UserStatus } from 'src/contracts';
+import { ServerError, User, UserStatus, ValidationError } from 'src/contracts';
 import { MutationTree } from 'vuex';
 import { AuthStateInterface } from './state';
 
 const mutation: MutationTree<AuthStateInterface> = {
   AUTH_START(state) {
     state.status = 'pending';
-    state.errors = [];
+    state.validationErrors = [];
+    state.serverError = null
   },
   AUTH_SUCCESS(state, user: User | null) {
     state.status = 'success';
     state.user = user;
   },
-  AUTH_ERROR(state, errors: []) {
+  AUTH_VALIDATION_ERROR(state, errors: ValidationError[]) {
     state.status = 'error';
-    state.errors = errors;
+    state.validationErrors = errors;
+  },
+  AUTH_SERVER_ERROR(state, error: ServerError) {
+    state.status = 'error'
+    state.serverError = error
   },
   CHANGE_STATUS(state, status: UserStatus) {
     if (state.user) {
