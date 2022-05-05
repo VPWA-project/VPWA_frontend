@@ -21,7 +21,6 @@ import {
 import { StateInterface } from 'src/store';
 import { channelService } from '.';
 import { SocketManager } from './SocketManager';
-import Vue from 'vue';
 import { Notify, AppVisibility } from 'quasar';
 
 class ChannelSocketManager extends SocketManager {
@@ -62,7 +61,7 @@ class ChannelSocketManager extends SocketManager {
           // Let's check whether notification permissions have already been granted
           else if (Notification.permission === 'granted') {
             // If it's okay let's create a notification
-            const notification = new Notification(message.message, {
+            new Notification(message.message, {
               body: `@${message.user.nickname} - ${message.user.firstname} ${message.user.lastname}`,
             });
           }
@@ -73,7 +72,7 @@ class ChannelSocketManager extends SocketManager {
               .then(function (permission) {
                 // If the user accepts, let's create a notification
                 if (permission === 'granted') {
-                  const notification = new Notification(message.message, {
+                  new Notification(message.message, {
                     body: `@${message.user.nickname} - ${message.user.firstname} ${message.user.lastname}`,
                   });
                 }

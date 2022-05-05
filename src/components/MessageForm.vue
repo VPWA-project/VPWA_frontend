@@ -31,12 +31,8 @@ import { useRoute, useRouter } from 'vue-router';
 import { useQuasar } from 'quasar';
 import {
   Channel,
-  ChannelType,
-  CreateChannelRequest,
-  KickType,
-  User,
 } from 'src/contracts';
-import auth from 'src/boot/auth';
+import { commandService } from 'src/services';
 
 export default defineComponent({
   name: 'MessageForm',
@@ -81,57 +77,38 @@ export default defineComponent({
         const command = words[0];
         const args = words.slice(1);
 
-        if (
-          (command === '/cancel' && activeChannel.value) ||
-          (command === '/quit' && activeChannel.value && amIChannelAdmin)
-        ) {
-          await $store
-            .dispatch('channels_v2/leaveChannel', activeChannel.value.name)
-            .then(() => router.push({ name: 'home' }));
-        } else if (
-          (command === '/kick' || command === '/revoke') &&
-          activeChannel.value &&
-          args.length === 1
-        ) {
-          const userToBeKicked = (await $store.dispatch(
-            'channels_v2/getUserByNicknameFromActiveChannelStore',
-            args[0]
-          )) as User | undefined;
-
-          if (userToBeKicked)
-            await $store.dispatch('channels_v2/kickUser', {
-              channelName: activeChannel.value.name,
-              userId: userToBeKicked.id,
-              method: command === '/kick' ? KickType.Kick : KickType.Revoke,
-            });
-        } else if (
-          command === '/invite' &&
-          activeChannel.value &&
-          args.length === 1
-        ) {
-          await $store.dispatch('invitations/inviteByNickname', {
-            channelId: activeChannel.value.id,
-            nicknames: args,
-          });
-        } else if (
-          command === '/join' &&
-          args.length >= 1 &&
-          args.length <= 2
-        ) {
-          const channelName = args[0];
-          const channelType =
-            args[1] && args[1] === 'private'
-              ? ChannelType.Private
-              : ChannelType.Public;
-
-          await $store.dispatch('createChannel/create', {
-            name: channelName,
-            type: channelType,
-            invitations: undefined,
-          } as CreateChannelRequest);
-        }
+        if (command === '/join')
+          await commandService.processJoinCommand($store, args);
+        else if (command === '/cancel')
+          await commandService.processCancelCommand(
+            $store,
+            router,
+            args,
+            activeChannel.value
+          );
+        else if (command === '/quit')
+          await commandService.processQuitCommand(
+            $store,
+            router,
+            args,
+            activeChannel.value,
+            amIChannelAdmin.value
+          );
+        else if (command === '/kick' || command === '/revoke')
+          await commandService.processKickRevokeCommand(
+            $store,
+            command,
+            args,
+            activeChannel.value
+          );
+        else if (command === '/invite')
+          await commandService.processInviteCommand(
+            $store,
+            args,
+            activeChannel.value,
+            amIChannelAdmin.value
+          );
       } else {
-        // TODO: parse tags
         const tags = state.message
           .split(' ')
           .filter((word) => word.startsWith('@'))
