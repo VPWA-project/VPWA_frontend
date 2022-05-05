@@ -5,7 +5,6 @@ import { authService, authManager, activityService } from 'src/services';
 import {
   LoginRequest,
   RegisterRequest,
-  ServerError,
   UserStatus,
   ValidationErrorResponse,
 } from 'src/contracts';
@@ -21,7 +20,9 @@ const actions: ActionTree<AuthStateInterface, StateInterface> = {
     } catch (err) {
       const error = err as AxiosError;
 
-      commit('AUTH_SERVER_ERROR', error.message);
+      commit('AUTH_SERVER_ERROR', {
+        message: error.message,
+      });
       throw err;
     }
   },
@@ -39,9 +40,10 @@ const actions: ActionTree<AuthStateInterface, StateInterface> = {
       if (error.response?.status == 422) {
         const errors = error.response?.data as ValidationErrorResponse;
         commit('AUTH_VALIDATION_ERROR', errors.errors);
-      } else {
-        commit('AUTH_SERVER_ERROR', { message: error.message } as ServerError);
-      }
+      } else
+        commit('AUTH_SERVER_ERROR', {
+          message: error.message,
+        });
 
       throw err;
     }
@@ -60,9 +62,10 @@ const actions: ActionTree<AuthStateInterface, StateInterface> = {
       if (error.response?.status == 422 || error.response?.status === 401) {
         const errors = error.response.data as ValidationErrorResponse;
         commit('AUTH_VALIDATION_ERROR', errors.errors);
-      } else {
-        commit('AUTH_SERVER_ERROR', { message: error.message } as ServerError);
-      }
+      } else
+        commit('AUTH_SERVER_ERROR', {
+          message: error.message,
+        });
 
       throw err;
     }
@@ -78,7 +81,9 @@ const actions: ActionTree<AuthStateInterface, StateInterface> = {
     } catch (err) {
       const error = err as AxiosError;
 
-      commit('AUTH_ERROR', error.message);
+      commit('AUTH_SERVER_ERROR', {
+        message: error.message,
+      });
       throw err;
     }
   },

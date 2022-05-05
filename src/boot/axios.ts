@@ -64,8 +64,8 @@ api.interceptors.response.use(
 
     // server api request returned unathorized response so we trrigger logout
     if (
-      error.response.status === 401 &&
-      !error.response.config.dontTriggerLogout
+      error.response?.status === 401 &&
+      !error.response?.config.dontTriggerLogout
     ) {
       authManager.logout();
     }
