@@ -104,9 +104,6 @@ const getters: GetterTree<ChannelsV2StateInterface, StateInterface> = {
     const channelUsers = context.channelsUsers[activeChannel!.name] || [];
     const onlineDndUsers = [] as User[];
 
-    console.log('STORED users: ', storedUsers);
-    console.log('DB users: ', channelUsers);
-
     channelUsers.forEach((channelUser) => {
       if (!storedUsers.find((storedUser) => storedUser.id === channelUser.id)) {
         if (
@@ -122,9 +119,9 @@ const getters: GetterTree<ChannelsV2StateInterface, StateInterface> = {
     return onlineDndUsers;
   },
   getAllUsers(context) {
-    const activeChannel = context.activeChannel
+    const activeChannel = context.activeChannel;
 
-    if(!activeChannel) return
+    if (!activeChannel) return;
 
     return activeChannel ? context.channelsUsers[activeChannel?.name] : [];
   },

@@ -16,12 +16,13 @@ import {
   TypedMessage,
   GetChannelUsersResponse,
   Channel,
+  UserStatus,
 } from 'src/contracts';
 import { StateInterface } from 'src/store';
 import { channelService } from '.';
 import { SocketManager } from './SocketManager';
-import { Notify } from 'quasar';
-import Vue from 'vue' 
+import Vue from 'vue';
+import { Notify, AppVisibility } from 'quasar';
 
 class ChannelSocketManager extends SocketManager {
   public subscribe({ store }: BootFileParams<StateInterface>): void {
@@ -31,15 +32,56 @@ class ChannelSocketManager extends SocketManager {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       store.commit('channels_v2/NEW_MESSAGE', { channel, message });
 
-      Notify.create({
-        message: `${message.message.substring(0, 30)}${
-          message.message.length > 30 ? '...' : ''
-        }`,
-        caption: `@${message.user.nickname} - ${message.user.firstname} ${message.user.lastname}`,
-        color: 'grey-2',
-        textColor: 'black',
-        position: 'bottom-right',
-      });
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const authUser = store.getters[
+        'auth/getAuthenticatedUser'
+      ] as User | null;
+
+      console.log(authUser);
+
+      if (authUser?.status !== UserStatus.DND) {
+        if (AppVisibility.appVisible) {
+          Notify.create({
+            message: `${message.message.substring(0, 30)}${
+              message.message.length > 30 ? '...' : ''
+            }`,
+            caption: `@${message.user.nickname} - ${message.user.firstname} ${message.user.lastname}`,
+            color: 'grey-2',
+            textColor: 'black',
+            position: 'bottom-right',
+          });
+        } else {
+          // Notifikacie
+
+          console.log(AppVisibility.appVisible);
+
+          // Let's check if the browser supports notifications
+          if (!('Notification' in window)) {
+            alert('This browser does not support desktop notification');
+          }
+          // Let's check whether notification permissions have already been granted
+          else if (Notification.permission === 'granted') {
+            // If it's okay let's create a notification
+            const notification = new Notification(message.message, {
+              body: `@${message.user.nickname} - ${message.user.firstname} ${message.user.lastname}`,
+            });
+          }
+          // Otherwise, we need to ask the user for permission
+          else if (Notification.permission !== 'denied') {
+            console.log('denied');
+            Notification.requestPermission()
+              .then(function (permission) {
+                // If the user accepts, let's create a notification
+                if (permission === 'granted') {
+                  const notification = new Notification(message.message, {
+                    body: `@${message.user.nickname} - ${message.user.firstname} ${message.user.lastname}`,
+                  });
+                }
+              })
+              .catch(console.log);
+          }
+        }
+      }
     });
 
     this.socket.on(
@@ -76,8 +118,8 @@ class ChannelSocketManager extends SocketManager {
     this.socket.on('channel:delete', (channel: Channel) => {
       store.commit('channels_v2/REMOVE_CHANNEL', channel.name);
       channelService.disconnect(channel.name);
-       // TODO: redirect with vue router
-       window.location.href = '/';
+      // TODO: redirect with vue router
+      window.location.href = '/';
     });
 
     this.socket.on(
