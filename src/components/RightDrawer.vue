@@ -54,7 +54,7 @@
           :key="member.id"
           v-bind="member"
           :status="member.status"
-          :show="true"
+          :show="showKickOptionsMenu"
         />
       </q-list>
     </div>
@@ -74,7 +74,7 @@
           v-for="member in offlineUsers"
           :key="member.id"
           v-bind="member"
-          :show="true"
+          :show="showKickOptionsMenu"
         />
       </q-list>
     </div>
@@ -82,7 +82,7 @@
 </template>
 
 <script lang="ts">
-import { Channel, User } from 'src/contracts';
+import { Channel, ChannelType, User } from 'src/contracts';
 import { useStore } from 'src/store';
 import { defineComponent, computed, reactive } from 'vue';
 import ChannelMember from './ChannelMember.vue';
@@ -116,11 +116,21 @@ export default defineComponent({
       () => $store.getters['channels_v2/getOfflineUsers'] as User[]
     );
 
-    //console.log(offlineUsers.value);
-
     const state = reactive({
       isInviteUsersOpen: false,
     });
+
+    const amIChannelAdmin = computed(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      () => $store.getters['channels_v2/amIChannelAdmin'] as boolean
+    );
+
+    const showKickOptionsMenu = computed(() =>
+      activeChannel.value?.type === ChannelType.Private &&
+      !amIChannelAdmin.value
+        ? false
+        : true
+    );
 
     return {
       state,
@@ -134,6 +144,7 @@ export default defineComponent({
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         () => $store.getters['channels_v2/amIChannelMember'] as boolean
       ),
+      showKickOptionsMenu
     };
   },
 });

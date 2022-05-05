@@ -43,13 +43,7 @@ class ChannelSocketManager extends SocketManager {
 
     this.socket.on(
       'user:receiveKick',
-      async ({
-        userId,
-        channelName,
-      }: {
-        userId: string;
-        channelName: string;
-      }) => {
+      async ({ userId }: { userId: string }) => {
         // check if ID is mine, if so, disconnect socket from the server and delete server from the list of servers
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         const authUser = store.getters[
@@ -57,8 +51,10 @@ class ChannelSocketManager extends SocketManager {
         ] as User | null;
 
         if (authUser?.id === userId) {
-          store.commit('channels_v2/REMOVE_CHANNEL', channelName);
-          await store.dispatch('channels_v2/leave', channelName);
+          store.commit('channels_v2/REMOVE_CHANNEL', channel);
+          await store.dispatch('channels_v2/leave', channel);
+          // TODO: redirect with vue router
+          window.location.href = '/';
         } else {
           // if not, delete user from the list of users
           store.commit('REMOVE_FROM_USER_LIST', userId);
@@ -94,7 +90,10 @@ class ChannelSocketManager extends SocketManager {
           channelService.disconnect(channel.name);
         }
 
-        store.commit('channels_v2/REMOVE_USER_FROM_CHANNEL', { user, channel });
+        store.commit('channels_v2/REMOVE_USER_FROM_CHANNEL', {
+          userId: user.id,
+          channelName: channel.name,
+        });
 
         //console.log(`User: ${user.nickname} left the channel`);
       }
@@ -102,11 +101,11 @@ class ChannelSocketManager extends SocketManager {
 
     this.socket.on('channel:connect', async (user: User) => {
       await store.dispatch('channels_v2/userOnline', user);
-      store.commit('channels_v2/ADD_CHANNEL_USER', { channel, user })
+      store.commit('channels_v2/ADD_CHANNEL_USER', { channel, user });
     });
 
     this.socket.on('channel:disconnect', (user: User) => {
-      console.log(`User ${user.nickname} is disconnecting from ${channel}`)
+      console.log(`User ${user.nickname} is disconnecting from ${channel}`);
       store.commit('channels_v2/REMOVE_TYPED_MESSAGE', {
         channelName: channel,
         userId: user.id,
@@ -114,7 +113,10 @@ class ChannelSocketManager extends SocketManager {
     });
   }
 
-  public addMessage(message: RawMessage, tags?: string[]): Promise<SerializedMessage> {
+  public addMessage(
+    message: RawMessage,
+    tags?: string[]
+  ): Promise<SerializedMessage> {
     return this.emitAsync('addMessage', message, tags);
   }
 
@@ -125,7 +127,7 @@ class ChannelSocketManager extends SocketManager {
     return this.emitAsync('loadMessages', page || 1, limit || 50);
   }
 
-  public kickUser(data: KickUserRequest) {
+  public kickUser(data: KickUserRequest): Promise<void> {
     console.log('Kick data: ', data);
     return this.emitAsync('user:sendKick', data);
   }

@@ -71,11 +71,11 @@ const mutation: MutationTree<ChannelsV2StateInterface> = {
   },
   REMOVE_USER_FROM_CHANNEL(
     state,
-    { user, channel }: { user: User; channel: Channel }
+    { userId, channelName }: { userId: string; channelName: string }
   ) {
     console.log(state.channelsUsers);
-    state.channelsUsers[channel.name] = state.channelsUsers[channel.name].filter(
-      (obj) => obj.id !== user.id
+    state.channelsUsers[channelName] = state.channelsUsers[channelName].filter(
+      (obj) => obj.id !== userId
     );
     console.log(state.channelsUsers);
   },

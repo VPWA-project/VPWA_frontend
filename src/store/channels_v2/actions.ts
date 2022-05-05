@@ -190,7 +190,7 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
   },
 
   async kickUser(
-    {},
+    { commit },
     {
       channelName,
       userId,
@@ -201,7 +201,12 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
 
     if (!manager) return;
 
-    await manager.kickUser({ userId, method } as KickUserRequest);
+    try {
+      await manager.kickUser({ userId, method } as KickUserRequest);
+      commit('REMOVE_USER_FROM_CHANNEL', { userId, channelName });
+    } catch (err) {
+      throw err;
+    }
   },
 
   async sendTypedMessage(

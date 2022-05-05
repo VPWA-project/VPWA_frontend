@@ -94,14 +94,24 @@ export default defineComponent({
         cancel: true,
         persistent: false,
       }).onOk(() => {
-        kickUser(id, KickType.Revoke).catch(console.log);
-        $q.notify({
-          message: `User ${
-            member.firstname + ' ' + member.lastname
-          } was revoked successfully`,
-          color: 'grey-8',
-          type: 'positive',
-        });
+        kickUser(id, KickType.Revoke)
+          .then(() => {
+            $q.notify({
+              message: `User ${
+                member.firstname + ' ' + member.lastname
+              } was revoked successfully`,
+              color: 'grey-8',
+              type: 'positive',
+            });
+          })
+          .catch(err => {
+            console.log(err)
+            $q.notify({
+              message: 'Unexpected error',
+              color: 'red-8',
+              type: 'negative',
+            });
+          });
       });
     };
 
