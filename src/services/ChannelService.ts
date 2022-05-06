@@ -21,7 +21,6 @@ import {
 import { StateInterface } from 'src/store';
 import { channelService } from '.';
 import { SocketManager } from './SocketManager';
-import Vue from 'vue';
 import { Notify, AppVisibility } from 'quasar';
 
 class ChannelSocketManager extends SocketManager {

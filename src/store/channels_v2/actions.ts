@@ -4,11 +4,14 @@ import {
   KickUserRequest,
   RawMessage,
   User,
+  PageMetaData,
+  SerializedMessage,
 } from 'src/contracts';
-import { channelService } from 'src/services';
+import { activityService, channelService } from 'src/services';
 import { ActionTree } from 'vuex';
 import { StateInterface } from '../index';
 import { ChannelsV2StateInterface } from './state';
+import { useStore } from 'src/store';
 
 const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
   async join({ commit }, channel: string) {
@@ -85,12 +88,33 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
     });
   },
 
-  async onlineDnd({ commit }) {
+  async onlineDnd({ commit, dispatch }) {
     try {
       const channels = await channelService.getUserChannels();
 
       channels.forEach((channel) => {
         channelService.join(channel.name);
+      });
+
+      channels.forEach((channel) => {
+        commit('OFFLINE_CHANNEL', channel.name);
+      });
+
+      void dispatch('getUserChannels')
+        .then((channels: Channel[]) => {
+          channels.forEach((channel) => {
+            dispatch('getChannelUsers', {
+              channelId: channel.id,
+              channelName: channel.name,
+            }).catch(console.log);
+          });
+        })
+        .catch(console.log);
+
+      channels.forEach((channel) => {
+        dispatch('fetchMessages', {
+          channel: channel.name,
+        }).catch(console.log);
       });
     } catch (err) {
       commit('LOADING_ERROR');
