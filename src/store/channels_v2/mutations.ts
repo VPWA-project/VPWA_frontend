@@ -35,6 +35,11 @@ const mutation: MutationTree<ChannelsV2StateInterface> = {
     delete state.messages[channel];
     delete state.pagination[channel];
   },
+  OFFLINE_CHANNEL(state, channel: string) {
+    state.messages[channel] = [];
+    state.pagination[channel] = <PageMetaData>{};
+    state.channelsUsers[channel] = [];
+  },
   SET_ACTIVE(state, channel: string | null) {
     state.active = channel;
   },
@@ -93,10 +98,7 @@ const mutation: MutationTree<ChannelsV2StateInterface> = {
   GET_USER_CHANNELS(state, channels: Channel[]) {
     state.channels = channels;
   },
-  ADD_CHANNEL_USER(
-    state,
-    { channel, user }: { channel: string; user: User }
-  ) {
+  ADD_CHANNEL_USER(state, { channel, user }: { channel: string; user: User }) {
     const users = state.channelsUsers[channel] || [];
     users.push(user);
 
