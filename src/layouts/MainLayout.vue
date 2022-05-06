@@ -61,24 +61,22 @@ export default defineComponent({
 
   setup() {
     const state = reactive({
-      isLeftDrawerOpen: false
+      isLeftDrawerOpen: false,
     });
 
     const $store = useStore();
     const route = useRoute();
     const $router = useRouter();
 
-    const isRightDrawerOpen = computed(
-      {
-        get() {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-          return $store.getters['gui/isRightDrawerOpen'] as boolean;
-        },
-        async set(newValue: boolean) {
-          await $store.dispatch('gui/setRightDrawer', newValue)
-        },
-      }
-    );
+    const isRightDrawerOpen = computed({
+      get() {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        return $store.getters['gui/isRightDrawerOpen'] as boolean;
+      },
+      set(newValue: boolean) {
+        $store.dispatch('gui/setRightDrawer', newValue).catch(console.log);
+      },
+    });
 
     const amIChannelMember = computed(
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
