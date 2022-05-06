@@ -21,7 +21,7 @@
     <q-drawer
       show-if-above
       :breakpoint="1440"
-      v-model="state.isRightDrawerOpen"
+      v-model="isRightDrawerOpen"
       side="right"
       style="border-radius: 15px 0px 0px 15px"
       class="bg-blue-grey-2"
@@ -61,13 +61,24 @@ export default defineComponent({
 
   setup() {
     const state = reactive({
-      isLeftDrawerOpen: false,
-      isRightDrawerOpen: false,
+      isLeftDrawerOpen: false
     });
 
     const $store = useStore();
     const route = useRoute();
     const $router = useRouter();
+
+    const isRightDrawerOpen = computed(
+      {
+        get() {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          return $store.getters['gui/isRightDrawerOpen'] as boolean;
+        },
+        async set(newValue: boolean) {
+          await $store.dispatch('gui/setRightDrawer', newValue)
+        },
+      }
+    );
 
     const amIChannelMember = computed(
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -134,7 +145,8 @@ export default defineComponent({
       toggleLeftDrawer: () =>
         (state.isLeftDrawerOpen = !state.isLeftDrawerOpen),
       toggleRightDrawer: () =>
-        (state.isRightDrawerOpen = !state.isRightDrawerOpen),
+        (isRightDrawerOpen.value = !isRightDrawerOpen.value),
+      isRightDrawerOpen,
     };
   },
 });
