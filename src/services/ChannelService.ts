@@ -36,7 +36,7 @@ class ChannelSocketManager extends SocketManager {
         'auth/getAuthenticatedUser'
       ] as User | null;
 
-      console.log(authUser);
+      //console.log('User status: ', authUser?.status);
 
       if (authUser?.status !== UserStatus.DND) {
         if (AppVisibility.appVisible) {
@@ -51,8 +51,6 @@ class ChannelSocketManager extends SocketManager {
           });
         } else {
           // Notifikacie
-
-          console.log(AppVisibility.appVisible);
 
           // Let's check if the browser supports notifications
           if (!('Notification' in window)) {
