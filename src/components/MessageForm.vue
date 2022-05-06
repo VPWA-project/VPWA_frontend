@@ -28,10 +28,7 @@ import { defineComponent, reactive, computed } from 'vue';
 import TypingChips from './TypingChips.vue';
 import { useStore } from 'src/store';
 import { useRoute, useRouter } from 'vue-router';
-import { useQuasar } from 'quasar';
-import {
-  Channel,
-} from 'src/contracts';
+import { Channel } from 'src/contracts';
 import { commandService } from 'src/services';
 
 export default defineComponent({
@@ -44,7 +41,6 @@ export default defineComponent({
     const $store = useStore();
     const route = useRoute();
     const router = useRouter();
-    const $q = useQuasar();
 
     const activeChannel = computed(
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -54,6 +50,11 @@ export default defineComponent({
     const amIChannelAdmin = computed(
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       () => $store.getters['channels_v2/amIChannelAdmin'] as boolean
+    );
+
+    const amIChannelMember = computed(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      () => $store.getters['channels_v2/amIChannelMember'] as boolean
     );
 
     const sendTypedMessage = async () => {
@@ -107,6 +108,13 @@ export default defineComponent({
             args,
             activeChannel.value,
             amIChannelAdmin.value
+          );
+        else if (command === '/list')
+          await commandService.processListCommand(
+            $store,
+            args,
+            activeChannel.value,
+            amIChannelMember.value
           );
       } else {
         const tags = state.message

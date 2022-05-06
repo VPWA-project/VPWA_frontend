@@ -205,6 +205,30 @@ class CommandService {
       )
       .catch(() => this.notifyUserNegative('Unexpected error'));
   };
+
+  processListCommand = async (
+    $store: Store<StateInterface>,
+    args: string[],
+    activeChannel: Channel | null,
+    amIChannelMember: boolean
+  ) => {
+    if (args.length !== 0) {
+      this.notifyUserNegative(
+        'The syntax of the command is incorrect. Use: /list'
+      );
+      return;
+    }
+    if (!activeChannel) {
+      this.notifyUserNegative('No channel was selected');
+      return;
+    }
+    if (!amIChannelMember) {
+      this.notifyUserNegative('You are not member of this channel');
+      return;
+    }
+
+    await $store.dispatch('gui/setRightDrawer', true);
+  };
 }
 
 export default new CommandService();
