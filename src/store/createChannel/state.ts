@@ -1,16 +1,18 @@
-import { ValidationError } from 'src/contracts';
+import { ServerError, ValidationError } from 'src/contracts';
 
 export interface CreateChannelStateInterface {
   submitStatus: 'pending' | 'success' | 'error';
   isSubmitting: boolean;
-  errors: ValidationError[];
+  validationErrors: ValidationError[];
+  serverError: ServerError | null
 }
 
 function state(): CreateChannelStateInterface {
   return {
     submitStatus: 'pending',
     isSubmitting: false,
-    errors: [],
+    validationErrors: [],
+    serverError: null
   };
 }
 

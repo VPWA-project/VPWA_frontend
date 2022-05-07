@@ -1,8 +1,8 @@
-import { Channel } from 'src/contracts';
+import { Channel, ServerError } from 'src/contracts';
 
 export interface SearchChannelsStateInterface {
   loading: boolean;
-  error: Error | null;
+  error: ServerError | null;
   channels: Channel[];
 }
 

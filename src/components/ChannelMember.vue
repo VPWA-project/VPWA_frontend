@@ -10,7 +10,12 @@
       <q-btn flat class="no-border q-pa-none" icon="more_vert">
         <q-menu fit>
           <q-list style="width: 150px">
-            <q-item clickable @click="confirmRevokeUser(id)" v-close-popup v-if="amIAdmin">
+            <q-item
+              clickable
+              @click="confirmRevokeUser(id)"
+              v-close-popup
+              v-if="amIAdmin"
+            >
               <q-item-section>
                 <q-item-label>Revoke</q-item-label>
               </q-item-section>
@@ -34,6 +39,8 @@ import { computed, defineComponent } from 'vue';
 import { useQuasar } from 'quasar';
 import { KickType, User } from 'src/contracts';
 import { useStore } from 'src/store';
+import { notifyUserNegative, notifyUserPositive } from 'src/utils/utils';
+import { AxiosError } from 'axios';
 
 export default defineComponent({
   props: {
@@ -59,7 +66,7 @@ export default defineComponent({
     },
     background: String,
     show: Boolean,
-    amIAdmin: Boolean
+    amIAdmin: Boolean,
   },
   components: {
     UserBanner,
@@ -96,33 +103,26 @@ export default defineComponent({
         persistent: false,
       }).onOk(() => {
         kickUser(id, KickType.Revoke)
-          .then(() => {
-            $q.notify({
-              message: `User ${
+          .then(() =>
+            notifyUserPositive(
+              `User ${
                 member.firstname + ' ' + member.lastname
-              } was revoked successfully`,
-              color: 'grey-8',
-              type: 'positive',
-            });
-          })
-          .catch(err => {
-            console.log(err)
-            $q.notify({
-              message: 'Unexpected error',
-              color: 'red-8',
-              type: 'negative',
-            });
+              } was revoked successfully`
+            )
+          )
+          .catch((err: AxiosError) => {
+            console.log(err);
+            notifyUserNegative('Unexpected error')
           });
       });
     };
 
-    const kickUser = async (id: string, method: KickType) => {
-      await $store.dispatch('channels_v2/kickUser', {
+    const kickUser = (id: string, method: KickType) =>
+      $store.dispatch('channels_v2/kickUser', {
         channelName: activeChannelName.value,
         userId: id,
         method,
       });
-    };
 
     const confirmKickUser = (id: string) => {
       const member = channelMembers.value.find((member) => member.id === id);
@@ -140,16 +140,17 @@ export default defineComponent({
         persistent: false,
       }).onOk(() => {
         kickUser(id, KickType.Kick)
-          .then(() => {
-            $q.notify({
-              message: `User ${
+          .then(() =>
+            notifyUserPositive(
+              `User ${
                 member.firstname + ' ' + member.lastname
-              } was kicked successfully`,
-              color: 'grey-8',
-              type: 'positive',
-            });
-          })
-          .catch(console.log);
+              } was kicked successfully`
+            )
+          )
+          .catch((err: AxiosError) => {
+            console.log(err)
+            notifyUserNegative('Unexpected error')
+          });
       });
     };
 

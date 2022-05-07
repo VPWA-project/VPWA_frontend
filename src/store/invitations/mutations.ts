@@ -1,14 +1,18 @@
-import { Invitation, User } from 'src/contracts';
+import { Invitation, ServerError, User } from 'src/contracts';
 import { MutationTree } from 'vuex';
 import { InvitationsStateInterface } from './state';
 
 const mutation: MutationTree<InvitationsStateInterface> = {
   SUBMIT_START(state) {
     state.isSubmitting = true
-    state.errors = null
+    state.error = null
   },
-  SUBMIT_FINISH(state) {
+  SUBMIT_SUCCESS(state) {
     state.isSubmitting = false
+  },
+  SUBMIT_ERROR(state, error: ServerError) {
+    state.isSubmitting = false
+    state.error = error
   },
   ADD_INVITATION(state, invitation: Invitation) {
     state.invitations.push(invitation)

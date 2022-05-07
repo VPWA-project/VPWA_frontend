@@ -27,9 +27,11 @@
 </template>
 
 <script lang="ts">
+import { AxiosError } from 'axios';
 import { useQuasar } from 'quasar';
 import { Channel, InvitationStatus } from 'src/contracts';
 import { useStore } from 'src/store';
+import { notifyUserNegative, notifyUserPositive } from 'src/utils/utils';
 import { defineComponent, PropType } from 'vue';
 import ChannelLink from './ChannelLink.vue';
 
@@ -59,11 +61,19 @@ export default defineComponent({
     const $store = useStore();
     const $q = useQuasar();
 
-    const processInvitation = (id: string, status: InvitationStatus, channel: Channel) => {
+    const processInvitation = (
+      id: string,
+      status: InvitationStatus,
+      channel: Channel
+    ) =>
       $store
         .dispatch('invitations/resolveInvitation', { id, status, channel })
-        .catch(console.log);
-    };
+        .then(() =>
+          notifyUserPositive(
+            `Invitation to the channel ${channel.name} was successfully resolved`
+          )
+        )
+        .catch((err: AxiosError) => notifyUserNegative(err.message));
 
     const confirmInvitationRefuse = (
       linkId: string,
@@ -76,7 +86,7 @@ export default defineComponent({
         cancel: true,
         persistent: false,
       }).onOk(() => {
-        processInvitation(linkId, status, channel);
+        void processInvitation(linkId, status, channel)
       });
     };
 

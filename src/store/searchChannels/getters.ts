@@ -8,6 +8,9 @@ const getters: GetterTree<SearchChannelsStateInterface, StateInterface> = {
   },
   isLoading(context) {
     return context.loading
+  },
+  getServerError(context) {
+    return context.error
   }
 };
 

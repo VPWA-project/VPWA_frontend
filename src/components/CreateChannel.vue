@@ -18,6 +18,9 @@
           @click="handleCloseButton"
           icon="close"
         />
+        <q-banner v-if="serverError" inline-actions class="text-white bg-red">
+          {{ serverError.message }}
+        </q-banner>
         <h3 class="self-center" style="font-size: 1.5rem">
           Create a new
           {{ `${state.isChannelPublic ? 'public' : 'private'}` }} channel
@@ -127,7 +130,6 @@
 </template>
 
 <script lang="ts">
-import { useQuasar } from 'quasar';
 import { computed, defineComponent, reactive, toRef } from 'vue';
 import { useStore } from '../store';
 import useVuelidate from '@vuelidate/core';
@@ -135,10 +137,12 @@ import { required, helpers } from '@vuelidate/validators';
 import {
   ChannelType,
   CreateChannelRequest,
+  ServerError,
   ServerErrors,
   User,
+  ValidationError,
 } from 'src/contracts';
-import { groupValidationErrors, clearServerError } from 'src/utils/utils';
+import { groupValidationErrors, clearServerError, notifyUserPositive } from 'src/utils/utils';
 
 const doesTheNameContainSpace = (value: string) => {
   return !(value.indexOf(' ') >= 0);
@@ -161,20 +165,11 @@ export default defineComponent({
       default: true,
     },
   },
-  watch: {
-    open(_, newValue) {
-      if (newValue === false) {
-        this.state.name = '';
-        this.state.isChannelPublic = true;
-      }
-    },
-  },
   emits: ['close'],
   setup(props, { emit }) {
     const isDialogOpen = toRef(props, 'open');
 
     const $store = useStore();
-    const $q = useQuasar();
 
     const state = reactive({
       invitations: [] as User[],
@@ -183,12 +178,27 @@ export default defineComponent({
       serverErrors: {} as ServerErrors,
     });
 
-    const submitting = computed(() => $store.state.createChannel.isSubmitting);
+    const submitting = computed(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      () => $store.getters['createChannel/isSubmitting'] as boolean
+    );
+    const validationErrors = computed(
+      () =>
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        $store.getters['createChannel/getValidationErrors'] as ValidationError[]
+    );
 
     const v$ = useVuelidate(rules, state);
 
     const handleCloseButton = () => {
       emit('close');
+
+      state.invitations = []
+      state.name = ''
+      state.isChannelPublic = true
+      state.serverErrors = {}
+
+      v$.value?.$reset()
     };
 
     const userOptions = computed(
@@ -225,17 +235,12 @@ export default defineComponent({
             $store
               .dispatch('createChannel/create', payload)
               .then(() => {
-                $q.notify({
-                  message: `Channel ${payload.name} was created successfully`,
-                  color: 'grey-8',
-                  type: 'positive',
-                });
-
+                notifyUserPositive(`Channel ${payload.name} was created successfully`)
                 handleCloseButton();
               })
               .catch(() => {
                 state.serverErrors = groupValidationErrors(
-                  $store.state.createChannel.errors
+                  validationErrors.value
                 );
               });
           }
@@ -253,6 +258,10 @@ export default defineComponent({
       v$,
       fetchUsers,
       userOptions,
+      serverError: computed(
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        () => $store.getters['createChannel/getServerError'] as ServerError | null
+      ),
     };
   },
 });

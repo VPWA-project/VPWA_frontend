@@ -1,4 +1,3 @@
-import { Notify } from 'quasar';
 import {
   ChannelType,
   CreateChannelRequest,
@@ -7,25 +6,11 @@ import {
   KickType,
 } from 'src/contracts';
 import { StateInterface } from 'src/store';
+import { notifyUserPositive, notifyUserNegative } from 'src/utils/utils';
 import { Router } from 'vue-router';
 import { Store } from 'vuex';
 
 class CommandService {
-  notifyUser(message: string, type: string, color: string) {
-    Notify.create({
-      message,
-      color: color,
-      textColor: 'black',
-      type: type,
-      position: 'bottom',
-    });
-  }
-
-  notifyUserPositive = (message: string) =>
-    this.notifyUser(message, 'positive', 'grey-2');
-  notifyUserNegative = (message: string) =>
-    this.notifyUser(message, 'negative', 'red-2');
-
   processJoinCommand = async (
     $store: Store<StateInterface>,
     args: string[]
@@ -44,7 +29,7 @@ class CommandService {
           invitations: undefined,
         } as CreateChannelRequest)
         .then(() =>
-          this.notifyUserPositive(
+          notifyUserPositive(
             `The channel ${channelName} was created successfully`
           )
         )
@@ -58,14 +43,14 @@ class CommandService {
             await $store
               .dispatch('channels_v2/joinChannel', channel.id)
               .then(() =>
-                this.notifyUserPositive(
+                notifyUserPositive(
                   `Successfully joined to the channel ${channelName}`
                 )
               )
-              .catch(() => this.notifyUserNegative('Unexpected error'));
+              .catch(() => notifyUserNegative('Unexpected error'));
         });
     } else
-      this.notifyUserNegative(
+      notifyUserNegative(
         'The syntax of the command is incorrect. Use: /join channelName [private]'
       );
   };
@@ -77,13 +62,13 @@ class CommandService {
     activeChannel: Channel | null
   ) => {
     if (args.length) {
-      this.notifyUserNegative(
+      notifyUserNegative(
         'The syntax of the command is incorrect. Use: /cancel'
       );
       return;
     }
     if (!activeChannel) {
-      this.notifyUserNegative('No channel was selected');
+      notifyUserNegative('No channel was selected');
       return;
     }
 
@@ -92,10 +77,10 @@ class CommandService {
     await $store
       .dispatch('channels_v2/leaveChannel', activeChannel.name)
       .then(async () => {
-        this.notifyUserPositive(`Channel ${channelname} left successfully`);
+        notifyUserPositive(`Channel ${channelname} left successfully`);
         await router.push({ name: 'home' });
       })
-      .catch(() => this.notifyUserNegative('Unexpected error'));
+      .catch(() => notifyUserNegative('Unexpected error'));
   };
 
   processQuitCommand = async (
@@ -106,17 +91,15 @@ class CommandService {
     amIChannelAdmin: boolean
   ) => {
     if (args.length) {
-      this.notifyUserNegative(
-        'The syntax of the command is incorrect. Use: /quit'
-      );
+      notifyUserNegative('The syntax of the command is incorrect. Use: /quit');
       return;
     }
     if (!activeChannel) {
-      this.notifyUserNegative('No channel was selected');
+      notifyUserNegative('No channel was selected');
       return;
     }
     if (!amIChannelAdmin) {
-      this.notifyUserNegative('You are not admin of the channel');
+      notifyUserNegative('You are not admin of the channel');
       return;
     }
 
@@ -125,10 +108,10 @@ class CommandService {
     await $store
       .dispatch('channels_v2/leaveChannel', activeChannel.name)
       .then(async () => {
-        this.notifyUserPositive(`Channel ${channelName} left successfully`);
+        notifyUserPositive(`Channel ${channelName} left successfully`);
         await router.push({ name: 'home' });
       })
-      .catch(() => this.notifyUserNegative('Unexpected error'));
+      .catch(() => notifyUserNegative('Unexpected error'));
   };
 
   processKickRevokeCommand = async (
@@ -138,13 +121,13 @@ class CommandService {
     activeChannel: Channel | null
   ) => {
     if (args.length !== 1) {
-      this.notifyUserNegative(
+      notifyUserNegative(
         `The syntax of the command is incorrect. Use: ${command} nickname`
       );
       return;
     }
     if (!activeChannel) {
-      this.notifyUserNegative('No channel was selected');
+      notifyUserNegative('No channel was selected');
       return;
     }
     const nickname = args[0];
@@ -162,14 +145,14 @@ class CommandService {
           method: command === '/kick' ? KickType.Kick : KickType.Revoke,
         })
         .then(() =>
-          this.notifyUserPositive(
+          notifyUserPositive(
             `User ${nickname} was ${
               command === '/kick' ? 'kicked' : 'revoked'
             } successfully`
           )
         )
-        .catch(() => this.notifyUserNegative('Unexpected error'));
-    else this.notifyUserNegative(`User ${nickname} was not found`);
+        .catch(() => notifyUserNegative('Unexpected error'));
+    else notifyUserNegative(`User ${nickname} was not found`);
   };
 
   processInviteCommand = async (
@@ -179,17 +162,17 @@ class CommandService {
     amIChannelAdmin: boolean
   ) => {
     if (args.length !== 1) {
-      this.notifyUserNegative(
+      notifyUserNegative(
         'The syntax of the command is incorrect. Use: /invite nickname'
       );
       return;
     }
     if (!activeChannel) {
-      this.notifyUserNegative('No channel was selected');
+      notifyUserNegative('No channel was selected');
       return;
     }
     if (activeChannel.type === ChannelType.Private && !amIChannelAdmin) {
-      this.notifyUserNegative('You are not admin of the channel');
+      notifyUserNegative('You are not admin of the channel');
       return;
     }
 
@@ -201,9 +184,9 @@ class CommandService {
         nicknames: args,
       })
       .then(() =>
-        this.notifyUserPositive(`User ${nickname} was invited successfully`)
+        notifyUserPositive(`User ${nickname} was invited successfully`)
       )
-      .catch(() => this.notifyUserNegative('Unexpected error'));
+      .catch(() => notifyUserNegative('Unexpected error'));
   };
 
   processListCommand = async (
@@ -213,17 +196,15 @@ class CommandService {
     amIChannelMember: boolean
   ) => {
     if (args.length !== 0) {
-      this.notifyUserNegative(
-        'The syntax of the command is incorrect. Use: /list'
-      );
+      notifyUserNegative('The syntax of the command is incorrect. Use: /list');
       return;
     }
     if (!activeChannel) {
-      this.notifyUserNegative('No channel was selected');
+      notifyUserNegative('No channel was selected');
       return;
     }
     if (!amIChannelMember) {
-      this.notifyUserNegative('You are not member of this channel');
+      notifyUserNegative('You are not member of this channel');
       return;
     }
 

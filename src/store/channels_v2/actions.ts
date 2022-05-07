@@ -231,8 +231,10 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
     if (!manager) return;
 
     try {
-      await manager.kickUser({ userId, method } as KickUserRequest);
+      const success = await manager.kickUser({ userId, method } as KickUserRequest);
       commit('REMOVE_USER_FROM_CHANNEL', { userId, channelName });
+
+      return success;
     } catch (err) {
       throw err;
     }

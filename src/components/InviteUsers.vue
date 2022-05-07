@@ -84,8 +84,10 @@
 </template>
 
 <script lang="ts">
+import { AxiosError } from 'axios';
 import { Channel, User } from 'src/contracts';
 import { useStore } from 'src/store';
+import { notifyUserNegative, notifyUserPositive } from 'src/utils/utils';
 import { computed, defineComponent, reactive, toRef } from 'vue';
 
 export default defineComponent({
@@ -106,8 +108,8 @@ export default defineComponent({
 
     const handleCloseButton = () => {
       emit('close');
-      
-      state.invitations = []
+
+      state.invitations = [];
     };
 
     const submitting = computed(
@@ -126,7 +128,7 @@ export default defineComponent({
     );
 
     const fetchUsers = (val: string, update: (value: () => void) => void) => {
-      if(!activeChannel.value) return
+      if (!activeChannel.value) return;
 
       setTimeout(() => {
         update(() => {
@@ -136,7 +138,7 @@ export default defineComponent({
               channelId: activeChannel.value?.id,
               search: needle,
             })
-            .catch(console.log);
+            .catch((err: AxiosError) => notifyUserNegative(err.message));
         });
       }, 500);
     };
@@ -144,10 +146,13 @@ export default defineComponent({
     const handleSubmit = async () => {
       if (!activeChannel.value) return;
 
-      await $store.dispatch('invitations/invite', {
-        channelId: activeChannel.value.id,
-        userIds: state.invitations.map((user) => user.id),
-      });
+      await $store
+        .dispatch('invitations/invite', {
+          channelId: activeChannel.value.id,
+          userIds: state.invitations.map((user) => user.id),
+        })
+        .then(() => notifyUserPositive('Invitations sent successfully'))
+        .catch((err: AxiosError) => notifyUserNegative(err.message));
 
       handleCloseButton();
     };

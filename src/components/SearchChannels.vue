@@ -85,7 +85,9 @@
 </template>
 
 <script lang="ts">
+import { AxiosError } from 'axios';
 import { Channel, SearchPublicChannelsRequest } from 'src/contracts/Channel';
+import { notifyUserNegative, notifyUserPositive } from 'src/utils/utils';
 import { defineComponent, ref, toRef, computed } from 'vue';
 import { useStore } from '../store';
 import ChannelLink from './ChannelLink.vue';
@@ -138,9 +140,11 @@ export default defineComponent({
         .then(() => {
           showSpinner.value = false;
         })
-        .catch((err) => {
+        .catch((err: AxiosError) => {
           console.log(err);
           showSpinner.value = false;
+
+          notifyUserNegative(err.message)
         });
     };
 
@@ -148,12 +152,18 @@ export default defineComponent({
       await $store
         .dispatch('channels_v2/joinChannel', channel.id)
         .then(
-          async () =>
+          async () => {
             void await $store.dispatch(
               'searchChannels/removePublicChannel',
               channel.id
             )
-        );
+            notifyUserPositive(`Successfully joined to the ${channel.name} channel`)
+          }
+        ).catch((err: AxiosError) => {
+          console.log(err)
+
+          notifyUserNegative(err.message)
+        });
     };
 
     return {
