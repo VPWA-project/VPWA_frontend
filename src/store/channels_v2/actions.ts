@@ -4,14 +4,11 @@ import {
   KickUserRequest,
   RawMessage,
   User,
-  PageMetaData,
-  SerializedMessage,
 } from 'src/contracts';
-import { activityService, channelService } from 'src/services';
+import { channelService } from 'src/services';
 import { ActionTree } from 'vuex';
 import { StateInterface } from '../index';
 import { ChannelsV2StateInterface } from './state';
-import { useStore } from 'src/store';
 
 const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
   async join({ commit }, channel: string) {
@@ -93,8 +90,12 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
       const channels = await channelService.getUserChannels();
 
       channels.forEach((channel) => {
-        channelService.join(channel.name);
+        //channelService.join(channel.name);
+        const channelName = channel.name;
+        void dispatch('tryJoin', { channelName });
       });
+
+      //setActiveChannel(route.params.name as string);
 
       channels.forEach((channel) => {
         commit('OFFLINE_CHANNEL', channel.name);
@@ -166,14 +167,6 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
     }
   },
 
-  async getChannel({}, channelName: string | undefined) {
-    if (channelName) {
-      return await channelService.getChannel(channelName);
-    }
-
-    return null;
-  },
-
   async setActiveChannel(
     { getters, commit, dispatch },
     name: string | undefined
@@ -186,7 +179,11 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
 
       console.log('Currently active channel is: ', activeChannelName);
 
-      const channel = (await dispatch('getChannel', name)) as Channel | null;
+      let channel = undefined;
+
+      if (name) {
+        channel = await channelService.getChannel(name);
+      }
 
       console.log('Received channel is: ', channel);
 

@@ -40,11 +40,22 @@ const getters: GetterTree<ChannelsV2StateInterface, StateInterface> = {
   getActiveChannel(context) {
     return context.activeChannel;
   },
-  getAdministrator(context) {
-    const administrator = context.activeChannel!.administrator;
+  getAdministrator(context, getters, _, rootGetters) {
+    if (!context.activeChannel) return undefined;
+    const administrator = context.activeChannel.administrator;
     const storedUsers = context.onlineDndUsers;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const authUser = rootGetters['auth/getAuthenticatedUser'] as User | null;
     const aa = storedUsers.find((admin) => admin.id === administrator.id);
-    if (aa) {
+    if (administrator.id === authUser?.id) {
+      if (authUser?.status === undefined) {
+        administrator.status = UserStatus.Online;
+        return administrator;
+      } else {
+        administrator.status = authUser.status;
+        return administrator;
+      }
+    } else if (aa) {
       administrator.status = aa?.status;
       return administrator;
     } else {
@@ -72,20 +83,22 @@ const getters: GetterTree<ChannelsV2StateInterface, StateInterface> = {
     return !!context.channels.find((channel) => channel.name === activeChannel);
   },
   getOnlineDndUsers(context, getters, store) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    const activeChannel = getters['getActiveChannel'] as Channel | null;
+    const activeChannel = context.activeChannel;
     const storedUsers = context.onlineDndUsers;
-    const administrator = context.activeChannel!.administrator;
-    const authUser = store.auth.user;
 
-    const channelUsers = context.channelsUsers[activeChannel!.name] || [];
+    if (!activeChannel) return undefined;
+    const administrator = activeChannel.administrator;
+    const authUser = store.auth.user;
+    if (!authUser) return undefined;
+
+    const channelUsers = context.channelsUsers[activeChannel.name] || [];
     const onlineDndUsers = [] as User[];
 
     storedUsers.forEach((channelUser) => {
       if (channelUsers.find((storedUser) => storedUser.id === channelUser.id)) {
         if (
           channelUser.id != administrator.id &&
-          channelUser.id != authUser!.id
+          channelUser.id != authUser.id
         ) {
           onlineDndUsers.push(channelUser);
         }
@@ -96,19 +109,21 @@ const getters: GetterTree<ChannelsV2StateInterface, StateInterface> = {
   },
   getOfflineUsers(context, getters, store) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    const activeChannel = getters['getActiveChannel'] as Channel | null;
+    const activeChannel = context.activeChannel;
+    if (!activeChannel) return undefined;
     const storedUsers = context.onlineDndUsers;
-    const administrator = context.activeChannel!.administrator;
+    const administrator = activeChannel.administrator;
     const authUser = store.auth.user;
+    if (!authUser) return undefined;
 
-    const channelUsers = context.channelsUsers[activeChannel!.name] || [];
+    const channelUsers = context.channelsUsers[activeChannel.name] || [];
     const onlineDndUsers = [] as User[];
 
     channelUsers.forEach((channelUser) => {
       if (!storedUsers.find((storedUser) => storedUser.id === channelUser.id)) {
         if (
           channelUser.id != administrator.id &&
-          channelUser.id != authUser!.id
+          channelUser.id != authUser.id
         ) {
           channelUser.status = UserStatus.OFFLINE;
           onlineDndUsers.push(channelUser);
