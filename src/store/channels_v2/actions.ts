@@ -4,26 +4,22 @@ import {
   KickUserRequest,
   RawMessage,
   User,
-  PageMetaData,
-  SerializedMessage,
 } from 'src/contracts';
-import { activityService, channelService } from 'src/services';
+import { channelService } from 'src/services';
 import { ActionTree } from 'vuex';
 import { StateInterface } from '../index';
 import { ChannelsV2StateInterface } from './state';
-import { useStore } from 'src/store';
 
 const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
   async join({ commit }, channel: string) {
     try {
       commit('LOADING_START');
 
-      const response = await channelService.join(channel).loadMessages();
+      const messages = await channelService.join(channel).loadMessages();
 
       commit('LOADING_SUCCESS', {
         channel,
-        messages: response.data,
-        page: response.meta,
+        messages,
       });
     } catch (err) {
       commit('LOADING_ERROR', err);
@@ -45,20 +41,25 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
 
   async fetchMessages(
     { commit },
-    { channel, page, limit }: { channel: string; page: number; limit: number }
+    {
+      channel,
+      beforeId,
+      limit,
+    }: { channel: string; beforeId?: number; limit?: number }
   ) {
     try {
-      const response = await channelService
+      const messages = await channelService
         .in(channel)
-        ?.loadMessages(page, limit);
+        ?.loadMessages(beforeId, limit);
 
-      console.log('Fetching new messages: ', response);
+      console.log('Fetching new messages: ', messages);
 
       commit('FETCH_MESSAGES', {
         channel,
-        messages: response?.data,
-        page: response?.meta,
+        messages,
       });
+
+      return messages;
     } catch (err) {
       throw err;
     }

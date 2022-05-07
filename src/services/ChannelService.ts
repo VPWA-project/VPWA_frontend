@@ -4,7 +4,6 @@ import {
   CreateChannelRequest,
   CreateChannelResponse,
   GetUserChannelsResponse,
-  PaginatedResponse,
   RawMessage,
   SerializedMessage,
   User,
@@ -163,10 +162,10 @@ class ChannelSocketManager extends SocketManager {
   }
 
   public loadMessages(
-    page?: number,
+    beforeId?: number,
     limit?: number
-  ): Promise<PaginatedResponse<SerializedMessage[]>> {
-    return this.emitAsync('loadMessages', page || 1, limit || 50);
+  ): Promise<SerializedMessage[]> {
+    return this.emitAsync('loadMessages', beforeId, limit || 50);
   }
 
   public kickUser(data: KickUserRequest): Promise<void> {
