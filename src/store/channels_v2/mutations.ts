@@ -1,6 +1,5 @@
 import {
   Channel,
-  PageMetaData,
   SerializedMessage,
   TypedMessage,
   User,
@@ -19,12 +18,10 @@ const mutation: MutationTree<ChannelsV2StateInterface> = {
     {
       channel,
       messages,
-      page,
-    }: { channel: string; messages: SerializedMessage[]; page: PageMetaData }
+    }: { channel: string; messages: SerializedMessage[] }
   ) {
     state.loading = false;
     state.messages[channel] = messages;
-    state.pagination[channel] = page;
   },
   LOADING_ERROR(state, error: Error | null) {
     state.loading = false;
@@ -33,11 +30,9 @@ const mutation: MutationTree<ChannelsV2StateInterface> = {
   CLEAR_CHANNEL(state, channel: string) {
     state.active = null;
     delete state.messages[channel];
-    delete state.pagination[channel];
   },
   OFFLINE_CHANNEL(state, channel: string) {
     state.messages[channel] = [];
-    state.pagination[channel] = <PageMetaData>{};
     state.channelsUsers[channel] = [];
   },
   SET_ACTIVE(state, channel: string | null) {
@@ -71,7 +66,6 @@ const mutation: MutationTree<ChannelsV2StateInterface> = {
   REMOVE_CHANNEL(state, name: string) {
     state.active = null;
     delete state.messages[name];
-    delete state.pagination[name];
     state.channels = state.channels.filter((channel) => channel.name !== name);
   },
   REMOVE_USER_FROM_CHANNEL(
@@ -89,11 +83,9 @@ const mutation: MutationTree<ChannelsV2StateInterface> = {
     {
       channel,
       messages,
-      page,
-    }: { channel: string; messages: SerializedMessage[]; page: PageMetaData }
+    }: { channel: string; messages: SerializedMessage[] }
   ) {
     state.messages[channel].push(...messages);
-    state.pagination[channel] = page;
   },
   GET_USER_CHANNELS(state, channels: Channel[]) {
     state.channels = channels;

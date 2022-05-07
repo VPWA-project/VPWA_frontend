@@ -55,8 +55,17 @@ const getters: GetterTree<ChannelsV2StateInterface, StateInterface> = {
   getActiveChannelName(context) {
     return context.active;
   },
-  getCurrentPageMetaData(context) {
-    return context.active ? context.pagination[context.active] : null;
+  getOldestMessageId(context) {
+    if (!context.active) return undefined;
+
+    const messages = context.messages[context.active];
+
+    return messages
+      ? Math.min.apply(
+          null,
+          messages.map((message) => message.id as unknown as number)
+        )
+      : undefined;
   },
   amIChannelAdmin(context, getters, _, rootGetters) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access

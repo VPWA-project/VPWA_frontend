@@ -57,7 +57,7 @@
 <script lang="ts">
 import { computed, defineComponent, ref } from 'vue';
 import moment from 'moment';
-import { PageMetaData, SerializedMessage, User } from 'src/contracts';
+import { SerializedMessage, User } from 'src/contracts';
 import { useStore } from 'src/store';
 
 export default defineComponent({
@@ -71,12 +71,10 @@ export default defineComponent({
       ] as SerializedMessage[];
     });
 
-    const page = computed(
+    const oldestMessageId = computed(
       () =>
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        $store.getters[
-          'channels_v2/getCurrentPageMetaData'
-        ] as PageMetaData | null
+        $store.getters['channels_v2/getOldestMessageId'] as number | undefined
     );
 
     const authUser = computed(
@@ -87,22 +85,17 @@ export default defineComponent({
     const activeChannel = computed(() => $store.state.channels_v2.active);
 
     return {
-      onLoad: (_: number, done: (stop: boolean | undefined) => void) => {
-        if (!page.value) {
-          done(false);
-          return;
-        }
-        if (page.value.current_page === page.value.last_page) done(true);
-        else {
-          $store
-            .dispatch('channels_v2/fetchMessages', {
-              channel: activeChannel.value,
-              page: page.value.current_page + 1,
-              limit: page.value.per_page,
-            })
-            .catch(console.log);
-          done(false);
-        }
+      onLoad: async (_: number, done: (stop: boolean | undefined) => void) => {
+        await $store
+          .dispatch('channels_v2/fetchMessages', {
+            channel: activeChannel.value,
+            beforeId: oldestMessageId.value,
+          })
+          .then((messages: SerializedMessage[]) => {
+            if (messages.length === 0) done(true);
+            else done(false)
+          })
+          .catch(console.log);
       },
       messages,
       authUser,
