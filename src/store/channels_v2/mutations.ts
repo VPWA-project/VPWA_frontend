@@ -15,10 +15,7 @@ const mutation: MutationTree<ChannelsV2StateInterface> = {
   },
   LOADING_SUCCESS(
     state,
-    {
-      channel,
-      messages,
-    }: { channel: string; messages: SerializedMessage[] }
+    { channel, messages }: { channel: string; messages: SerializedMessage[] }
   ) {
     state.loading = false;
     state.messages[channel] = messages;
@@ -80,10 +77,7 @@ const mutation: MutationTree<ChannelsV2StateInterface> = {
   },
   FETCH_MESSAGES(
     state,
-    {
-      channel,
-      messages,
-    }: { channel: string; messages: SerializedMessage[] }
+    { channel, messages }: { channel: string; messages: SerializedMessage[] }
   ) {
     state.messages[channel].push(...messages);
   },
