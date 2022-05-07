@@ -120,11 +120,11 @@ export default defineComponent({
       onlyNotifications,
       changeUserStatus: async (status: UserStatus) => {
         await $store.dispatch('auth/changeUserStatus', status).catch(console.log);
-        // if (status === UserStatus.OFFLINE) {
-        //   await $store.dispatch('channels_v2/offline').catch(console.log);
-        // } else {
-        //   await $store.dispatch('channels_v2/onlineDnd').catch(console.log);
-        // }
+        if (status === UserStatus.OFFLINE) {
+          await $store.dispatch('channels_v2/offline').catch(console.log);
+        } else {
+          await $store.dispatch('channels_v2/onlineDnd').catch(console.log);
+        }
       },
       logout: async () => {
         await $store.dispatch('auth/logout');
