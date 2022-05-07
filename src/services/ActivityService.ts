@@ -1,5 +1,5 @@
 import { BootFileParams } from '@quasar/app-webpack';
-import { User, UserStatus, Channel, PageMetaData } from 'src/contracts';
+import { User, UserStatus } from 'src/contracts';
 import { authManager } from '.';
 import { StateInterface } from '../store';
 import { SocketManager } from './SocketManager';

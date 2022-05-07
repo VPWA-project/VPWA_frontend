@@ -35,8 +35,6 @@ class ChannelSocketManager extends SocketManager {
         'auth/getAuthenticatedUser'
       ] as User | null;
 
-      //console.log('User status: ', authUser?.status);
-
       if (authUser?.status !== UserStatus.DND) {
         if (AppVisibility.appVisible) {
           Notify.create({
