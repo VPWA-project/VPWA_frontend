@@ -12,7 +12,7 @@
       borderless
       v-model="state.email"
       :error="v$.email.$error || !!state.serverValidationErrors?.email"
-      @keyup="clearServerError(state, 'email')"
+      @keyup="clearServerError(state.serverValidationErrors, 'email')"
       name="email"
       label="Email"
       bottom-slots
@@ -37,7 +37,7 @@
       v-model="state.password"
       :error="v$.password.$error || !!state.serverValidationErrors?.password"
       :type="state.isPwd ? 'password' : 'text'"
-      @keyup="clearServerError(state, 'password')"
+      @keyup="clearServerError(state.serverValidationErrors, 'password')"
       name="password"
       label="Password"
       bottom-slots

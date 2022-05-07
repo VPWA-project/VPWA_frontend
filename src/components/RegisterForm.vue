@@ -12,7 +12,7 @@
       borderless
       v-model="state.email"
       :error="v$.email.$error || !!state.serverValidationErrors?.email"
-      @keyup="clearServerError(state, 'email')"
+      @keyup="clearServerError(state.serverValidationErrors, 'email')"
       name="email"
       label="Email"
       bottom-slots
@@ -34,7 +34,7 @@
       v-model="state.password"
       :error="v$.password.$error || !!state.serverValidationErrors?.password"
       :type="state.isPwd ? 'password' : 'text'"
-      @keyup="clearServerError(state, 'password')"
+      @keyup="clearServerError(state.serverValidationErrors, 'password')"
       name="password"
       label="Password"
       bottom-slots
@@ -66,7 +66,7 @@
         !!state.serverValidationErrors?.password_confirmation
       "
       :type="state.isPwd ? 'password' : 'text'"
-      @keyup="clearServerError(state, 'password_configuration')"
+      @keyup="clearServerError(state.serverValidationErrors, 'password_configuration')"
       name="password_confirmation"
       label="Confirm password"
       bottom-slots
@@ -100,7 +100,7 @@
       borderless
       v-model="state.firstname"
       :error="v$.firstname.$error || !!state.serverValidationErrors?.firstname"
-      @keyup="clearServerError(state, 'firstname')"
+      @keyup="clearServerError(state.serverValidationErrors, 'firstname')"
       name="firstname"
       label="Firstname"
       bottom-slots
@@ -124,7 +124,7 @@
       borderless
       v-model="state.lastname"
       :error="v$.lastname.$error || !!state.serverValidationErrors?.lastname"
-      @keyup="clearServerError(state, 'lastname')"
+      @keyup="clearServerError(state.serverValidationErrors, 'lastname')"
       name="lastname"
       label="Lastname"
       bottom-slots
@@ -145,7 +145,7 @@
       borderless
       v-model="state.nickname"
       :error="v$.nickname.$error || !!state.serverValidationErrors?.nickname"
-      @keyup="clearServerError(state, 'nickname')"
+      @keyup="clearServerError(state.serverValidationErrors, 'nickname')"
       name="nickname"
       label="Nickname"
       bottom-slots
