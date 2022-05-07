@@ -40,7 +40,7 @@ class CommandService {
       await $store
         .dispatch('createChannel/create', {
           name: channelName,
-          type: channelType,
+          type: channelType.toUpperCase(),
           invitations: undefined,
         } as CreateChannelRequest)
         .then(() =>
