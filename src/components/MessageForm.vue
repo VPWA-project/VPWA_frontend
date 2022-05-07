@@ -30,6 +30,7 @@ import { useStore } from 'src/store';
 import { useRoute, useRouter } from 'vue-router';
 import { Channel } from 'src/contracts';
 import { commandService } from 'src/services';
+import { notifyUserNegative } from 'src/utils/utils';
 
 export default defineComponent({
   name: 'MessageForm',
@@ -122,7 +123,7 @@ export default defineComponent({
             activeChannel.value,
             amIChannelMember.value
           );
-        else commandService.notifyUserNegative('Unknown command');
+        else notifyUserNegative('Unknown command');
       } else {
         const tags = message
           .split(' ')

@@ -1,3 +1,4 @@
+import { AxiosError } from 'axios';
 import { SearchPublicChannelsRequest } from 'src/contracts';
 import { channelService } from 'src/services';
 import { ActionTree } from 'vuex';
@@ -12,16 +13,22 @@ const actions: ActionTree<SearchChannelsStateInterface, StateInterface> = {
       const channels = await channelService.getSearchedChannels(payload);
 
       commit('SET_PUBLIC_CHANNELS', channels.data);
+
+      commit('LOADING_SUCCESS');
     } catch (err) {
+      const error = err as AxiosError;
+
+      commit('LOADING_ERROR', {
+        message: error.message,
+      });
+
       throw err;
-    } finally {
-      commit('LOADING_FINISH');
     }
   },
 
-  removePublicChannel({commit}, id: string) {
-    commit('REMOVE_PUBLIC_CHANNEL', id)
-  }
+  removePublicChannel({ commit }, id: string) {
+    commit('REMOVE_PUBLIC_CHANNEL', id);
+  },
 };
 
 export default actions;
