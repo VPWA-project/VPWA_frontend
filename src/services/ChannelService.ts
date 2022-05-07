@@ -94,7 +94,10 @@ class ChannelSocketManager extends SocketManager {
           window.location.href = '/';
         } else {
           // if not, delete user from the list of users
-          store.commit('REMOVE_FROM_USER_LIST', userId);
+          store.commit('channels_v2/REMOVE_USER_FROM_CHANNEL', {
+            userId,
+            channelName: channel,
+          });
         }
       }
     );
