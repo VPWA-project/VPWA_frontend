@@ -1,3 +1,4 @@
+import { AxiosError } from 'axios';
 import {
   Channel,
   CreateInvitationRequest,
@@ -39,10 +40,13 @@ const actions: ActionTree<InvitationsStateInterface, StateInterface> = {
 
       if (status === 'ACCEPT')
         await dispatch('channels_v2/addChannel', channel, { root: true });
+
+      commit('SUBMIT_SUCCESS');
     } catch (err) {
+      const error = err as AxiosError;
+
+      commit('SUBMIT_ERROR', { message: error.message });
       throw err;
-    } finally {
-      commit('SUBMIT_FINISH');
     }
   },
 
@@ -70,8 +74,6 @@ const actions: ActionTree<InvitationsStateInterface, StateInterface> = {
         { page: 1, limit: 10, search }
       );
 
-      console.log(response);
-
       commit('GET_USER_OPTIONS', response.data);
     } catch (err) {
       throw err;
@@ -93,10 +95,13 @@ const actions: ActionTree<InvitationsStateInterface, StateInterface> = {
           } as CreateInvitationRequest)
         )
       );
+
+      commit('SUBMIT_SUCCESS');
     } catch (err) {
+      const error = err as AxiosError;
+
+      commit('SUBMIT_ERROR', { message: error.message });
       throw err;
-    } finally {
-      commit('SUBMIT_FINISH');
     }
   },
 
@@ -115,10 +120,13 @@ const actions: ActionTree<InvitationsStateInterface, StateInterface> = {
           } as CreateInvitationRequest)
         )
       );
+      
+      commit('SUBMIT_SUCCESS');
     } catch (err) {
+      const error = err as AxiosError;
+
+      commit('SUBMIT_ERROR', { message: error.message });
       throw err;
-    } finally {
-      commit('SUBMIT_FINISH');
     }
   },
 };
