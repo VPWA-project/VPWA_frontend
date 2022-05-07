@@ -111,7 +111,7 @@ export default defineComponent({
         return user ? user.onlyNotifications : false;
       },
       set() {
-        return
+        return;
       },
     });
 
@@ -119,18 +119,21 @@ export default defineComponent({
       UserStatus,
       onlyNotifications,
       changeUserStatus: async (status: UserStatus) => {
-        await $store.dispatch('auth/changeUserStatus', status).catch(console.log);
-        // if (status === UserStatus.OFFLINE) {
-        //   await $store.dispatch('channels_v2/offline').catch(console.log);
-        // } else {
-        //   await $store.dispatch('channels_v2/onlineDnd').catch(console.log);
-        // }
+        await $store
+          .dispatch('auth/changeUserStatus', status)
+          .catch(console.log);
+        if (status === UserStatus.OFFLINE) {
+          await $store.dispatch('channels_v2/offline').catch(console.log);
+        } else {
+          await $store.dispatch('channels_v2/onlineDnd').catch(console.log);
+        }
       },
       logout: async () => {
         await $store.dispatch('auth/logout');
         await $store.dispatch('channels_v2/leave');
       },
-      changeOnlyNotifications: () => $store.dispatch('auth/update', !onlyNotifications.value),
+      changeOnlyNotifications: () =>
+        $store.dispatch('auth/update', !onlyNotifications.value),
     };
   },
 });

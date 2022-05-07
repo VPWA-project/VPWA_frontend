@@ -11,10 +11,11 @@ import {
 import { AxiosError } from 'axios';
 
 const actions: ActionTree<AuthStateInterface, StateInterface> = {
-  async check({ commit }) {
+  async check({ commit, state }) {
     try {
       commit('AUTH_START');
       const user = await authService.me();
+      if (user) user.status = state.user?.status;
       commit('AUTH_SUCCESS', user);
       return user !== null;
     } catch (err) {
