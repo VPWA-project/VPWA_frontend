@@ -58,11 +58,15 @@ export default defineComponent({
     );
 
     const sendTypedMessage = async () => {
-      if (!state.message && !state.sendedLastEdit) return;
+      if (
+        (!state.message || state.message.startsWith('/')) &&
+        !state.sendedLastEdit
+      )
+        return;
 
       await $store.dispatch('channels_v2/sendTypedMessage', {
         channelName: activeChannel.value?.name,
-        message: state.message,
+        message: state.message.startsWith('/') ? '' : state.message,
       });
 
       state.sendedLastEdit = true;
@@ -72,9 +76,11 @@ export default defineComponent({
     const handleSubmit = async () => {
       if (!state.message) return;
 
-      if (state.message.startsWith('/')) {
+      const message = state.message;
+
+      if (message.startsWith('/')) {
         // command
-        const words = state.message.split(' ');
+        const words = message.split(' ');
         const command = words[0];
         const args = words.slice(1);
 
@@ -116,8 +122,9 @@ export default defineComponent({
             activeChannel.value,
             amIChannelMember.value
           );
+        else commandService.notifyUserNegative('Unknown command');
       } else {
-        const tags = state.message
+        const tags = message
           .split(' ')
           .filter((word) => word.startsWith('@'))
           .map((nickname) => nickname.slice(1));
@@ -125,7 +132,7 @@ export default defineComponent({
         await $store
           .dispatch('channels_v2/addMessage', {
             channel: route.params.name as string,
-            message: state.message,
+            message,
             tags,
           })
           .catch(console.log);
