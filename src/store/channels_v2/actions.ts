@@ -11,11 +11,23 @@ import { StateInterface } from '../index';
 import { ChannelsV2StateInterface } from './state';
 
 const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
-  async join({ commit }, channel: string) {
+  async join({ commit, dispatch }, channel: string) {
     try {
       commit('LOADING_START');
 
       const messages = await channelService.join(channel).loadMessages();
+      void dispatch('getUserChannels')
+        .then((channels: Channel[]) => {
+          channels.forEach((foundChannel) => {
+            if (foundChannel.name === channel) {
+              dispatch('getChannelUsers', {
+                channelId: foundChannel.id,
+                channelName: foundChannel.name,
+              }).catch(console.log);
+            }
+          });
+        })
+        .catch(console.log);
 
       commit('LOADING_SUCCESS', {
         channel,
@@ -94,9 +106,9 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
       const channels = await channelService.getUserChannels();
 
       channels.forEach((channel) => {
-        //channelService.join(channel.name);
-        const channelName = channel.name;
-        void dispatch('tryJoin', { channelName });
+        channelService.join(channel.name);
+        //const channelName = channel.name;
+        //void dispatch('tryJoin', { channelName });
       });
 
       //setActiveChannel(route.params.name as string);
@@ -256,8 +268,6 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
     try {
       commit('LOADING_START');
       const users = await channelService.getSearchedUsers(channelId);
-      console.log('Received users: ', users);
-      console.log('Payload was: ', channelName);
       commit('GET_CHANNEL_USERS', { channel: channelName, users });
     } catch (err) {
       commit('LOADING_ERROR');
