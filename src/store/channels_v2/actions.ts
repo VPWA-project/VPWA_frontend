@@ -278,6 +278,14 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
 
     return channelUsers.find((user) => user.nickname === nickname);
   },
+
+  async getChannel({}, channelName: string | undefined) {
+    if (channelName) {
+      return await channelService.getChannel(channelName);
+    }
+
+    return null;
+  },
 };
 
 export default actions;

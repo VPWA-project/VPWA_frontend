@@ -46,7 +46,7 @@
               borderless
               type="text"
               name="name"
-              @keyup="clearServerError(state, 'name')"
+              @keyup="clearServerError(state.serverErrors, 'name')"
               bottom-slots
               label="Name"
             >

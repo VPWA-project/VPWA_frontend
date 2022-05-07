@@ -1,7 +1,5 @@
 import { api } from 'src/boot/axios';
 import {
-  CreateInvitationRequest,
-  CreateInvitationResponse,
   GetAllUsersRequest,
   GetAllUsersResponse,
   GetChannelUserOptionsRequest,
@@ -40,14 +38,6 @@ class InvitationService {
       { params: { ...data } }
     );
 
-    return response.data;
-  }
-
-  async invite(data: CreateInvitationRequest) {
-    const response = await api.post<CreateInvitationResponse>(
-      'invitations',
-      data
-    );
     return response.data;
   }
 }

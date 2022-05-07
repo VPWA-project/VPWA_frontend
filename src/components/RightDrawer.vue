@@ -34,6 +34,7 @@
           :key="administrator.id"
           v-bind="administrator"
           :show="false"
+          :amIAdmin="amIChannelAdmin"
         />
       </q-list>
     </div>
@@ -55,6 +56,7 @@
           v-bind="member"
           :status="member.status"
           :show="showKickOptionsMenu"
+          :amIAdmin="amIChannelAdmin"
         />
       </q-list>
     </div>
@@ -75,6 +77,7 @@
           :key="member.id"
           v-bind="member"
           :show="showKickOptionsMenu"
+          :amIAdmin="amIChannelAdmin"
         />
       </q-list>
     </div>
@@ -138,6 +141,7 @@ export default defineComponent({
       administrator,
       users,
       offlineUsers,
+      amIChannelAdmin,
 
       showInviteUsers: () => (state.isInviteUsersOpen = true),
       amIChannelMember: computed(

@@ -10,7 +10,7 @@
       <q-btn flat class="no-border q-pa-none" icon="more_vert">
         <q-menu fit>
           <q-list style="width: 150px">
-            <q-item clickable @click="confirmRevokeUser(id)" v-close-popup>
+            <q-item clickable @click="confirmRevokeUser(id)" v-close-popup v-if="amIAdmin">
               <q-item-section>
                 <q-item-label>Revoke</q-item-label>
               </q-item-section>
@@ -59,6 +59,7 @@ export default defineComponent({
     },
     background: String,
     show: Boolean,
+    amIAdmin: Boolean
   },
   components: {
     UserBanner,

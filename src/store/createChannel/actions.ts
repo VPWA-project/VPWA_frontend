@@ -2,7 +2,6 @@ import { AxiosError } from 'axios';
 import {
   ChannelType,
   CreateChannelRequest,
-  CreateInvitationRequest,
   ValidationErrorResponse,
 } from 'src/contracts';
 import { channelService, invitationManager } from 'src/services';
@@ -27,14 +26,12 @@ const actions: ActionTree<CreateChannelStateInterface, StateInterface> = {
         type,
       } as CreateChannelRequest);
 
-      invitations?.forEach((userId) => {
-        (async () => {
-          await invitationManager.sendInvitation({
-            channelId: channel.id,
-            userId,
-          } as CreateInvitationRequest);
-        })
-      });
+      if (invitations)
+        await Promise.all(
+          invitations.map((userId) =>
+            invitationManager.sendInvitation({ channelId: channel.id, userId })
+          )
+        );
 
       commit('SUBMIT_SUCCESS', channel);
 

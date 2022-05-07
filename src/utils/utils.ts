@@ -3,7 +3,7 @@ import { ServerErrors, ValidationError } from 'src/contracts';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const clearServerError = (state: any, field: string) => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  delete state.serverValidationErrors[field];
+  if(field in state) delete state[field];
 };
 
 export const groupValidationErrors = (errors: ValidationError[]) =>
