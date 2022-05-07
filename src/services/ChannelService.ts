@@ -14,7 +14,6 @@ import {
   KickUserRequest,
   TypedMessage,
   GetChannelUsersResponse,
-  Channel,
   UserStatus,
 } from 'src/contracts';
 import { StateInterface } from 'src/store';
@@ -112,29 +111,29 @@ class ChannelSocketManager extends SocketManager {
         });
     });
 
-    this.socket.on('channel:delete', (channel: Channel) => {
-      store.commit('channels_v2/REMOVE_CHANNEL', channel.name);
-      channelService.disconnect(channel.name);
+    this.socket.on('channel:delete', () => {
+      store.commit('channels_v2/REMOVE_CHANNEL', channel);
+      channelService.disconnect(channel);
       // TODO: redirect with vue router
       window.location.href = '/';
     });
 
     this.socket.on(
       'channel:leave',
-      ({ user, channel }: { user: User; channel: Channel }) => {
+      ({ user }: { user: User }) => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         const authUser = store.getters[
           'auth/getAuthenticatedUser'
         ] as User | null;
 
         if (authUser?.id === user.id) {
-          store.commit('channels_v2/REMOVE_CHANNEL', channel.name);
-          channelService.disconnect(channel.name);
+          store.commit('channels_v2/REMOVE_CHANNEL', channel);
+          channelService.disconnect(channel);
         }
 
         store.commit('channels_v2/REMOVE_USER_FROM_CHANNEL', {
           userId: user.id,
-          channelName: channel.name,
+          channelName: channel,
         });
 
         //console.log(`User: ${user.nickname} left the channel`);
