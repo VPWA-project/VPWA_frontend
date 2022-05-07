@@ -168,7 +168,7 @@ class ChannelSocketManager extends SocketManager {
     return this.emitAsync('loadMessages', beforeId, limit || 50);
   }
 
-  public kickUser(data: KickUserRequest): Promise<void> {
+  public kickUser(data: KickUserRequest): Promise<boolean> {
     console.log('Kick data: ', data);
     return this.emitAsync('user:sendKick', data);
   }
