@@ -35,43 +35,87 @@ class ChannelSocketManager extends SocketManager {
       ] as User | null;
 
       if (authUser?.status !== UserStatus.DND) {
-        if (AppVisibility.appVisible) {
-          Notify.create({
-            message: `${message.message.substring(0, 30)}${
-              message.message.length > 30 ? '...' : ''
-            }`,
-            caption: `@${message.user.nickname} - ${message.user.firstname} ${message.user.lastname}`,
-            color: 'grey-2',
-            textColor: 'black',
-            position: 'bottom-right',
-          });
-        } else {
-          // Notifikacie
+        if (authUser?.onlyNotifications) {
+          if (message.message.includes('@' + authUser.nickname)) {
+            if (AppVisibility.appVisible) {
+              Notify.create({
+                message: `${message.message.substring(0, 30)}${
+                  message.message.length > 30 ? '...' : ''
+                }`,
+                caption: `@${message.user.nickname} - ${message.user.firstname} ${message.user.lastname}`,
+                color: 'grey-2',
+                textColor: 'black',
+                position: 'bottom-right',
+              });
+            } else {
+              // Notifikacie
 
-          // Let's check if the browser supports notifications
-          if (!('Notification' in window)) {
-            alert('This browser does not support desktop notification');
+              // Let's check if the browser supports notifications
+              if (!('Notification' in window)) {
+                alert('This browser does not support desktop notification');
+              }
+              // Let's check whether notification permissions have already been granted
+              else if (Notification.permission === 'granted') {
+                // If it's okay let's create a notification
+                new Notification(message.message, {
+                  body: `@${message.user.nickname} - ${message.user.firstname} ${message.user.lastname}`,
+                });
+              }
+              // Otherwise, we need to ask the user for permission
+              else if (Notification.permission !== 'denied') {
+                console.log('denied');
+                Notification.requestPermission()
+                  .then(function (permission) {
+                    // If the user accepts, let's create a notification
+                    if (permission === 'granted') {
+                      new Notification(message.message, {
+                        body: `@${message.user.nickname} - ${message.user.firstname} ${message.user.lastname}`,
+                      });
+                    }
+                  })
+                  .catch(console.log);
+              }
+            }
           }
-          // Let's check whether notification permissions have already been granted
-          else if (Notification.permission === 'granted') {
-            // If it's okay let's create a notification
-            new Notification(message.message, {
-              body: `@${message.user.nickname} - ${message.user.firstname} ${message.user.lastname}`,
+        } else {
+          if (AppVisibility.appVisible) {
+            Notify.create({
+              message: `${message.message.substring(0, 30)}${
+                message.message.length > 30 ? '...' : ''
+              }`,
+              caption: `@${message.user.nickname} - ${message.user.firstname} ${message.user.lastname}`,
+              color: 'grey-2',
+              textColor: 'black',
+              position: 'bottom-right',
             });
-          }
-          // Otherwise, we need to ask the user for permission
-          else if (Notification.permission !== 'denied') {
-            console.log('denied');
-            Notification.requestPermission()
-              .then(function (permission) {
-                // If the user accepts, let's create a notification
-                if (permission === 'granted') {
-                  new Notification(message.message, {
-                    body: `@${message.user.nickname} - ${message.user.firstname} ${message.user.lastname}`,
-                  });
-                }
-              })
-              .catch(console.log);
+          } else {
+            // Notifikacie
+
+            // Let's check if the browser supports notifications
+            if (!('Notification' in window)) {
+              alert('This browser does not support desktop notification');
+            }
+            // Let's check whether notification permissions have already been granted
+            else if (Notification.permission === 'granted') {
+              // If it's okay let's create a notification
+              new Notification(message.message, {
+                body: `@${message.user.nickname} - ${message.user.firstname} ${message.user.lastname}`,
+              });
+            }
+            // Otherwise, we need to ask the user for permission
+            else if (Notification.permission !== 'denied') {
+              console.log('denied');
+              Notification.requestPermission()
+                .then(function (permission) {
+                  // If the user accepts, let's create a notification
+                  if (permission === 'granted') {
+                    new Notification(message.message, {
+                      body: `@${message.user.nickname} - ${message.user.firstname} ${message.user.lastname}`,
+                    });
+                  }
+                })
+                .catch(console.log);
+            }
           }
         }
       }
