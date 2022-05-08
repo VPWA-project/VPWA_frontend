@@ -10,7 +10,6 @@ export interface Invitation {
   channelId: string;
   channel: Channel;
   createdAt: string;
-  acceptedAt: string;
 }
 
 export type GetUserInvitationsResponse = Invitation[];
