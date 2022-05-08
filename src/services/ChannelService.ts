@@ -47,7 +47,7 @@ class ChannelSocketManager extends SocketManager {
                 message: `${message.message.substring(0, 30)}${
                   message.message.length > 30 ? '...' : ''
                 }`,
-                caption: `@${message.user.nickname} - ${message.user.firstname} ${message.user.lastname}`,
+                caption: `${channel}: @${message.user.nickname} - ${message.user.firstname} ${message.user.lastname}`,
                 color: 'grey-2',
                 textColor: 'black',
                 position: 'bottom-right',
@@ -63,7 +63,7 @@ class ChannelSocketManager extends SocketManager {
               else if (Notification.permission === 'granted') {
                 // If it's okay let's create a notification
                 new Notification(message.message, {
-                  body: `@${message.user.nickname} - ${message.user.firstname} ${message.user.lastname}`,
+                  body: `${channel}: @${message.user.nickname} - ${message.user.firstname} ${message.user.lastname}`,
                 });
               }
               // Otherwise, we need to ask the user for permission
@@ -74,7 +74,7 @@ class ChannelSocketManager extends SocketManager {
                     // If the user accepts, let's create a notification
                     if (permission === 'granted') {
                       new Notification(message.message, {
-                        body: `@${message.user.nickname} - ${message.user.firstname} ${message.user.lastname}`,
+                        body: `${channel}: @${message.user.nickname} - ${message.user.firstname} ${message.user.lastname}`,
                       });
                     }
                   })
@@ -88,7 +88,7 @@ class ChannelSocketManager extends SocketManager {
               message: `${message.message.substring(0, 30)}${
                 message.message.length > 30 ? '...' : ''
               }`,
-              caption: `@${message.user.nickname} - ${message.user.firstname} ${message.user.lastname}`,
+              caption: `${channel}: @${message.user.nickname} - ${message.user.firstname} ${message.user.lastname}`,
               color: 'grey-2',
               textColor: 'black',
               position: 'bottom-right',
@@ -104,7 +104,7 @@ class ChannelSocketManager extends SocketManager {
             else if (Notification.permission === 'granted') {
               // If it's okay let's create a notification
               new Notification(message.message, {
-                body: `@${message.user.nickname} - ${message.user.firstname} ${message.user.lastname}`,
+                body: `${channel}: @${message.user.nickname} - ${message.user.firstname} ${message.user.lastname}`,
               });
             }
             // Otherwise, we need to ask the user for permission
@@ -115,7 +115,7 @@ class ChannelSocketManager extends SocketManager {
                   // If the user accepts, let's create a notification
                   if (permission === 'granted') {
                     new Notification(message.message, {
-                      body: `@${message.user.nickname} - ${message.user.firstname} ${message.user.lastname}`,
+                      body: `${channel}: @${message.user.nickname} - ${message.user.firstname} ${message.user.lastname}`,
                     });
                   }
                 })
