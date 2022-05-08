@@ -1,7 +1,7 @@
 import { Invitation, ServerError, User } from 'src/contracts';
 
 export interface InvitationsStateInterface {
-  invitations: {[invitationId: string]: Invitation};
+  invitations: {[channelName: string]: Invitation};
   isSubmitting: boolean;
   error: ServerError | null;
   userOptions: User[]

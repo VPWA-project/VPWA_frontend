@@ -11,7 +11,7 @@ const getters: GetterTree<InvitationsStateInterface, StateInterface> = {
   },
   getUserOptions(context) {
     return context.userOptions
-  }
+  },
 };
 
 export default getters;

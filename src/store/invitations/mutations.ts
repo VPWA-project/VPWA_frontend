@@ -15,14 +15,14 @@ const mutation: MutationTree<InvitationsStateInterface> = {
     state.error = error
   },
   ADD_INVITATION(state, invitation: Invitation) {
-    state.invitations[invitation.id] = invitation
+    state.invitations[invitation.channel.name] = invitation
   },
-  REMOVE_INVITATION(state, id: string) {
-    if(id in state.invitations) delete state.invitations[id]
+  REMOVE_INVITATION(state, channel: string) {
+    if(channel in state.invitations) delete state.invitations[channel];
   },
   GET_USER_INVITATIONS(state, invitations: Invitation[]) {
     invitations.forEach(invitation => {
-      state.invitations[invitation.id] = invitation
+      state.invitations[invitation.channel.name] = invitation
     })
   },
   GET_USER_OPTIONS(state, users: User[]) {

@@ -47,6 +47,7 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
     const channel = await channelService.joinChannel(id);
 
     commit('ADD_CHANNEL', channel);
+    commit('invitations/REMOVE_INVITATION', channel.name, { root: true })
 
     await dispatch('join', channel.name);
   },
