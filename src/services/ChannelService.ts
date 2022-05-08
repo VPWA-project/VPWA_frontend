@@ -162,29 +162,34 @@ class ChannelSocketManager extends SocketManager {
       window.location.href = '/';
     });
 
-    this.socket.on(
-      'channel:leave',
-      ({ user }: { user: User }) => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        const authUser = store.getters[
-          'auth/getAuthenticatedUser'
-        ] as User | null;
+    this.socket.on('channel:leave', ({ user }: { user: User }) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const authUser = store.getters[
+        'auth/getAuthenticatedUser'
+      ] as User | null;
 
-        if (authUser?.id === user.id) {
-          store.commit('channels_v2/REMOVE_CHANNEL', channel);
-          channelService.disconnect(channel);
-        }
-
-        store.commit('channels_v2/REMOVE_USER_FROM_CHANNEL', {
-          userId: user.id,
-          channelName: channel,
-        });
-
-        //console.log(`User: ${user.nickname} left the channel`);
+      if (authUser?.id === user.id) {
+        store.commit('channels_v2/REMOVE_CHANNEL', channel);
+        channelService.disconnect(channel);
       }
-    );
+
+      store.commit('channels_v2/REMOVE_USER_FROM_CHANNEL', {
+        userId: user.id,
+        channelName: channel,
+      });
+
+      //console.log(`User: ${user.nickname} left the channel`);
+    });
 
     this.socket.on('channel:connect', async (user: User) => {
+      const channelUsers = store.state.channels_v2.channelsUsers[channel];
+      const userToFind = channelUsers.find(
+        (findUser) => findUser.id === user.id
+      );
+      console.log(userToFind);
+      if (userToFind) {
+        user.status = UserStatus.OFFLINE;
+      }
       await store.dispatch('channels_v2/userOnline', user);
       store.commit('channels_v2/ADD_CHANNEL_USER', { channel, user });
     });
