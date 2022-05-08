@@ -47,7 +47,7 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
     const channel = await channelService.joinChannel(id);
 
     commit('ADD_CHANNEL', channel);
-    commit('invitations/REMOVE_INVITATION', channel.name, { root: true })
+    commit('invitations/REMOVE_INVITATION', channel.name, { root: true });
 
     await dispatch('join', channel.name);
   },
@@ -72,7 +72,7 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
         messages,
       });
 
-      return messages;
+      return messages ? messages : [];
     } catch (err) {
       throw err;
     }
@@ -244,7 +244,10 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
     if (!manager) return;
 
     try {
-      const success = await manager.kickUser({ userId, method } as KickUserRequest);
+      const success = await manager.kickUser({
+        userId,
+        method,
+      } as KickUserRequest);
       commit('REMOVE_USER_FROM_CHANNEL', { userId, channelName });
 
       return success;
