@@ -1,6 +1,5 @@
 import { AxiosError } from 'axios';
 import {
-  Channel,
   CreateInvitationRequest,
   InvitationStatus,
   ResolveInvitationRequest,
@@ -22,24 +21,19 @@ const actions: ActionTree<InvitationsStateInterface, StateInterface> = {
   },
 
   async resolveInvitation(
-    { commit, dispatch },
+    { commit },
     {
       id,
       status,
-      channel,
-    }: { id: string; status: InvitationStatus; channel: Channel }
+    }: { id: string; status: InvitationStatus; }
   ) {
     try {
       commit('SUBMIT_START');
 
-      await invitationService.resolveInvitation(id, {
-        status,
+      await invitationManager.resolveInvitation({
+        id,
+        status
       } as ResolveInvitationRequest);
-
-      commit('REMOVE_INVITATION', channel.name);
-
-      if (status === 'ACCEPT')
-        await dispatch('channels_v2/addChannel', channel, { root: true });
 
       commit('SUBMIT_SUCCESS');
     } catch (err) {

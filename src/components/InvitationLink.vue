@@ -67,7 +67,7 @@ export default defineComponent({
       channel: Channel
     ) =>
       $store
-        .dispatch('invitations/resolveInvitation', { id, status, channel })
+        .dispatch('invitations/resolveInvitation', { id, status })
         .then(() =>
           notifyUserPositive(
             `Invitation to the channel ${channel.name} was successfully resolved`

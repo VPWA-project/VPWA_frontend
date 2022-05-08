@@ -18,6 +18,7 @@ export type GetUserInvitationsResponse = Invitation[];
 export type InvitationStatus = 'ACCEPT' | 'DECLINE';
 
 export interface ResolveInvitationRequest {
+  id: string
   status: InvitationStatus;
 }
 
