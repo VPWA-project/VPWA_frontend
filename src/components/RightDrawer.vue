@@ -12,6 +12,7 @@
         @click="showInviteUsers"
         icon-right="add_circle"
         label="Invite users"
+        :disable="!amIChannelAdmin && activeChannel.type === 'PRIVATE'"
       />
     </q-item>
     <InviteUsers
