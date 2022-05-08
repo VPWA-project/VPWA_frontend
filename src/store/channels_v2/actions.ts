@@ -73,8 +73,6 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
         .in(channel)
         ?.loadMessages(beforeId, limit);
 
-      console.log('Fetching new messages: ', messages);
-
       commit('FETCH_MESSAGES', {
         channel,
         messages,
@@ -104,7 +102,6 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       getters.joinedChannels;
 
-    console.log(leaving);
     leaving.forEach((c) => {
       channelService.disconnect(c);
     });
@@ -192,30 +189,16 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
     }
   },
 
-  async setActiveChannel(
-    { getters, commit, dispatch },
-    name: string | undefined
-  ) {
+  async setActiveChannel({ commit, dispatch }, name: string | undefined) {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      const activeChannelName = getters['getActiveChannelName'] as
-        | string
-        | null;
-
-      console.log('Currently active channel is: ', activeChannelName);
-
       let channel = undefined;
 
       if (name) {
         channel = await channelService.getChannel(name);
       }
 
-      console.log('Received channel is: ', channel);
-
       commit('SET_ACTIVE', name);
       commit('SET_ACTIVE_CHANNEL', channel);
-
-      console.log('Newly active channel is: ', name);
 
       return channel;
     } catch (err) {
