@@ -55,6 +55,7 @@ export default defineComponent({
           await $store.dispatch('invitations/resolveInvitation', {
             id: invitation.id,
             status: 'ACCEPT',
+            channel: activeChannel.value,
           });
       }
     };
