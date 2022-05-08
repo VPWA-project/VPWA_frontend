@@ -37,7 +37,6 @@ export interface User {
   lastname: string;
   nickname: string;
   status?: UserStatus;
-  onlyNotifications: boolean;
   created_at: string;
   updated_at: string;
 }

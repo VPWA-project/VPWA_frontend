@@ -36,7 +36,7 @@ const actions: ActionTree<InvitationsStateInterface, StateInterface> = {
         status,
       } as ResolveInvitationRequest);
 
-      commit('REMOVE_INVITATION', id);
+      commit('REMOVE_INVITATION', channel.name);
 
       if (status === 'ACCEPT')
         await dispatch('channels_v2/addChannel', channel, { root: true });

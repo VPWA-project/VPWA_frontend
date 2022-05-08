@@ -15,6 +15,9 @@ const getters: GetterTree<AuthStateInterface, StateInterface> = {
   getServerError(context) {
     return context.serverError;
   },
+  getOnlyNotifications(context) {
+    return context.onlyNotifications
+  }
 };
 
 export default getters;

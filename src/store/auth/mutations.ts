@@ -26,7 +26,7 @@ const mutation: MutationTree<AuthStateInterface> = {
     }
   },
   CHANGE_ONLY_NOTIFICATIONS(state, onlyNotifications: boolean) {
-    if (state.user) state.user.onlyNotifications = onlyNotifications;
+    state.onlyNotifications = onlyNotifications
   },
 };
 

@@ -34,9 +34,14 @@ class ChannelSocketManager extends SocketManager {
         'auth/getAuthenticatedUser'
       ] as User | null;
 
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const onlyNotifications = store.getters[
+        'auth/getOnlyNotifications'
+      ] as boolean;
+
       if (authUser?.status !== UserStatus.DND) {
-        if (authUser?.onlyNotifications) {
-          if (message.message.includes('@' + authUser.nickname)) {
+        if (onlyNotifications) {
+          if (authUser && message.message.includes('@' + authUser.nickname)) {
             if (AppVisibility.appVisible) {
               Notify.create({
                 message: `${message.message.substring(0, 30)}${
@@ -162,27 +167,24 @@ class ChannelSocketManager extends SocketManager {
       window.location.href = '/';
     });
 
-    this.socket.on(
-      'channel:leave',
-      ({ user }: { user: User }) => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        const authUser = store.getters[
-          'auth/getAuthenticatedUser'
-        ] as User | null;
+    this.socket.on('channel:leave', ({ user }: { user: User }) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const authUser = store.getters[
+        'auth/getAuthenticatedUser'
+      ] as User | null;
 
-        if (authUser?.id === user.id) {
-          store.commit('channels_v2/REMOVE_CHANNEL', channel);
-          channelService.disconnect(channel);
-        }
-
-        store.commit('channels_v2/REMOVE_USER_FROM_CHANNEL', {
-          userId: user.id,
-          channelName: channel,
-        });
-
-        //console.log(`User: ${user.nickname} left the channel`);
+      if (authUser?.id === user.id) {
+        store.commit('channels_v2/REMOVE_CHANNEL', channel);
+        channelService.disconnect(channel);
       }
-    );
+
+      store.commit('channels_v2/REMOVE_USER_FROM_CHANNEL', {
+        userId: user.id,
+        channelName: channel,
+      });
+
+      //console.log(`User: ${user.nickname} left the channel`);
+    });
 
     this.socket.on('channel:connect', async (user: User) => {
       await store.dispatch('channels_v2/userOnline', user);

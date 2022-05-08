@@ -77,8 +77,12 @@ const mutation: MutationTree<ChannelsV2StateInterface> = {
   },
   FETCH_MESSAGES(
     state,
-    { channel, messages }: { channel: string; messages: SerializedMessage[] }
+    {
+      channel,
+      messages,
+    }: { channel: string; messages: SerializedMessage[] | undefined }
   ) {
+    if (!messages) return;
     state.messages[channel].push(...messages);
   },
   GET_USER_CHANNELS(state, channels: Channel[]) {
