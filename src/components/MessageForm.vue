@@ -16,6 +16,8 @@
           @keyup="sendTypedMessage"
           v-model.trim="state.message"
           placeholder="Type a message"
+          ref="messageInput"
+          autofocus
         />
         <q-btn round color="cyan-8" icon="send" type="submit" />
       </q-form>
@@ -24,13 +26,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, computed } from 'vue';
+import { defineComponent, reactive, computed, ref } from 'vue';
 import TypingChips from './TypingChips.vue';
 import { useStore } from 'src/store';
 import { useRoute, useRouter } from 'vue-router';
 import { Channel } from 'src/contracts';
 import { commandService } from 'src/services';
 import { notifyUserNegative } from 'src/utils/utils';
+import { QInput } from 'quasar';
 
 export default defineComponent({
   name: 'MessageForm',
@@ -42,6 +45,8 @@ export default defineComponent({
     const $store = useStore();
     const route = useRoute();
     const router = useRouter();
+
+    const messageInput = ref<QInput | null>(null)
 
     const activeChannel = computed(
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -124,7 +129,7 @@ export default defineComponent({
             amIChannelMember.value
           );
         else notifyUserNegative('Unknown command');
-      } else {
+      } else if(activeChannel.value) {
         const tags = message
           .split(' ')
           .filter((word) => word.startsWith('@'))
@@ -141,12 +146,15 @@ export default defineComponent({
 
       state.message = '';
 
-      await sendTypedMessage();
+      if(activeChannel.value) await sendTypedMessage();
+
+      messageInput.value?.focus()
     };
 
     return {
       state,
       handleSubmit,
+      messageInput,
       activeChannel: computed(() => $store.state.channels_v2.active),
       amIChannelMember: computed(
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
