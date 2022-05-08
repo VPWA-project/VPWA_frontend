@@ -70,7 +70,6 @@
         </q-item-section>
         <q-item-section avatar>
           <q-toggle
-            @click="changeOnlyNotifications"
             color="cyan-9"
             v-model="onlyNotifications"
           />
@@ -96,7 +95,7 @@
 </template>
 
 <script lang="ts">
-import { User, UserStatus } from 'src/contracts';
+import { UserStatus } from 'src/contracts';
 import { useStore } from 'src/store';
 import { computed, defineComponent } from 'vue';
 
@@ -107,11 +106,10 @@ export default defineComponent({
     const onlyNotifications = computed({
       get() {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        const user = $store.getters['auth/getAuthenticatedUser'] as User | null;
-        return user ? user.onlyNotifications : false;
+        return $store.getters['auth/getOnlyNotifications'] as boolean
       },
-      set() {
-        return;
+      async set(newValue) {
+        void await $store.dispatch('auth/update', newValue)
       },
     });
 
@@ -132,8 +130,6 @@ export default defineComponent({
         await $store.dispatch('auth/logout');
         await $store.dispatch('channels_v2/leave');
       },
-      changeOnlyNotifications: () =>
-        $store.dispatch('auth/update', !onlyNotifications.value),
     };
   },
 });
