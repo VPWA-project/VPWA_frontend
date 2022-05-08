@@ -69,10 +69,7 @@
           <q-item-label>Only @mentions</q-item-label>
         </q-item-section>
         <q-item-section avatar>
-          <q-toggle
-            color="cyan-9"
-            v-model="onlyNotifications"
-          />
+          <q-toggle color="cyan-9" v-model="onlyNotifications" />
         </q-item-section>
       </q-item>
 
@@ -106,10 +103,10 @@ export default defineComponent({
     const onlyNotifications = computed({
       get() {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        return $store.getters['auth/getOnlyNotifications'] as boolean
+        return $store.getters['auth/getOnlyNotifications'] as boolean;
       },
-      async set(newValue) {
-        void await $store.dispatch('auth/update', newValue)
+      set(newValue) {
+        void $store.dispatch('auth/update', newValue);
       },
     });
 
