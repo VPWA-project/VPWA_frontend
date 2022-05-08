@@ -1,5 +1,5 @@
 <template>
-  <ChannelLink :id="channelId" :name="name" :type="type">
+  <ChannelLink :id="channel.id" :name="channel.name" :type="channel.type">
     <template v-slot:append>
       <div class="flex justify-end q-gutter-sm">
         <q-btn
@@ -7,55 +7,50 @@
           size="sm"
           color="blue-grey-9"
           icon="highlight_off"
-          @click="confirmInvitationRefuse(id, InvitationState.Refuse, name)"
+          @click.prevent.stop="confirmInvitationRefuse(id, 'DECLINE', channel)"
         />
         <q-btn
           round
           size="sm"
           color="cyan-7"
           icon="check_circle_outline"
-          @click="
-            processInvitation({
-              id,
-              state: InvitationState.Accept,
-            })
-          "
+          @click.prevent.stop="processInvitation(id, 'ACCEPT', channel)"
         />
       </div>
     </template>
     <template v-slot:invitedBy>
-      <div style="font-size: 10px">by Adam Bublavy</div>
+      <div style="font-size: 10px">
+        by {{ invitedByFirstname + ' ' + invitedByLastname }}
+      </div>
     </template>
   </ChannelLink>
 </template>
 
 <script lang="ts">
+import { AxiosError } from 'axios';
 import { useQuasar } from 'quasar';
+import { Channel, InvitationStatus } from 'src/contracts';
 import { useStore } from 'src/store';
-import {
-  ChannelType,
-  InvitationInfo,
-  InvitationState,
-} from 'src/store/channels/state';
+import { notifyUserNegative, notifyUserPositive } from 'src/utils/utils';
 import { defineComponent, PropType } from 'vue';
 import ChannelLink from './ChannelLink.vue';
 
 export default defineComponent({
   props: {
     id: {
-      type: Number,
-      required: true,
-    },
-    channelId: {
-      type: Number,
-      required: true,
-    },
-    name: {
       type: String,
       required: true,
     },
-    type: {
-      type: String as PropType<ChannelType>,
+    channel: {
+      type: Object as PropType<Channel>,
+      required: true,
+    },
+    invitedByFirstname: {
+      type: String,
+      required: true,
+    },
+    invitedByLastname: {
+      type: String,
       required: true,
     },
   },
@@ -66,27 +61,36 @@ export default defineComponent({
     const $store = useStore();
     const $q = useQuasar();
 
-    const processInvitation = (inv: InvitationInfo) => {
-      $store.dispatch('channels/processInvitation', inv).catch(console.log);
-    };
+    const processInvitation = (
+      id: string,
+      status: InvitationStatus,
+      channel: Channel
+    ) =>
+      $store
+        .dispatch('invitations/resolveInvitation', { id, status, channel })
+        .then(() =>
+          notifyUserPositive(
+            `Invitation to the channel ${channel.name} was successfully resolved`
+          )
+        )
+        .catch((err: AxiosError) => notifyUserNegative(err.message));
 
     const confirmInvitationRefuse = (
-      linkId: number,
-      state: InvitationState,
-      channelName: string
+      linkId: string,
+      status: InvitationStatus,
+      channel: Channel
     ) => {
       $q.dialog({
         title: 'Confirm',
-        message: `Would you like to really refuse invitation to ${channelName}`,
+        message: `Would you like to really refuse invitation to ${channel.name}`,
         cancel: true,
         persistent: false,
       }).onOk(() => {
-        processInvitation({ id: linkId, state });
+        void processInvitation(linkId, status, channel)
       });
     };
 
     return {
-      InvitationState,
       processInvitation,
       confirmInvitationRefuse,
     };

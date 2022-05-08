@@ -31,7 +31,7 @@
 
         <q-item
           clickable
-          @click="changeUserStatus(UserStatus.Dnd)"
+          @click="changeUserStatus(UserStatus.DND)"
           class="border-15 bg-white"
         >
           <q-item-section avatar>
@@ -44,7 +44,7 @@
 
         <q-item
           clickable
-          @click="changeUserStatus(UserStatus.Offline)"
+          @click="changeUserStatus(UserStatus.OFFLINE)"
           class="border-15 bg-white"
         >
           <q-item-section avatar>
@@ -69,7 +69,7 @@
           <q-item-label>Only @mentions</q-item-label>
         </q-item-section>
         <q-item-section avatar>
-          <q-toggle color="cyan-9" v-model="state.allowOnlyMentions" />
+          <q-toggle color="cyan-9" v-model="onlyNotifications" />
         </q-item-section>
       </q-item>
 
@@ -92,28 +92,40 @@
 </template>
 
 <script lang="ts">
+import { UserStatus } from 'src/contracts';
 import { useStore } from 'src/store';
-import { UserStatus } from 'src/store/user/state';
-import { defineComponent, reactive } from 'vue';
-import { useRouter } from 'vue-router';
+import { computed, defineComponent } from 'vue';
 
 export default defineComponent({
   setup() {
     const $store = useStore();
-    const router = useRouter();
 
-    const state = reactive({
-      allowOnlyMentions: false,
+    const onlyNotifications = computed({
+      get() {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        return $store.getters['auth/getOnlyNotifications'] as boolean;
+      },
+      set(newValue) {
+        void $store.dispatch('auth/update', newValue);
+      },
     });
 
     return {
-      state,
       UserStatus,
-      changeUserStatus: (status: UserStatus) =>
-        $store.dispatch('user/changeUserStatus', status).catch(console.log),
-      logout: () => {
-        // TODO: logout
-        router.push({ name: 'account' }).catch(console.log);
+      onlyNotifications,
+      changeUserStatus: async (status: UserStatus) => {
+        await $store
+          .dispatch('auth/changeUserStatus', status)
+          .catch(console.log);
+        if (status === UserStatus.OFFLINE) {
+          await $store.dispatch('channels_v2/offline').catch(console.log);
+        } else {
+          await $store.dispatch('channels_v2/onlineDnd').catch(console.log);
+        }
+      },
+      logout: async () => {
+        await $store.dispatch('auth/logout');
+        await $store.dispatch('channels_v2/leave');
       },
     };
   },

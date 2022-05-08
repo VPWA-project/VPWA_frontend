@@ -6,11 +6,7 @@
       class="cursor-pointer no-padding"
     >
       <UserMenu />
-      <UserBanner
-        background="bg-grey-2"
-        v-if="user.loggedInUser"
-        v-bind="user.loggedInUser"
-      >
+      <UserBanner background="bg-grey-2" v-if="user" v-bind="user">
         <template v-slot:append>
           <q-item-section avatar>
             <q-icon :name="state.userBannerIcon" size="1.4em" />
@@ -33,9 +29,9 @@
           v-for="link in invitations"
           :key="link.id"
           :id="link.id"
-          :channelId="link.channel.id"
-          :name="link.channel.name"
-          :type="link.channel.type"
+          :channel="link.channel"
+          :invitedByFirstname="link.invitedBy.firstname"
+          :invitedByLastname="link.invitedBy.lastname"
         />
       </q-list>
     </div>
@@ -75,14 +71,13 @@
 
 <script lang="ts">
 import { useStore } from 'src/store';
-import { Channel, InvitationState } from 'src/store/channels/state';
-import { defineComponent, computed, reactive, watch, onMounted } from 'vue';
+import { defineComponent, computed, reactive } from 'vue';
 import UserMenu from './UserMenu.vue';
 import UserBanner from './UserBanner.vue';
 import ChannelLink from './ChannelLink.vue';
 import SearchChannels from './SearchChannels.vue';
-import { useRoute } from 'vue-router';
 import InvitationLink from './InvitationLink.vue';
+import { Invitation } from 'src/contracts';
 
 export default defineComponent({
   components: {
@@ -94,36 +89,6 @@ export default defineComponent({
   },
   setup() {
     const $store = useStore();
-    const route = useRoute();
-
-    const setActiveChannel = (id: string) => {
-      let channel = $store.state.channels.channels.find(
-        (channel) => channel.id === parseInt(id)
-      );
-
-      if (!channel)
-        channel = $store.state.channels.availableChannels.find(
-          (channel) => channel.id === parseInt(id)
-        );
-
-      if (!channel)
-        channel = $store.state.channels.invitations.find(
-          (invitation) => invitation.channel.id === parseInt(id)
-        )?.channel;
-
-      $store.dispatch('channels/setActiveChannel', channel).catch(console.log);
-    };
-
-    watch(
-      () => route.params.id,
-      (id) => {
-        setActiveChannel(id as string);
-      }
-    );
-
-    onMounted(() => {
-      setActiveChannel(route.params.id as string);
-    });
 
     const state = reactive({
       userBannerIcon: 'expand_more',
@@ -132,22 +97,18 @@ export default defineComponent({
 
     return {
       state,
-      InvitationState,
-      switchChannel: (channel: Channel) =>
-        $store
-          .dispatch('channels/setActiveChannel', channel)
-          .catch(console.log),
       invitations: computed(() => {
-        return $store.state.channels.invitations;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        return $store.getters['invitations/getInvitations'] as Invitation[];
       }),
-      user: computed(() => $store.state.user),
+      user: computed(() => $store.state.auth.user),
       toggleUserBannerIcon: () =>
         (state.userBannerIcon =
           state.userBannerIcon === 'expand_more'
             ? 'expand_less'
             : 'expand_more'),
       channels: computed(() => {
-        return $store.state.channels.channels;
+        return $store.state.channels_v2.channels;
       }),
       showBrowseChannels: () => (state.isBrowseChannelsOpen = true),
     };

@@ -13,65 +13,154 @@
           dense
           class="col-grow q-mr-sm"
           bg-color="white"
-          v-model="state.message"
+          @keyup="sendTypedMessage"
+          v-model.trim="state.message"
           placeholder="Type a message"
+          ref="messageInput"
+          autofocus
         />
-        <q-btn
-          round
-          color="cyan-8"
-          icon="send"
-          type="submit"
-          @click="showNotif"
-        />
+        <q-btn round color="cyan-8" icon="send" type="submit" />
       </q-form>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, computed } from 'vue';
+import { defineComponent, reactive, computed, ref } from 'vue';
 import TypingChips from './TypingChips.vue';
 import { useStore } from 'src/store';
-import { useRoute } from 'vue-router';
-import { useQuasar } from 'quasar';
+import { useRoute, useRouter } from 'vue-router';
+import { Channel } from 'src/contracts';
+import { commandService } from 'src/services';
+import { notifyUserNegative } from 'src/utils/utils';
+import { QInput } from 'quasar';
 
 export default defineComponent({
   name: 'MessageForm',
   setup() {
     const state = reactive({
       message: '',
+      sendedLastEdit: false,
     });
     const $store = useStore();
     const route = useRoute();
-    const $q = useQuasar();
+    const router = useRouter();
 
-    const handleSubmit = () => {
-      const trimmedMessage = state.message.trim();
-      if (!!trimmedMessage) {
-        $store
-          .dispatch('channels/appendChannelMessage', {
-            channelId: route.params.id as unknown as number,
-            message: trimmedMessage,
+    const messageInput = ref<QInput | null>(null)
+
+    const activeChannel = computed(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      () => $store.getters['channels_v2/getActiveChannel'] as Channel | null
+    );
+
+    const amIChannelAdmin = computed(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      () => $store.getters['channels_v2/amIChannelAdmin'] as boolean
+    );
+
+    const amIChannelMember = computed(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      () => $store.getters['channels_v2/amIChannelMember'] as boolean
+    );
+
+    const sendTypedMessage = async () => {
+      if (
+        (!state.message || state.message.startsWith('/')) &&
+        !state.sendedLastEdit
+      )
+        return;
+
+      await $store.dispatch('channels_v2/sendTypedMessage', {
+        channelName: activeChannel.value?.name,
+        message: state.message.startsWith('/') ? '' : state.message,
+      });
+
+      state.sendedLastEdit = true;
+      if (!state.message) state.sendedLastEdit = false;
+    };
+
+    const handleSubmit = async () => {
+      if (!state.message) return;
+
+      const message = state.message;
+
+      if (message.startsWith('/')) {
+        // command
+        const words = message.split(' ');
+        const command = words[0];
+        const args = words.slice(1);
+
+        if (command === '/join')
+          await commandService.processJoinCommand($store, args);
+        else if (command === '/cancel')
+          await commandService.processCancelCommand(
+            $store,
+            router,
+            args,
+            activeChannel.value
+          );
+        else if (command === '/quit')
+          await commandService.processQuitCommand(
+            $store,
+            router,
+            args,
+            activeChannel.value,
+            amIChannelAdmin.value
+          );
+        else if (command === '/kick' || command === '/revoke')
+          await commandService.processKickRevokeCommand(
+            $store,
+            command,
+            args,
+            activeChannel.value
+          );
+        else if (command === '/invite')
+          await commandService.processInviteCommand(
+            $store,
+            args,
+            activeChannel.value,
+            amIChannelAdmin.value
+          );
+        else if (command === '/list')
+          await commandService.processListCommand(
+            $store,
+            args,
+            activeChannel.value,
+            amIChannelMember.value
+          );
+        else notifyUserNegative('Unknown command');
+      } else if(activeChannel.value) {
+        const tags = message
+          .split(' ')
+          .filter((word) => word.startsWith('@'))
+          .map((nickname) => nickname.slice(1));
+
+        await $store
+          .dispatch('channels_v2/addMessage', {
+            channel: route.params.name as string,
+            message,
+            tags,
           })
           .catch(console.log);
       }
-      console.log($store.state.channels.channels);
+
       state.message = '';
+
+      if(activeChannel.value) await sendTypedMessage();
+
+      messageInput.value?.focus()
     };
+
     return {
       state,
       handleSubmit,
-      showNotif() {
-        $q.notify({
-          message: 'John Doe',
-          caption: 'Heeey Jozko, How are you ?',
-          color: 'grey-2',
-          textColor: 'black',
-          position: 'bottom-right',
-        });
-      },
-      activeChannel: computed(() => $store.state.channels.activeChannel),
-      amIChannelMember: computed(() => $store.state.channels.amIChannelMember),
+      messageInput,
+      activeChannel: computed(() => $store.state.channels_v2.active),
+      amIChannelMember: computed(
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        () => $store.getters['channels_v2/amIChannelMember'] as boolean
+      ),
+      sendTypedMessage,
     };
   },
   components: { TypingChips },

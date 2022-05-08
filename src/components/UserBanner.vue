@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts">
-import { UserStatus } from 'src/store/user/state';
+import { UserStatus } from 'src/contracts';
 import { defineComponent, computed, toRefs } from 'vue';
 
 export default defineComponent({
@@ -43,10 +43,10 @@ export default defineComponent({
         if (status.value === UserStatus.Online) {
           return 'green';
         }
-        if (status.value === UserStatus.Dnd) {
+        if (status.value === UserStatus.DND) {
           return 'red';
         }
-        if (status.value === UserStatus.Offline) {
+        if (status.value === UserStatus.OFFLINE) {
           return 'black';
         }
         return 'green';

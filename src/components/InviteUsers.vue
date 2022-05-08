@@ -23,7 +23,7 @@
         <q-card-section class="col q-pa-none q-mx-sm q-mt-none">
           <q-form @submit.prevent.stop="handleSubmit">
             <q-select
-              v-model="invitations"
+              v-model="state.invitations"
               use-input
               use-chips
               multiple
@@ -33,9 +33,26 @@
               class="q-mt-lg border-15 bg-white q-pb-none q-pl-md q-pr-md"
               color="cyan-9"
               borderless
-              :options="options"
+              :options="userOptions"
               @filter="fetchUsers"
             >
+              <template v-slot:option="scope">
+                <q-item v-bind="scope.itemProps">
+                  <q-item-section>
+                    {{ scope.opt.nickname }}
+                  </q-item-section>
+                </q-item>
+              </template>
+              <template v-slot:selected-item="scope">
+                <q-chip
+                  @remove="scope.removeAtIndex(scope.index)"
+                  dense
+                  class="text-cyan-9"
+                  color="text-cyan-9"
+                  removable
+                  >{{ scope.opt.nickname }}</q-chip
+                >
+              </template>
               <template v-slot:no-option>
                 <q-item>
                   <q-item-section class="text-grey">
@@ -47,9 +64,9 @@
 
             <q-btn
               type="submit"
-              :loading="state.submitting"
+              :loading="submitting"
               flat
-              :disable="!invitations"
+              :disable="!state.invitations.length"
               label="Invite users"
               class="q-mt-lg bg-white border-15"
               color="black"
@@ -67,8 +84,11 @@
 </template>
 
 <script lang="ts">
-import { QSelect, useQuasar } from 'quasar';
-import { defineComponent, reactive, ref, toRef } from 'vue';
+import { AxiosError } from 'axios';
+import { Channel, User } from 'src/contracts';
+import { useStore } from 'src/store';
+import { notifyUserNegative, notifyUserPositive } from 'src/utils/utils';
+import { computed, defineComponent, reactive, toRef } from 'vue';
 
 export default defineComponent({
   props: {
@@ -77,53 +97,63 @@ export default defineComponent({
       default: true,
     },
   },
-  watch: {
-    open(_, newValue) {
-      if (newValue === false) {
-        this.state.submitting = false;
-      }
-    },
-  },
   emits: ['close'],
   setup(props, { emit }) {
     const isDialogOpen = toRef(props, 'open');
-    const $q = useQuasar();
+    const $store = useStore();
 
     const state = reactive({
-      submitting: false,
+      invitations: [] as User[],
     });
 
     const handleCloseButton = () => {
       emit('close');
+
+      state.invitations = [];
     };
 
-    const stringOptions = ['sangalaa', 'adam', '5cos', 'lucyklus', 'stuff'];
+    const submitting = computed(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      () => $store.getters['invitations/isSubmitting'] as boolean
+    );
 
-    const invitations = ref<QSelect | null>(null);
-    const options = ref(stringOptions);
+    const userOptions = computed(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      () => $store.getters['invitations/getUserOptions'] as User[]
+    );
+
+    const activeChannel = computed(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      () => $store.getters['channels_v2/getActiveChannel'] as Channel | null
+    );
 
     const fetchUsers = (val: string, update: (value: () => void) => void) => {
+      if (!activeChannel.value) return;
+
       setTimeout(() => {
         update(() => {
-          if (val === '') {
-            options.value = stringOptions;
-          } else {
-            const needle = val.toLowerCase();
-            options.value = stringOptions.filter(
-              (v) => v.toLowerCase().indexOf(needle) > -1
-            );
-          }
+          const needle = val.toLowerCase();
+          $store
+            .dispatch('invitations/getChannelUserOptions', {
+              channelId: activeChannel.value?.id,
+              search: needle,
+            })
+            .catch((err: AxiosError) => notifyUserNegative(err.message));
         });
-      }, 1500);
+      }, 500);
     };
 
-    const handleSubmit = () => {
-      state.submitting = true;
-      $q.notify({
-        message: 'Invitations send successfully',
-        color: 'grey-8',
-        type: 'positive',
-      });
+    const handleSubmit = async () => {
+      if (!activeChannel.value) return;
+
+      await $store
+        .dispatch('invitations/invite', {
+          channelId: activeChannel.value.id,
+          userIds: state.invitations.map((user) => user.id),
+        })
+        .then(() => notifyUserPositive('Invitations sent successfully'))
+        .catch((err: AxiosError) => notifyUserNegative(err.message));
+
       handleCloseButton();
     };
 
@@ -132,8 +162,8 @@ export default defineComponent({
       handleSubmit,
       handleCloseButton,
       state,
-      invitations,
-      options,
+      userOptions,
+      submitting,
       fetchUsers,
     };
   },

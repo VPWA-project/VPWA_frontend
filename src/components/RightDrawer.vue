@@ -1,5 +1,5 @@
 <template>
-  <q-list v-if="amIChannelMember">
+  <q-list v-if="activeChannel && amIChannelMember">
     <q-item class="q-mt-sm column">
       <q-item-label class="text-weight-medium text-subtitle1"
         >Channel members</q-item-label
@@ -12,6 +12,7 @@
         @click="showInviteUsers"
         icon-right="add_circle"
         label="Invite users"
+        :disable="!amIChannelAdmin && activeChannel.type === 'PRIVATE'"
       />
     </q-item>
     <InviteUsers
@@ -31,10 +32,10 @@
       <q-list>
         <ChannelMember
           background="bg-white"
-          v-for="member in offline"
-          :key="member.id"
-          v-bind="member"
-          :channelMembers="state.channelMembers"
+          :key="administrator.id"
+          v-bind="administrator"
+          :show="false"
+          :amIAdmin="amIChannelAdmin"
         />
       </q-list>
     </div>
@@ -51,10 +52,12 @@
       <q-list>
         <ChannelMember
           background="bg-white"
-          v-for="member in online"
+          v-for="member in users"
           :key="member.id"
           v-bind="member"
-          :channelMembers="state.channelMembers"
+          :status="member.status"
+          :show="showKickOptionsMenu"
+          :amIAdmin="amIChannelAdmin"
         />
       </q-list>
     </div>
@@ -71,10 +74,11 @@
       <q-list>
         <ChannelMember
           background="bg-white"
-          v-for="member in offline"
+          v-for="member in offlineUsers"
           :key="member.id"
           v-bind="member"
-          :channelMembers="state.channelMembers"
+          :show="showKickOptionsMenu"
+          :amIAdmin="amIChannelAdmin"
         />
       </q-list>
     </div>
@@ -82,8 +86,8 @@
 </template>
 
 <script lang="ts">
+import { Channel, ChannelType, User } from 'src/contracts';
 import { useStore } from 'src/store';
-import { User } from 'src/store/user/state';
 import { defineComponent, computed, reactive } from 'vue';
 import ChannelMember from './ChannelMember.vue';
 import InviteUsers from './InviteUsers.vue';
@@ -95,46 +99,57 @@ export default defineComponent({
   },
   setup() {
     const $store = useStore();
+
+    const activeChannel = computed(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      () => $store.getters['channels_v2/getActiveChannel'] as Channel | null
+    );
+
+    const administrator = computed(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      () => $store.getters['channels_v2/getAdministrator'] as User
+    );
+
+    const users = computed(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      () => $store.getters['channels_v2/getOnlineDndUsers'] as User[]
+    );
+
+    const offlineUsers = computed(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      () => $store.getters['channels_v2/getOfflineUsers'] as User[]
+    );
+
     const state = reactive({
-      channelMembers: [
-        {
-          id: 1,
-          email: '',
-          firstname: 'John',
-          lastname: 'Doe',
-          nickname: 'john',
-          status: 'ONLINE',
-        },
-        {
-          id: 2,
-          email: '',
-          firstname: 'Frank',
-          lastname: 'Doe',
-          nickname: 'frank',
-          status: 'DND',
-        },
-        {
-          id: 3,
-          email: '',
-          firstname: 'Martin',
-          lastname: 'Doe',
-          nickname: 'martin',
-          status: 'OFFLINE',
-        },
-      ] as User[],
       isInviteUsersOpen: false,
     });
 
+    const amIChannelAdmin = computed(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      () => $store.getters['channels_v2/amIChannelAdmin'] as boolean
+    );
+
+    const showKickOptionsMenu = computed(() =>
+      activeChannel.value?.type === ChannelType.Private &&
+      !amIChannelAdmin.value
+        ? false
+        : true
+    );
+
     return {
       state,
-      online: computed(() =>
-        state.channelMembers.filter((x) => x.status !== 'OFFLINE')
-      ),
-      offline: computed(() =>
-        state.channelMembers.filter((x) => x.status === 'OFFLINE')
-      ),
+      activeChannel,
+      administrator,
+      users,
+      offlineUsers,
+      amIChannelAdmin,
+
       showInviteUsers: () => (state.isInviteUsersOpen = true),
-      amIChannelMember: computed(() => $store.state.channels.amIChannelMember),
+      amIChannelMember: computed(
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        () => $store.getters['channels_v2/amIChannelMember'] as boolean
+      ),
+      showKickOptionsMenu
     };
   },
 });

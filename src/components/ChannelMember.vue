@@ -6,11 +6,16 @@
     :nickname="nickname"
     :status="status"
   >
-    <template v-slot:append>
+    <template v-slot:append v-if="show">
       <q-btn flat class="no-border q-pa-none" icon="more_vert">
         <q-menu fit>
           <q-list style="width: 150px">
-            <q-item clickable @click="confirmRevokeUser(id)" v-close-popup>
+            <q-item
+              clickable
+              @click="confirmRevokeUser(id)"
+              v-close-popup
+              v-if="amIAdmin"
+            >
               <q-item-section>
                 <q-item-label>Revoke</q-item-label>
               </q-item-section>
@@ -29,15 +34,18 @@
 
 <script lang="ts">
 import UserBanner from './UserBanner.vue';
-import { User } from 'src/store/user/state';
 
-import { defineComponent, PropType, toRef } from 'vue';
+import { computed, defineComponent } from 'vue';
 import { useQuasar } from 'quasar';
+import { KickType, User } from 'src/contracts';
+import { useStore } from 'src/store';
+import { notifyUserNegative, notifyUserPositive } from 'src/utils/utils';
+import { AxiosError } from 'axios';
 
 export default defineComponent({
   props: {
     id: {
-      type: Number,
+      type: String,
       required: true,
     },
     firstname: {
@@ -56,21 +64,30 @@ export default defineComponent({
       type: String,
       required: true,
     },
-    channelMembers: {
-      type: Array as PropType<Array<User>>,
-      required: true,
-    },
     background: String,
+    show: Boolean,
+    amIAdmin: Boolean,
   },
   components: {
     UserBanner,
   },
-  setup(props) {
+  setup() {
     const $q = useQuasar();
+    const $store = useStore();
 
-    const channelMembers = toRef(props, 'channelMembers');
+    const channelMembers = computed(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      () => $store.getters['channels_v2/getAllUsers'] as User[]
+    );
 
-    const confirmRevokeUser = (id: number) => {
+    const activeChannelName = computed(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      () => $store.getters['channels_v2/getActiveChannelName'] as string | null
+    );
+
+    const confirmRevokeUser = (id: string) => {
+      if (!activeChannelName.value) return;
+
       const member = channelMembers.value.find((member) => member.id === id);
 
       if (!member) {
@@ -85,26 +102,29 @@ export default defineComponent({
         cancel: true,
         persistent: false,
       }).onOk(() => {
-        kickUser(id);
-        $q.notify({
-          message: `User ${
-            member.firstname + ' ' + member.lastname
-          } was revoked successfully`,
-          color: 'grey-8',
-          type: 'positive',
-        });
+        kickUser(id, KickType.Revoke)
+          .then(() =>
+            notifyUserPositive(
+              `User ${
+                member.firstname + ' ' + member.lastname
+              } was revoked successfully`
+            )
+          )
+          .catch((err: AxiosError) => {
+            console.log(err);
+            notifyUserNegative('Unexpected error')
+          });
       });
     };
 
-    const kickUser = (id: number) => {
-      const index = channelMembers.value.map((member) => member.id).indexOf(id);
+    const kickUser = (id: string, method: KickType) =>
+      $store.dispatch('channels_v2/kickUser', {
+        channelName: activeChannelName.value,
+        userId: id,
+        method,
+      });
 
-      if (index > -1) {
-        channelMembers.value.splice(index, 1);
-      }
-    };
-
-    const confirmKickUser = (id: number) => {
+    const confirmKickUser = (id: string) => {
       const member = channelMembers.value.find((member) => member.id === id);
 
       if (!member) {
@@ -119,23 +139,19 @@ export default defineComponent({
         cancel: true,
         persistent: false,
       }).onOk(() => {
-        banUser(id);
-        $q.notify({
-          message: `User ${
-            member.firstname + ' ' + member.lastname
-          } was kicked successfully`,
-          color: 'grey-8',
-          type: 'positive',
-        });
+        kickUser(id, KickType.Kick)
+          .then(() =>
+            notifyUserPositive(
+              `User ${
+                member.firstname + ' ' + member.lastname
+              } was kicked successfully`
+            )
+          )
+          .catch((err: AxiosError) => {
+            console.log(err)
+            notifyUserNegative('Unexpected error')
+          });
       });
-    };
-
-    const banUser = (id: number) => {
-      const index = channelMembers.value.map((member) => member.id).indexOf(id);
-
-      if (index > -1) {
-        channelMembers.value.splice(index, 1);
-      }
     };
 
     return {

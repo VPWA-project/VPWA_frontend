@@ -2,48 +2,70 @@
   <form @submit.prevent.stop="handleSubmit">
     <h2 class="text-h6 text-center">Login</h2>
 
+    <q-banner v-if="serverError" inline-actions class="text-white bg-red">
+      {{ serverError.message }}
+    </q-banner>
+
     <q-input
       class="q-mt-lg border-15 bg-white q-pb-none q-pl-md q-pr-md"
       color="cyan-9"
-      v-model="state.email"
       borderless
-      :error="v$.email.$error"
+      v-model="state.email"
+      :error="v$.email.$error || !!state.serverValidationErrors?.email"
+      @keyup="clearServerError(state.serverValidationErrors, 'email')"
+      name="email"
       label="Email"
+      bottom-slots
     >
       <template v-slot:error>
-        <span :key="error.$uid" v-for="error of v$.email.$errors">
+        <div :key="error.$uid" v-for="error of v$.email.$errors">
           {{ error.$message }}
-        </span>
-      </template></q-input
-    >
+        </div>
+        <div
+          :key="index"
+          v-for="(error, index) of state.serverValidationErrors.email"
+        >
+          {{ error }}
+        </div>
+      </template>
+    </q-input>
+
     <q-input
-      color="cyan-9"
       class="q-mt-lg border-15 bg-white q-pb-none q-pl-md q-pr-md"
+      color="cyan-9"
       borderless
       v-model="state.password"
-      :error="v$.password.$error"
+      :error="v$.password.$error || !!state.serverValidationErrors?.password"
       :type="state.isPwd ? 'password' : 'text'"
+      @keyup="clearServerError(state.serverValidationErrors, 'password')"
+      name="password"
       label="Password"
+      bottom-slots
     >
       <template v-slot:append>
         <q-icon
           :name="state.isPwd ? 'visibility_off' : 'visibility'"
-          class="cursor-pointer q-pr-md"
+          class="cursor-pointer"
           @click="state.isPwd = !state.isPwd"
         />
       </template>
-
       <template v-slot:error>
-        <span :key="error.$uid" v-for="error of v$.password.$errors">
+        <div :key="error.$uid" v-for="error of v$.password.$errors">
           {{ error.$message }}
-        </span>
+        </div>
+        <div
+          :key="index"
+          v-for="(error, index) of state.serverValidationErrors.password"
+        >
+          {{ error }}
+        </div>
       </template>
     </q-input>
 
     <div class="row justify-center">
       <q-btn
         type="submit"
-        :loading="state.submitting"
+        :loading="submitting"
         label="Login"
         class="q-mt-lg q-pa-md border-15"
         style="width: 100%"
@@ -58,12 +80,18 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from 'vue';
+import { computed, defineComponent, reactive } from 'vue';
 import { useStore } from '../store';
-import { UserLoginPayload } from '../store/user/types';
 import { helpers, required, email, minLength } from '@vuelidate/validators';
 import useVuelidate from '@vuelidate/core';
-import { useRouter } from 'vue-router';
+import { RouteLocationRaw, useRoute, useRouter } from 'vue-router';
+import {
+  LoginRequest,
+  ServerError,
+  ServerErrors,
+  ValidationError,
+} from 'src/contracts';
+import { groupValidationErrors, clearServerError } from 'src/utils/utils';
 
 const rules = {
   email: {
@@ -85,43 +113,47 @@ export default defineComponent({
   setup() {
     const $store = useStore();
     const router = useRouter();
+    const route = useRoute();
 
     const state = reactive({
       email: '',
       password: '',
       isPwd: true,
-      submitting: false,
+      serverValidationErrors: {} as ServerErrors,
     });
 
     const v$ = useVuelidate(rules, state);
 
-    const handleSubmit = () => {
-      state.submitting = true;
+    const redirectTo = computed(
+      () =>
+        (route.query.redirect as string) ||
+        ({ name: 'home' } as RouteLocationRaw)
+    );
+    const submitting = computed(() => $store.state.auth.status === 'pending');
 
+    const validationErrors = computed(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      () => $store.getters['auth/getValidationErrors'] as ValidationError[]
+    );
+
+    const handleSubmit = () => {
       v$.value
         .$validate()
         .then((isValid) => {
           if (isValid) {
-            const payload: UserLoginPayload = {
+            const payload: LoginRequest = {
               email: state.email,
               password: state.password,
             };
 
             $store
-              .dispatch('user/loginUser', payload)
-              .then(() => {
-                state.submitting = false;
-
-                $store
-                  .dispatch('channels/fetchUserChannels', 1)
-                  .then(() => {
-                    router.push('/').catch(console.log);
-                  })
-                  .catch(console.log);
-              })
-              .catch(console.log);
-          } else {
-            state.submitting = false;
+              .dispatch('auth/login', payload)
+              .then(() => router.push(redirectTo.value))
+              .catch(() => {
+                state.serverValidationErrors = groupValidationErrors(
+                  validationErrors.value
+                );
+              });
           }
         })
         .catch(console.log);
@@ -130,7 +162,13 @@ export default defineComponent({
     return {
       state,
       v$,
+      submitting,
+      clearServerError,
       handleSubmit,
+      serverError: computed(
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        () => $store.getters['auth/getServerError'] as ServerError | null
+      ),
     };
   },
 });

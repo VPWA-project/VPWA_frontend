@@ -18,6 +18,9 @@
           @click="handleCloseButton"
           icon="close"
         />
+        <q-banner v-if="serverError" inline-actions class="text-white bg-red">
+          {{ serverError.message }}
+        </q-banner>
         <h3 class="self-center" style="font-size: 1.5rem">
           Create a new
           {{ `${state.isChannelPublic ? 'public' : 'private'}` }} channel
@@ -39,12 +42,14 @@
           </p>
           <q-form @submit.prevent.stop="handleSubmit">
             <q-input
-              v-model="state.channelName"
-              :error="v$.channelName.$error"
+              v-model="state.name"
+              :error="v$.name.$error || !!state.serverErrors?.name"
               class="q-mt-lg border-15 bg-white q-pb-none q-pl-md q-pr-md"
               color="cyan-9"
               borderless
               type="text"
+              name="name"
+              @keyup="clearServerError(state.serverErrors, 'name')"
               bottom-slots
               label="Name"
             >
@@ -52,14 +57,20 @@
                 <q-icon :name="`${state.isChannelPublic ? 'tag' : 'lock'}`" />
               </template>
               <template v-slot:error>
-                <span :key="error.$uid" v-for="error of v$.channelName.$errors">
+                <div :key="error.$uid" v-for="error of v$.name.$errors">
                   {{ error.$message }}
-                </span>
+                </div>
+                <div
+                  :key="index"
+                  v-for="(error, index) of state.serverErrors.name"
+                >
+                  {{ error }}
+                </div>
               </template>
             </q-input>
 
             <q-select
-              v-model="invitations"
+              v-model="state.invitations"
               use-input
               use-chips
               multiple
@@ -69,9 +80,26 @@
               class="q-mt-lg border-15 bg-white q-pb-none q-pl-md q-pr-md"
               color="cyan-9"
               borderless
-              :options="options"
+              :options="userOptions"
               @filter="fetchUsers"
             >
+              <template v-slot:option="scope">
+                <q-item v-bind="scope.itemProps">
+                  <q-item-section>
+                    {{ scope.opt.nickname }}
+                  </q-item-section>
+                </q-item>
+              </template>
+              <template v-slot:selected-item="scope">
+                <q-chip
+                  @remove="scope.removeAtIndex(scope.index)"
+                  dense
+                  class="text-cyan-9"
+                  color="text-cyan-9"
+                  removable
+                  >{{ scope.opt.nickname }}</q-chip
+                >
+              </template>
               <template v-slot:no-option>
                 <q-item>
                   <q-item-section class="text-grey">
@@ -83,7 +111,7 @@
 
             <q-btn
               type="submit"
-              :loading="state.submitting"
+              :loading="submitting"
               flat
               label="Create channel"
               class="q-mt-lg bg-white border-15"
@@ -102,17 +130,31 @@
 </template>
 
 <script lang="ts">
-import { QSelect, useQuasar } from 'quasar';
-import { ChannelType } from 'src/store/channels/state';
-import { CreateChannelPayload } from 'src/store/channels/types';
-import { defineComponent, reactive, ref, toRef } from 'vue';
+import { computed, defineComponent, reactive, toRef } from 'vue';
 import { useStore } from '../store';
 import useVuelidate from '@vuelidate/core';
 import { required, helpers } from '@vuelidate/validators';
+import {
+  ChannelType,
+  CreateChannelRequest,
+  ServerError,
+  ServerErrors,
+  User,
+  ValidationError,
+} from 'src/contracts';
+import { groupValidationErrors, clearServerError, notifyUserPositive } from 'src/utils/utils';
+
+const doesTheNameContainSpace = (value: string) => {
+  return !(value.indexOf(' ') >= 0);
+};
 
 const rules = {
-  channelName: {
+  name: {
     required: helpers.withMessage("Channel name can't be empty", required),
+    doesTheNameContainSpace: helpers.withMessage(
+      "Channel name can't contain space",
+      doesTheNameContainSpace
+    ),
   },
 };
 
@@ -123,84 +165,84 @@ export default defineComponent({
       default: true,
     },
   },
-  watch: {
-    open(_, newValue) {
-      if (newValue === false) {
-        this.state.channelName = '';
-        this.state.isChannelPublic = true;
-        this.state.submitting = false;
-      }
-    },
-  },
   emits: ['close'],
   setup(props, { emit }) {
     const isDialogOpen = toRef(props, 'open');
 
     const $store = useStore();
-    const $q = useQuasar();
 
     const state = reactive({
-      channelName: '',
+      invitations: [] as User[],
+      name: '',
       isChannelPublic: true,
-      submitting: false,
+      serverErrors: {} as ServerErrors,
     });
+
+    const submitting = computed(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      () => $store.getters['createChannel/isSubmitting'] as boolean
+    );
+    const validationErrors = computed(
+      () =>
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        $store.getters['createChannel/getValidationErrors'] as ValidationError[]
+    );
 
     const v$ = useVuelidate(rules, state);
 
     const handleCloseButton = () => {
       emit('close');
+
+      state.invitations = []
+      state.name = ''
+      state.isChannelPublic = true
+      state.serverErrors = {}
+
+      v$.value?.$reset()
     };
 
-    const stringOptions = ['sangalaa', 'adam', '5cos', 'lucyklus', 'stuff'];
-
-    const invitations = ref<QSelect | null>(null);
-    const options = ref(stringOptions);
+    const userOptions = computed(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      () => $store.getters['invitations/getUserOptions'] as User[]
+    );
 
     const fetchUsers = (val: string, update: (value: () => void) => void) => {
       setTimeout(() => {
         update(() => {
-          if (val === '') {
-            options.value = stringOptions;
-          } else {
-            const needle = val.toLowerCase();
-            options.value = stringOptions.filter(
-              (v) => v.toLowerCase().indexOf(needle) > -1
-            );
-          }
+          const needle = val.toLowerCase();
+          $store
+            .dispatch('invitations/getUserOptions', needle)
+            .catch(console.log);
         });
-      }, 1500);
+      }, 500);
     };
 
     const handleSubmit = () => {
-      state.submitting = true;
-
       v$.value
         .$validate()
         .then((result) => {
           if (result) {
-            const payload: CreateChannelPayload = {
-              name: state.channelName,
+            const payload: CreateChannelRequest = {
+              name: state.name,
               type: state.isChannelPublic
                 ? ChannelType.Public
                 : ChannelType.Private,
+              invitations: !!state.invitations.length
+                ? state.invitations.map((user) => user.id)
+                : undefined,
             };
 
             $store
-              .dispatch('channels/createChannel', payload)
+              .dispatch('createChannel/create', payload)
               .then(() => {
-                $q.notify({
-                  message: `Channel ${payload.name} was created successfully`,
-                  color: 'grey-8',
-                  type: 'positive',
-                });
-
-                state.submitting = false;
-
+                notifyUserPositive(`Channel ${payload.name} was created successfully`)
                 handleCloseButton();
               })
-              .catch(console.log);
-          } else {
-            state.submitting = false;
+              .catch(() => {
+                state.serverErrors = groupValidationErrors(
+                  validationErrors.value
+                );
+              });
           }
         })
         .catch(console.log);
@@ -208,13 +250,18 @@ export default defineComponent({
 
     return {
       isDialogOpen,
+      clearServerError,
+      submitting,
       handleSubmit,
       handleCloseButton,
       state,
       v$,
-      invitations,
-      options,
       fetchUsers,
+      userOptions,
+      serverError: computed(
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        () => $store.getters['createChannel/getServerError'] as ServerError | null
+      ),
     };
   },
 });

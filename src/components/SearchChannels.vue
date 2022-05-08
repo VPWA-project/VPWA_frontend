@@ -71,7 +71,7 @@
                   flat
                   color="green"
                   label="Join"
-                  @click="joinChannel(link)"
+                  @click.prevent.stop="joinChannel(link)"
                 />
               </div>
             </template>
@@ -85,8 +85,9 @@
 </template>
 
 <script lang="ts">
-import { Channel } from 'src/store/channels/state';
-import { SearchPublicChannelsPayload } from 'src/store/channels/types';
+import { AxiosError } from 'axios';
+import { Channel, SearchPublicChannelsRequest } from 'src/contracts/Channel';
+import { notifyUserNegative, notifyUserPositive } from 'src/utils/utils';
 import { defineComponent, ref, toRef, computed } from 'vue';
 import { useStore } from '../store';
 import ChannelLink from './ChannelLink.vue';
@@ -129,29 +130,40 @@ export default defineComponent({
     const search = () => {
       showSpinner.value = true;
 
-      const payload: SearchPublicChannelsPayload = {
+      const payload: SearchPublicChannelsRequest = {
         searchText: searchText.value,
+        userId: $store.state.auth.user?.id,
       };
+
       $store
-        .dispatch('channels/searchPublicChannels', payload)
+        .dispatch('searchChannels/searchPublicChannels', payload)
         .then(() => {
           showSpinner.value = false;
         })
-        .catch((err) => {
+        .catch((err: AxiosError) => {
           console.log(err);
           showSpinner.value = false;
+
+          notifyUserNegative(err.message)
         });
     };
 
-    const joinChannel = (channel: Channel) => {
-      $store
-        .dispatch('channels/joinChannel', channel)
-        .then(() => {
-          $store
-            .dispatch('channels/removeFromPublicChannels', channel.id)
-            .catch(console.log);
-        })
-        .catch(console.log);
+    const joinChannel = async (channel: Channel) => {
+      await $store
+        .dispatch('channels_v2/joinChannel', channel.id)
+        .then(
+          async () => {
+            void await $store.dispatch(
+              'searchChannels/removePublicChannel',
+              channel.id
+            )
+            notifyUserPositive(`Successfully joined to the ${channel.name} channel`)
+          }
+        ).catch((err: AxiosError) => {
+          console.log(err)
+
+          notifyUserNegative(err.message)
+        });
     };
 
     return {
@@ -165,7 +177,8 @@ export default defineComponent({
       handleClearSearchText,
       joinChannel,
       availableChannels: computed(
-        () => $store.state.channels.availableChannels
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        () => $store.getters['searchChannels/getPublicChannels'] as Channel[]
       ),
       handleCloseButton: () => emit('close'),
     };
