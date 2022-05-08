@@ -9,9 +9,6 @@ class ActivitySocketManager extends SocketManager {
     this.socket.on(
       'user:list',
       (onlineUsers: User[], dndUsers: User[], offlineUsers: User[]) => {
-        console.log('Online users list', onlineUsers);
-        console.log('DND users list', dndUsers);
-        console.log('Offline users list', dndUsers);
         store.commit('channels_v2/SET_USER_LIST', {
           onlineUsers,
           dndUsers,
@@ -21,18 +18,15 @@ class ActivitySocketManager extends SocketManager {
     );
 
     this.socket.on('user:online', (userOnline: User) => {
-      console.log('User is online', userOnline);
       //store.commit('channels_v2/ADD_TO_USER_LIST', userOnline);
       void store.dispatch('channels_v2/userOnline', userOnline);
     });
 
     this.socket.on('user:offline', (offlineUser: User) => {
-      console.log('User is offline', offlineUser);
       store.commit('channels_v2/REMOVE_FROM_USER_LIST', offlineUser.id);
     });
 
     this.socket.on('user:receiveStatus', (changeUser: User) => {
-      console.log('user to change status', changeUser);
       store.commit('channels_v2/CHANGE_USER_STATUS', changeUser);
     });
 

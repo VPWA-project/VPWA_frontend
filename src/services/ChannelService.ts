@@ -68,7 +68,6 @@ class ChannelSocketManager extends SocketManager {
               }
               // Otherwise, we need to ask the user for permission
               else if (Notification.permission !== 'denied') {
-                console.log('denied');
                 Notification.requestPermission()
                   .then(function (permission) {
                     // If the user accepts, let's create a notification
@@ -109,7 +108,6 @@ class ChannelSocketManager extends SocketManager {
             }
             // Otherwise, we need to ask the user for permission
             else if (Notification.permission !== 'denied') {
-              console.log('denied');
               Notification.requestPermission()
                 .then(function (permission) {
                   // If the user accepts, let's create a notification
@@ -182,8 +180,6 @@ class ChannelSocketManager extends SocketManager {
         userId: user.id,
         channelName: channel,
       });
-
-      //console.log(`User: ${user.nickname} left the channel`);
     });
 
     this.socket.on('channel:connect', async (user: User) => {
@@ -191,7 +187,6 @@ class ChannelSocketManager extends SocketManager {
       const userToFind = channelUsers.find(
         (findUser) => findUser.id === user.id
       );
-      console.log(userToFind);
       if (userToFind) {
         user.status = UserStatus.OFFLINE;
       }
@@ -223,7 +218,6 @@ class ChannelSocketManager extends SocketManager {
   }
 
   public kickUser(data: KickUserRequest): Promise<boolean> {
-    console.log('Kick data: ', data);
     return this.emitAsync('user:sendKick', data);
   }
 
@@ -232,7 +226,6 @@ class ChannelSocketManager extends SocketManager {
   }
 
   public leaveChannel() {
-    console.log('Leaving channel');
     return this.emitAsync('channel:leave');
   }
 }

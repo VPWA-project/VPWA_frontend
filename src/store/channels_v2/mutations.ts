@@ -69,11 +69,9 @@ const mutation: MutationTree<ChannelsV2StateInterface> = {
     state,
     { userId, channelName }: { userId: string; channelName: string }
   ) {
-    console.log(state.channelsUsers);
     state.channelsUsers[channelName] = state.channelsUsers[channelName].filter(
       (obj) => obj.id !== userId
     );
-    console.log(state.channelsUsers);
   },
   FETCH_MESSAGES(
     state,
