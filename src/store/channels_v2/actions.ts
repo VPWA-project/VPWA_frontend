@@ -4,6 +4,7 @@ import {
   KickUserRequest,
   RawMessage,
   User,
+  UserStatus,
 } from 'src/contracts';
 import { channelService } from 'src/services';
 import { ActionTree } from 'vuex';
@@ -12,6 +13,9 @@ import { ChannelsV2StateInterface } from './state';
 
 const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
   async join({ commit, dispatch }, channel: string) {
+    if (this.state.auth.user?.status === UserStatus.OFFLINE) {
+      return;
+    }
     try {
       commit('LOADING_START');
 
@@ -40,7 +44,11 @@ const actions: ActionTree<ChannelsV2StateInterface, StateInterface> = {
   },
 
   tryJoin({}, channel: string) {
-    if (!channelService.in(channel)) channelService.join(channel);
+    if (
+      !channelService.in(channel) &&
+      this.state.auth.user?.status !== UserStatus.OFFLINE
+    )
+      channelService.join(channel);
   },
 
   async joinChannel({ commit, dispatch }, id: string) {
