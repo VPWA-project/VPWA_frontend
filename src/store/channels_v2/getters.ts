@@ -126,21 +126,22 @@ const getters: GetterTree<ChannelsV2StateInterface, StateInterface> = {
     if (!authUser) return undefined;
 
     const channelUsers = context.channelsUsers[activeChannel.name] || [];
-    const onlineDndUsers = [] as User[];
+    const offlineUsers = [] as User[];
 
     channelUsers.forEach((channelUser) => {
       if (!storedUsers.find((storedUser) => storedUser.id === channelUser.id)) {
         if (
           channelUser.id != administrator.id &&
-          channelUser.id != authUser.id
+          channelUser.id != authUser.id &&
+          !offlineUsers.find((asd) => asd.id === channelUser.id)
         ) {
           channelUser.status = UserStatus.OFFLINE;
-          onlineDndUsers.push(channelUser);
+          offlineUsers.push(channelUser);
         }
       }
     });
 
-    return onlineDndUsers;
+    return offlineUsers;
   },
   getAllUsers(context) {
     const activeChannel = context.activeChannel;

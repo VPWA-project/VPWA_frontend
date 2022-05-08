@@ -14,6 +14,7 @@ export interface ChannelsV2StateInterface {
   channelsUsers: { [channel: string]: User[] };
   searchedChannels: Channel[];
   onlineDndUsers: User[];
+  offlineUsers: User[];
   active: string | null;
   activeChannel: Channel | null;
 }
@@ -28,6 +29,7 @@ function state(): ChannelsV2StateInterface {
     channelsUsers: {},
     searchedChannels: [],
     onlineDndUsers: [],
+    offlineUsers: [],
     active: null,
     activeChannel: null,
   };

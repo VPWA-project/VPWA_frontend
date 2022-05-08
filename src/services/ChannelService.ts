@@ -187,6 +187,14 @@ class ChannelSocketManager extends SocketManager {
     });
 
     this.socket.on('channel:connect', async (user: User) => {
+      const channelUsers = store.state.channels_v2.channelsUsers[channel];
+      const userToFind = channelUsers.find(
+        (findUser) => findUser.id === user.id
+      );
+      console.log(userToFind);
+      if (userToFind) {
+        user.status = UserStatus.OFFLINE;
+      }
       await store.dispatch('channels_v2/userOnline', user);
       store.commit('channels_v2/ADD_CHANNEL_USER', { channel, user });
     });

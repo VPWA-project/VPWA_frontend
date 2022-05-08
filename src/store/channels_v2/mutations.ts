@@ -102,7 +102,11 @@ const mutation: MutationTree<ChannelsV2StateInterface> = {
   },
   SET_USER_LIST(
     state,
-    { onlineUsers, dndUsers }: { onlineUsers: User[]; dndUsers: User[] }
+    {
+      onlineUsers,
+      dndUsers,
+      offlineUsers,
+    }: { onlineUsers: User[]; dndUsers: User[]; offlineUsers: User[] }
   ) {
     const online = onlineUsers.map((user) => ({
       ...user,
@@ -114,10 +118,19 @@ const mutation: MutationTree<ChannelsV2StateInterface> = {
       status: UserStatus.DND,
     }));
 
+    const offline = offlineUsers.map((user) => ({
+      ...user,
+      status: UserStatus.OFFLINE,
+    }));
+
     state.onlineDndUsers = [...online, ...dnd];
+    state.offlineUsers = [...offline];
   },
   ADD_TO_USER_LIST(state, user: User) {
-    state.onlineDndUsers.push({ ...user, status: UserStatus.Online });
+    if (user.status === UserStatus.OFFLINE) {
+    } else {
+      state.onlineDndUsers.push({ ...user, status: UserStatus.Online });
+    }
   },
   REMOVE_FROM_USER_LIST(state, userId: string) {
     state.onlineDndUsers = state.onlineDndUsers.filter(
