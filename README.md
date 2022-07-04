@@ -41,6 +41,6 @@ Create a progressive IRC (Slack) style text communication web application that c
     * after clicking on the nickName, you can see the detailed text in real time, before the sender sends it (every change is visible)
 
 ## Technologies
-    * Frontend - [Quasar](https://quasar.dev/)
-    * Backend - [Adonis](https://adonisjs.com/)
-    * Database - PostgreSQL
+   * Frontend - [Quasar](https://quasar.dev/)
+   * Backend - [Adonis](https://adonisjs.com/)
+   * Database - PostgreSQL
