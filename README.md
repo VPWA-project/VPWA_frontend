@@ -44,3 +44,6 @@ Create a progressive IRC (Slack) style text communication web application that c
    * Frontend - [Quasar](https://quasar.dev/)
    * Backend - [Adonis](https://adonisjs.com/)
    * Database - PostgreSQL
+
+## Getting Started
+  Instructions are provided [here](https://github.com/VPWA-project/build).
